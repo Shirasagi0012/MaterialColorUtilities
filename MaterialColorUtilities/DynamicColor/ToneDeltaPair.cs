@@ -24,7 +24,7 @@ public enum TonePolarity
     Darker,
     Lighter,
     Nearer,
-    Farther,
+    Farther
 }
 
 /// <summary>

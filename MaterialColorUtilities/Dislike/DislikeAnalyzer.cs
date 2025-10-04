@@ -14,9 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MaterialColorUtilities.HCT;
 
 namespace MaterialColorUtilities.Dislike;
@@ -38,7 +35,8 @@ public static class DislikeAnalyzer
     /// <returns>True if the color is disliked (dark yellow-green).</returns>
     public static bool IsDisliked(Hct hct)
     {
-        var huePasses = Math.Round(hct.Hue, MidpointRounding.AwayFromZero) >= 90.0 && Math.Round(hct.Hue, MidpointRounding.AwayFromZero) <= 111.0;
+        var huePasses = Math.Round(hct.Hue, MidpointRounding.AwayFromZero) >= 90.0 &&
+                        Math.Round(hct.Hue, MidpointRounding.AwayFromZero) <= 111.0;
         var chromaPasses = Math.Round(hct.Chroma, MidpointRounding.AwayFromZero) > 16.0;
         var tonePasses = Math.Round(hct.Tone, MidpointRounding.AwayFromZero) < 65.0;
 

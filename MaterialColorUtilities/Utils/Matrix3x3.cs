@@ -53,9 +53,9 @@ public readonly struct Matrix3x3 : IEquatable<Matrix3x3>
     {
         get
         {
-            return (row,col) switch
+            return (row, col) switch
             {
-                (0,0) => M11,
+                (0, 0) => M11,
                 (0, 1) => M12,
                 (0, 2) => M13,
                 (1, 0) => M21,

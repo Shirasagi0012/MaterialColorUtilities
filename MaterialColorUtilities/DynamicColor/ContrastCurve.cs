@@ -14,7 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.DynamicColor;
@@ -62,7 +61,7 @@ public class ContrastCurve
             < 0.0 => MathUtils.Lerp(Low, Normal, (contrastLevel - -1) / 1),
             < 0.5 => MathUtils.Lerp(Normal, Medium, (contrastLevel - 0) / 0.5),
             < 1.0 => MathUtils.Lerp(Medium, High, (contrastLevel - 0.5) / 0.5),
-            _ => High,
+            _ => High
         };
     }
 }

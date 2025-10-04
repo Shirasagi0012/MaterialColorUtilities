@@ -14,8 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
 using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.Quantize;
@@ -147,7 +145,7 @@ public sealed class QuantizerWu : IQuantizer
             G1 = MaxIndex,
             B0 = 0,
             B1 = MaxIndex,
-            Vol = 0,
+            Vol = 0
         };
 
         var volumeVariance = new double[maxColorCount];
@@ -186,7 +184,7 @@ public sealed class QuantizerWu : IQuantizer
         return new CreateBoxesResult
         {
             RequestedCount = maxColorCount,
-            ResultCount = generatedColorCount,
+            ResultCount = generatedColorCount
         };
     }
 
@@ -389,13 +387,13 @@ public sealed class QuantizerWu : IQuantizer
     private static int Volume(Box cube, int[] moment)
     {
         return moment[GetIndex(cube.R1, cube.G1, cube.B1)]
-            - moment[GetIndex(cube.R1, cube.G1, cube.B0)]
-            - moment[GetIndex(cube.R1, cube.G0, cube.B1)]
-            + moment[GetIndex(cube.R1, cube.G0, cube.B0)]
-            - moment[GetIndex(cube.R0, cube.G1, cube.B1)]
-            + moment[GetIndex(cube.R0, cube.G1, cube.B0)]
-            + moment[GetIndex(cube.R0, cube.G0, cube.B1)]
-            - moment[GetIndex(cube.R0, cube.G0, cube.B0)];
+               - moment[GetIndex(cube.R1, cube.G1, cube.B0)]
+               - moment[GetIndex(cube.R1, cube.G0, cube.B1)]
+               + moment[GetIndex(cube.R1, cube.G0, cube.B0)]
+               - moment[GetIndex(cube.R0, cube.G1, cube.B1)]
+               + moment[GetIndex(cube.R0, cube.G1, cube.B0)]
+               + moment[GetIndex(cube.R0, cube.G0, cube.B1)]
+               - moment[GetIndex(cube.R0, cube.G0, cube.B0)];
     }
 
     private static int Bottom(Box cube, Direction direction, int[] moment)
@@ -403,18 +401,18 @@ public sealed class QuantizerWu : IQuantizer
         return direction switch
         {
             Direction.Red => -moment[GetIndex(cube.R0, cube.G1, cube.B1)]
-                + moment[GetIndex(cube.R0, cube.G1, cube.B0)]
-                + moment[GetIndex(cube.R0, cube.G0, cube.B1)]
-                - moment[GetIndex(cube.R0, cube.G0, cube.B0)],
+                             + moment[GetIndex(cube.R0, cube.G1, cube.B0)]
+                             + moment[GetIndex(cube.R0, cube.G0, cube.B1)]
+                             - moment[GetIndex(cube.R0, cube.G0, cube.B0)],
             Direction.Green => -moment[GetIndex(cube.R1, cube.G0, cube.B1)]
-                + moment[GetIndex(cube.R1, cube.G0, cube.B0)]
-                + moment[GetIndex(cube.R0, cube.G0, cube.B1)]
-                - moment[GetIndex(cube.R0, cube.G0, cube.B0)],
+                               + moment[GetIndex(cube.R1, cube.G0, cube.B0)]
+                               + moment[GetIndex(cube.R0, cube.G0, cube.B1)]
+                               - moment[GetIndex(cube.R0, cube.G0, cube.B0)],
             Direction.Blue => -moment[GetIndex(cube.R1, cube.G1, cube.B0)]
-                + moment[GetIndex(cube.R1, cube.G0, cube.B0)]
-                + moment[GetIndex(cube.R0, cube.G1, cube.B0)]
-                - moment[GetIndex(cube.R0, cube.G0, cube.B0)],
-            _ => 0,
+                              + moment[GetIndex(cube.R1, cube.G0, cube.B0)]
+                              + moment[GetIndex(cube.R0, cube.G1, cube.B0)]
+                              - moment[GetIndex(cube.R0, cube.G0, cube.B0)],
+            _ => 0
         };
     }
 
@@ -423,18 +421,18 @@ public sealed class QuantizerWu : IQuantizer
         return direction switch
         {
             Direction.Red => moment[GetIndex(position, cube.G1, cube.B1)]
-                - moment[GetIndex(position, cube.G1, cube.B0)]
-                - moment[GetIndex(position, cube.G0, cube.B1)]
-                + moment[GetIndex(position, cube.G0, cube.B0)],
+                             - moment[GetIndex(position, cube.G1, cube.B0)]
+                             - moment[GetIndex(position, cube.G0, cube.B1)]
+                             + moment[GetIndex(position, cube.G0, cube.B0)],
             Direction.Green => moment[GetIndex(cube.R1, position, cube.B1)]
-                - moment[GetIndex(cube.R1, position, cube.B0)]
-                - moment[GetIndex(cube.R0, position, cube.B1)]
-                + moment[GetIndex(cube.R0, position, cube.B0)],
+                               - moment[GetIndex(cube.R1, position, cube.B0)]
+                               - moment[GetIndex(cube.R0, position, cube.B1)]
+                               + moment[GetIndex(cube.R0, position, cube.B0)],
             Direction.Blue => moment[GetIndex(cube.R1, cube.G1, position)]
-                - moment[GetIndex(cube.R1, cube.G0, position)]
-                - moment[GetIndex(cube.R0, cube.G1, position)]
-                + moment[GetIndex(cube.R0, cube.G0, position)],
-            _ => 0,
+                              - moment[GetIndex(cube.R1, cube.G0, position)]
+                              - moment[GetIndex(cube.R0, cube.G1, position)]
+                              + moment[GetIndex(cube.R0, cube.G0, position)],
+            _ => 0
         };
     }
 }
@@ -443,7 +441,7 @@ internal enum Direction
 {
     Red,
     Green,
-    Blue,
+    Blue
 }
 
 internal sealed class MaximizeResult

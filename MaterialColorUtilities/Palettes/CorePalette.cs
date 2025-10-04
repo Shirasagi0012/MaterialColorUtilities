@@ -14,13 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace MaterialColorUtilities.Palettes;
 
 [Obsolete(
     "Use [DynamicScheme] for color scheme generation. \nUse [CorePalettes] for core palettes container class."
 )]
-internal class CorePalette { }
+internal class CorePalette
+{
+}

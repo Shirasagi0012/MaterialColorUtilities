@@ -14,7 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.Quantize;
@@ -24,7 +23,8 @@ namespace MaterialColorUtilities.Quantize;
 /// </summary>
 public sealed class QuantizerMap : IQuantizer
 {
-    public async Task<QuantizerResult> QuantizeAsync(List<ArgbColor> pixels, int maxColors) // TODO: Consider run in separate thread
+    public async Task<QuantizerResult>
+        QuantizeAsync(List<ArgbColor> pixels, int maxColors) // TODO: Consider run in separate thread
     {
         var countByColor = new Dictionary<ArgbColor, int>();
 

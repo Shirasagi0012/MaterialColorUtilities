@@ -14,8 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Runtime.CompilerServices;
 using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.HCT;
@@ -290,7 +288,7 @@ internal readonly record struct Cam16(
 
         var t = Math.Pow(
             alpha
-                / Math.Pow(1.64 - Math.Pow(0.29, viewingConditions.BackgroundYToWhitePointY), 0.73),
+            / Math.Pow(1.64 - Math.Pow(0.29, viewingConditions.BackgroundYToWhitePointY), 0.73),
             1.0 / 0.9
         );
         var hRad = Hue * Math.PI / 180.0;

@@ -92,10 +92,7 @@ public class TemperatureCache(Hct input)
             List<Hct> allHcts = [.. HctsByHue, Input];
 
             var temperaturesByHct = new Dictionary<Hct, double>();
-            foreach (var e in allHcts)
-            {
-                temperaturesByHct[e] = RawTemperature(e);
-            }
+            foreach (var e in allHcts) temperaturesByHct[e] = RawTemperature(e);
 
             _tempsByHct = temperaturesByHct;
             return _tempsByHct;
@@ -304,8 +301,8 @@ public class TemperatureCache(Hct input)
         var temperature =
             -0.5
             + 0.02
-                * Math.Pow(chroma, 1.07)
-                * Math.Cos(MathUtils.SanitizeDegrees(hue - 50.0) * Math.PI / 180.0);
+            * Math.Pow(chroma, 1.07)
+            * Math.Cos(MathUtils.SanitizeDegrees(hue - 50.0) * Math.PI / 180.0);
         return temperature;
     }
 }

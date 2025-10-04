@@ -302,7 +302,7 @@ internal static class HctSolver
         96.9059996312159,
         97.78421388448044,
         98.6670533535366,
-        99.55452497210776,
+        99.55452497210776
     ];
 
     private static double SanitizeRadians(double angle)

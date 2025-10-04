@@ -14,10 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 using MaterialColorUtilities.Utils;
 
 //[assembly: InternalsVisibleTo("MaterialColorUtilities.Avalonia")]
@@ -207,7 +203,7 @@ public struct Hct
         // 3. Create HCT from:
         // - CAM16 using default VC with XYZ coordinates in specified VC.
         // - L* converted from Y in XYZ coordinates in specified VC.
-        var recastHct = Hct.From(
+        var recastHct = From(
             recastInVc.Hue,
             recastInVc.Chroma,
             ColorUtils.LstarFromY(viewedInVc[1])

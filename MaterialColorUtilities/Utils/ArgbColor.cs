@@ -10,12 +10,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace MaterialColorUtilities.Utils;
 
+/// <summary>
+/// Represents a 32-bit ARGB (alpha, red, green, blue) color value.
+/// </summary>
+/// <remarks>
+/// The ArgbColor struct provides convenient access to the individual alpha, red, green, and blue
+/// components of a color, as well as the packed 32-bit integer value. It has the same level of
+/// efficiency as using a raw integer, while being significantly easier to use.
+/// It is used to replace int-based color representations in the original library.
+/// </remarks>
 public struct ArgbColor : IEquatable<ArgbColor>
 {
     private int _value;
@@ -82,5 +87,15 @@ public struct ArgbColor : IEquatable<ArgbColor>
     public override int GetHashCode()
     {
         return _value;
+    }
+
+    public static bool operator ==(ArgbColor left, ArgbColor right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(ArgbColor left, ArgbColor right)
+    {
+        return !(left == right);
     }
 }

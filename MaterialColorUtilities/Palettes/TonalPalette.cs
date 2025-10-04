@@ -14,9 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Utils;
 
@@ -53,7 +50,7 @@ public class TonalPalette
         90,
         95,
         99,
-        100,
+        100
     ];
 
     public static int CommonSize = CommonTones.Count;
@@ -70,6 +67,7 @@ public class TonalPalette
     /// </list>
     /// </summary>
     private readonly Dictionary<int, ArgbColor> _cache = [];
+
     private readonly bool _isFromCache;
 
     private TonalPalette(Hct hct)
@@ -180,7 +178,7 @@ public class TonalPalette
         return _isFromCache switch
         {
             true => $"TonalPalette (from cache) {AsList()}",
-            false => $"TonalPalette {Hue:F1}°, {Chroma:F1}",
+            false => $"TonalPalette {Hue:F1}°, {Chroma:F1}"
         };
     }
 
@@ -197,13 +195,11 @@ public class TonalPalette
                 if (_cache.Count != other._cache.Count)
                     return false;
                 foreach (var kvp in _cache)
-                {
                     if (
                         !other._cache.TryGetValue(kvp.Key, out var otherValue)
                         || !kvp.Value.Equals(otherValue)
                     )
                         return false;
-                }
                 return true;
             }
             else
@@ -212,15 +208,13 @@ public class TonalPalette
                 return Math.Abs(Hue - other.Hue) < 0.001 && Math.Abs(Chroma - other.Chroma) < 0.001;
             }
         }
+
         return false;
     }
 
     public override int GetHashCode()
     {
-        if (_isFromCache)
-        {
-            return _cache.GetHashCode();
-        }
+        if (_isFromCache) return _cache.GetHashCode();
         return HashCode.Combine(Hue, Chroma);
     }
 

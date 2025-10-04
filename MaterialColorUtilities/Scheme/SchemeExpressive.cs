@@ -55,5 +55,7 @@ public class SchemeExpressive : DynamicScheme
             new TonalPalette(GetRotatedHue(sourceColorHct, Hues, TertiaryRotations), 32.0),
             new TonalPalette(sourceColorHct.Hue + 15.0, 8.0),
             new TonalPalette(sourceColorHct.Hue + 15.0, 12.0)
-        ) { }
+        )
+    {
+    }
 }
