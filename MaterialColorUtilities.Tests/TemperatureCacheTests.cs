@@ -8,8 +8,6 @@ namespace MaterialColorUtilities.Tests.Temperature;
 
 public class TemperatureCacheTests
 {
-    // Note: RawTemperature tests are skipped because the method is private
-
     [Fact]
     public void RawTemperature_Blue()
     {

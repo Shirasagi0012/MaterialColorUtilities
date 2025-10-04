@@ -24,13 +24,15 @@ namespace MaterialColorUtilities.Quantize;
 public sealed class QuantizerMap : IQuantizer
 {
     public async Task<QuantizerResult>
-        QuantizeAsync(List<ArgbColor> pixels, int maxColors) // TODO: Consider run in separate thread
-    {
-        var countByColor = new Dictionary<ArgbColor, int>();
+        QuantizeAsync(List<ArgbColor> pixels, int maxColors) // TODO: Validate run in separate thread
+        =>
+            await Task.Run(() =>
+            {
+                var countByColor = new Dictionary<ArgbColor, int>();
 
-        foreach (var argb in pixels.Where(argb => argb.Alpha >= 255))
-            countByColor[argb] = countByColor.TryGetValue(argb, out var count) ? count + 1 : 1;
+                foreach (var argb in pixels.Where(argb => argb.Alpha >= 255))
+                    countByColor[argb] = countByColor.TryGetValue(argb, out var count) ? count + 1 : 1;
 
-        return new QuantizerResult(countByColor);
-    }
+                return new QuantizerResult(countByColor);
+            });
 }

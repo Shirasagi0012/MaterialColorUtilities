@@ -53,10 +53,11 @@ public class TemperatureCache(Hct input)
     {
         get
         {
-            if (_hctsByTemp.Any())
+            if (_hctsByTemp.Count != 0 )
                 return _hctsByTemp;
 
-            List<Hct> hcts = [.. HctsByHue, Input];
+            var hctsByHue = HctsByHue;
+            List<Hct> hcts = [.. hctsByHue, Input];
             var temperaturesByHct = TempsByHct;
             hcts.Sort((a, b) => temperaturesByHct[a].CompareTo(temperaturesByHct[b]));
             _hctsByTemp = hcts;
@@ -68,7 +69,7 @@ public class TemperatureCache(Hct input)
     {
         get
         {
-            if (_hctsByHue.Any())
+            if (_hctsByHue.Count != 0 )
                 return _hctsByHue;
 
             List<Hct> hcts = [];
@@ -78,7 +79,7 @@ public class TemperatureCache(Hct input)
                 hcts.Add(colorAtHue);
             }
 
-            _hctsByHue = [.. hcts];
+            _hctsByHue = hcts;
             return _hctsByHue;
         }
     }
@@ -87,9 +88,10 @@ public class TemperatureCache(Hct input)
     {
         get
         {
-            if (_tempsByHct.Any())
+            if (_tempsByHct.Count != 0 )
                 return _tempsByHct;
-            List<Hct> allHcts = [.. HctsByHue, Input];
+            var hctsByHue = HctsByHue;
+            List<Hct> allHcts = [.. hctsByHue, Input];
 
             var temperaturesByHct = new Dictionary<Hct, double>();
             foreach (var e in allHcts) temperaturesByHct[e] = RawTemperature(e);
@@ -98,6 +100,11 @@ public class TemperatureCache(Hct input)
             return _tempsByHct;
         }
     }
+
+    private double _inputRelativeTemperature = -1.0;
+    private List<Hct> _hctsByHue = [];
+    private List<Hct> _hctsByTemp = [];
+    private Dictionary<Hct, double> _tempsByHct = [];
 
     /// <summary>
     /// Gets the complement of the input color.
@@ -114,7 +121,7 @@ public class TemperatureCache(Hct input)
             var coldestTemp = TempsByHct[Coldest];
 
             var warmestHue = Warmest.Hue;
-            var warmestTemp = TempsByHct[Warmest];
+            var warmestTemp = _tempsByHct[Warmest]; // Use _tempsByHct for performance.
             var range = warmestTemp - coldestTemp;
             var startHueIsColdestToWarmest = IsBetween(Input.Hue, coldestHue, warmestHue);
             var startHue = startHueIsColdestToWarmest ? warmestHue : coldestHue;
@@ -131,8 +138,8 @@ public class TemperatureCache(Hct input)
                 var hue = MathUtils.SanitizeDegrees(startHue + directionOfRotation * hueAddend);
                 if (!IsBetween(hue, startHue, endHue))
                     continue;
-                var possibleAnswer = HctsByHue[(int)Math.Round(hue, MidpointRounding.AwayFromZero)];
-                var relativeTemp = (_tempsByHct[possibleAnswer] - coldestTemp) / range;
+                var possibleAnswer = _hctsByHue[(int)Math.Round(hue, MidpointRounding.AwayFromZero)];  // Use _hctsByHue for performance.
+                var relativeTemp = (_tempsByHct[possibleAnswer] - coldestTemp) / range; // Use _tempsByHct for performance.
                 var error = Math.Abs(complementRelativeTemp - relativeTemp);
                 if (error < smallestError)
                 {
@@ -146,10 +153,6 @@ public class TemperatureCache(Hct input)
         }
     }
 
-    private double _inputRelativeTemperature = -1.0;
-    private Dictionary<Hct, double> _tempsByHct = [];
-    private List<Hct> _hctsByHue = [];
-    private List<Hct> _hctsByTemp = [];
 
     public Hct Warmest => HctsByTemp.Last();
     public Hct Coldest => HctsByTemp.First();
