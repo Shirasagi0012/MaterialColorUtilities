@@ -45,6 +45,14 @@ public struct ArgbColor : IEquatable<ArgbColor>
     {
     }
 
+    public void Deconstruct (out byte alpha, out byte red, out byte green, out byte blue)
+    {
+        alpha = Alpha;
+        red = Red;
+        green = Green;
+        blue = Blue;
+    }
+
     public byte Alpha
     {
         get => (byte)((_value >> 24) & 0xFF);

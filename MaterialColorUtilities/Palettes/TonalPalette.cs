@@ -70,7 +70,7 @@ public class TonalPalette
 
     private readonly bool _isFromCache;
 
-    private TonalPalette(Hct hct)
+    public TonalPalette(Hct hct)
     {
         KeyColor = hct;
         Hue = hct.Hue;
@@ -86,13 +86,13 @@ public class TonalPalette
         _isFromCache = false;
     }
 
-    /// <summary>
-    /// Create a Tonal Palette from hue and chroma of hct.
-    /// </summary>
-    public static TonalPalette FromHct(Hct hct)
-    {
-        return new TonalPalette(hct);
-    }
+    ///// <summary>
+    ///// Create a Tonal Palette from hue and chroma of hct.
+    ///// </summary>
+    //public static TonalPalette FromHct(Hct hct)
+    //{
+    //    return new TonalPalette(hct);
+    //}
 
     private TonalPalette(Dictionary<int, ArgbColor> cache, double hue, double chroma)
     {

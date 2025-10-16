@@ -136,37 +136,21 @@ public class DynamicScheme(
         return dynamicColor.GetHct(this);
     }
 
-    public ArgbColor PrimaryPaletteKeyColor =>
-        GetArgb(MaterialDynamicColors.PrimaryPaletteKeyColor);
-
-    public ArgbColor SecondaryPaletteKeyColor =>
-        GetArgb(MaterialDynamicColors.SecondaryPaletteKeyColor);
-
-    public ArgbColor TertiaryPaletteKeyColor =>
-        GetArgb(MaterialDynamicColors.TertiaryPaletteKeyColor);
-
-    public ArgbColor NeutralPaletteKeyColor =>
-        GetArgb(MaterialDynamicColors.NeutralPaletteKeyColor);
-
-    public ArgbColor NeutralVariantPaletteKeyColor =>
-        GetArgb(MaterialDynamicColors.NeutralVariantPaletteKeyColor);
-
-    public ArgbColor Background => GetArgb(MaterialDynamicColors.Background);
+    public ArgbColor PrimaryPaletteKeyColor => GetArgb(MaterialDynamicColors.PrimaryPaletteKeyColor);
+    public ArgbColor SecondaryPaletteKeyColor => GetArgb(MaterialDynamicColors.SecondaryPaletteKeyColor);
+    public ArgbColor TertiaryPaletteKeyColor => GetArgb(MaterialDynamicColors.TertiaryPaletteKeyColor);
+    public ArgbColor NeutralPaletteKeyColor => GetArgb(MaterialDynamicColors.NeutralPaletteKeyColor);
+    public ArgbColor NeutralVariantPaletteKeyColor => GetArgb(MaterialDynamicColors.NeutralVariantPaletteKeyColor);
+   public ArgbColor Background => GetArgb(MaterialDynamicColors.Background);
     public ArgbColor OnBackground => GetArgb(MaterialDynamicColors.OnBackground);
     public ArgbColor Surface => GetArgb(MaterialDynamicColors.Surface);
     public ArgbColor SurfaceDim => GetArgb(MaterialDynamicColors.SurfaceDim);
     public ArgbColor SurfaceBright => GetArgb(MaterialDynamicColors.SurfaceBright);
-
-    public ArgbColor SurfaceContainerLowest =>
-        GetArgb(MaterialDynamicColors.SurfaceContainerLowest);
-
+    public ArgbColor SurfaceContainerLowest => GetArgb(MaterialDynamicColors.SurfaceContainerLowest);
     public ArgbColor SurfaceContainerLow => GetArgb(MaterialDynamicColors.SurfaceContainerLow);
     public ArgbColor SurfaceContainer => GetArgb(MaterialDynamicColors.SurfaceContainer);
     public ArgbColor SurfaceContainerHigh => GetArgb(MaterialDynamicColors.SurfaceContainerHigh);
-
-    public ArgbColor SurfaceContainerHighest =>
-        GetArgb(MaterialDynamicColors.SurfaceContainerHighest);
-
+    public ArgbColor SurfaceContainerHighest => GetArgb(MaterialDynamicColors.SurfaceContainerHighest);
     public ArgbColor OnSurface => GetArgb(MaterialDynamicColors.OnSurface);
     public ArgbColor SurfaceVariant => GetArgb(MaterialDynamicColors.SurfaceVariant);
     public ArgbColor OnSurfaceVariant => GetArgb(MaterialDynamicColors.OnSurfaceVariant);
@@ -201,14 +185,9 @@ public class DynamicScheme(
     public ArgbColor SecondaryFixed => GetArgb(MaterialDynamicColors.SecondaryFixed);
     public ArgbColor SecondaryFixedDim => GetArgb(MaterialDynamicColors.SecondaryFixedDim);
     public ArgbColor OnSecondaryFixed => GetArgb(MaterialDynamicColors.OnSecondaryFixed);
-
-    public ArgbColor OnSecondaryFixedVariant =>
-        GetArgb(MaterialDynamicColors.OnSecondaryFixedVariant);
-
+    public ArgbColor OnSecondaryFixedVariant => GetArgb(MaterialDynamicColors.OnSecondaryFixedVariant);
     public ArgbColor TertiaryFixed => GetArgb(MaterialDynamicColors.TertiaryFixed);
     public ArgbColor TertiaryFixedDim => GetArgb(MaterialDynamicColors.TertiaryFixedDim);
     public ArgbColor OnTertiaryFixed => GetArgb(MaterialDynamicColors.OnTertiaryFixed);
-
-    public ArgbColor OnTertiaryFixedVariant =>
-        GetArgb(MaterialDynamicColors.OnTertiaryFixedVariant);
+    public ArgbColor OnTertiaryFixedVariant => GetArgb(MaterialDynamicColors.OnTertiaryFixedVariant); 
 }

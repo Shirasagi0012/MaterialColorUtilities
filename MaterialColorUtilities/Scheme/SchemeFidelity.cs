@@ -43,7 +43,7 @@ public class SchemeFidelity(Hct sourceColorHct, bool isDark, double contrastLeve
             sourceColorHct.Hue,
             Math.Max(sourceColorHct.Chroma - 32.0, sourceColorHct.Chroma * 0.5)
         ),
-        TonalPalette.FromHct(
+        new TonalPalette(
             DislikeAnalyzer.FixIfDisliked(new TemperatureCache(sourceColorHct).Complement.Value)
         ),
         new TonalPalette(sourceColorHct.Hue, sourceColorHct.Chroma / 8.0),

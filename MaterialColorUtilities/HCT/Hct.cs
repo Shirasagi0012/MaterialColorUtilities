@@ -156,6 +156,8 @@ public struct Hct
         }
     }
 
+    public ArgbColor ToArgb() => Argb;
+
     public override int GetHashCode()
     {
         return HashCode.Combine(_argb);

@@ -44,7 +44,7 @@ public class SchemeContent(Hct sourceColorHct, bool isDark, double contrastLevel
             sourceColorHct.Hue,
             Math.Max(sourceColorHct.Chroma - 32.0, sourceColorHct.Chroma * 0.5)
         ),
-        TonalPalette.FromHct(
+        new TonalPalette(
             DislikeAnalyzer.FixIfDisliked(
                 new TemperatureCache(sourceColorHct).Analogous(3, 6).Last()
             )
