@@ -64,3 +64,26 @@ Thanks to Avalonia's ability to use any type for markup extensions, the XAML can
 ```
 
 Currently color extract XAML markup extension is not implemented, but it will be here after some time.
+
+Then, color tokens are available as dynamic resource:
+
+```xml
+<Border Background="{DynamicResource md.sys.color.on-primary}" Grid.Row="1" >
+    <TextBlock Foreground="{DynamicResource md.sys.color.primary}" Classes="label-medium" >
+        On Primary
+    </TextBlock>
+</Border>
+```
+
+Note that StaticResource won't work, as the scheme is dynamic generated. If you want IntelliSense to work, you'll need to add a statically defined resource dictionary that contains all the tokens:
+
+```xml
+<ResourceInclude Source="avares://MaterialColorUtilities.Avalonia/DefaultColorScheme.axaml" />
+```
+
+For extended colors, tokens is named like `md.sys.color.ex.[Color Name].on-extended`.
+
+### Limitations
+
+- Currently only color system token are supported, and you can't get ref tokens as resources. Will be implemented later. 
+- Extended colors list doesn't support data binding. 
