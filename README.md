@@ -36,6 +36,31 @@ Most parts of material-color-utilities (except CorePalette, which is labeled as 
 
 ⚠️ This library is **not yet** ready for production use.
 
-### Plans
+### APIs
 
-* A supporting library for **Avalonia** integration.
+Most API are identical to original implementation. There are some differences:
+
+- For convenience, this library uses ArgbColor struct to represent a color, instead of an int as the original implementation does.
+- Some `.From***(...)` method are replaced by constructor.
+
+There are a separate project for Avalonia app to use, which give you ability to directly define a dynamic scheme in XAML with no C# code needed, and easy access to material color tokens as resources. Seed color can be bind to a property, or a dynamic resource, and the color scheme will auto update. Extended Colors and color harmonization are also supported.
+
+You only need to put this in ResourceDictionary.MergedDictionaries
+
+```xml
+<mcu:DynamicMaterialColorScheme>
+    <mcu:DynamicMaterialColorScheme.Scheme>
+        <mcu:TonalSpotScheme Color="{DynamicResource SystemAccentColor}"/>
+    </mcu:DynamicMaterialColorScheme.Scheme>
+    <mcu:ExtendedPalette x:Key="Chartreuse" Color="Chartreuse" Harmonized="True" />
+    <mcu:ExtendedPalette x:Key="Azure" Color="#007cf7" Harmonized="False" />
+</mcu:DynamicMaterialColorScheme>
+```
+
+Thanks to Avalonia's ability to use any type for markup extensions, the XAML can be much simplified:
+
+```xml
+<mcu:DynamicMaterialColorScheme Scheme="{mcu:ExpressiveScheme {Binding SourceColor}}" />
+```
+
+Currently color extract XAML markup extension is not implemented, but it will be here after some time.
