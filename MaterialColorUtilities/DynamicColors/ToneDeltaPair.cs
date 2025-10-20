@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace MaterialColorUtilities.DynamicColor;
+namespace MaterialColorUtilities.DynamicColors;
 
 /// <summary>
 /// Describes the difference in tone between colors.

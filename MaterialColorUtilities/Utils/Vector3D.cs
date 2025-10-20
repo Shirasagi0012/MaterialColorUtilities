@@ -30,7 +30,7 @@ public readonly struct Vector3D : IEquatable<Vector3D>
         Z = z;
     }
 
-    public override string ToString()
+    override public string ToString()
     {
         return $"({X}, {Y}, {Z})";
     }
@@ -40,12 +40,12 @@ public readonly struct Vector3D : IEquatable<Vector3D>
         return X == other.X && Y == other.Y && Z == other.Z;
     }
 
-    public override bool Equals(object? obj)
+    override public bool Equals(object? obj)
     {
         return obj is Vector3D v && Equals(v);
     }
 
-    public override int GetHashCode()
+    override public int GetHashCode()
     {
         return HashCode.Combine(X, Y, Z);
     }

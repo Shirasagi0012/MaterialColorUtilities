@@ -51,7 +51,7 @@ public readonly record struct ViewingConditions(
 )
 {
     // XYZ to cone response transformation matrix (same as in Cam16)
-    public static readonly Matrix3x3 XyzToConeMatrix = new(
+    public readonly static Matrix3x3 XyzToConeMatrix = new(
         0.401288,
         0.650173,
         -0.051461,
@@ -63,7 +63,7 @@ public readonly record struct ViewingConditions(
         0.953127
     );
 
-    private static readonly ViewingConditions _standard = Make();
+    readonly private static ViewingConditions _standard = Make();
 
     // private static readonly ViewingConditions _srgb = Make();
 

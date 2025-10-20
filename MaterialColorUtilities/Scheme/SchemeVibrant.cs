@@ -14,11 +14,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using MaterialColorUtilities.DynamicColor;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Palettes;
 
 namespace MaterialColorUtilities.Scheme;
+
+using DynamicColors;
 
 /// <summary>
 /// A Dynamic Color theme that maxes out colorfulness at each position in the
@@ -41,17 +42,17 @@ public class SchemeVibrant(Hct sourceColorHct, bool isDark, double contrastLevel
     /// Hues used at breakpoints such that designers can specify a hue rotation
     /// that occurs at a given break point.
     /// </summary>
-    private static readonly double[] Hues = [0, 41, 61, 101, 131, 181, 251, 301, 360];
+    readonly private static double[] Hues = [0, 41, 61, 101, 131, 181, 251, 301, 360];
 
     /// <summary>
     /// Hue rotations of the Secondary TonalPalette, corresponding to the
     /// breakpoints in Hues.
     /// </summary>
-    private static readonly double[] SecondaryRotations = [18, 15, 10, 12, 15, 18, 15, 12, 12];
+    readonly private static double[] SecondaryRotations = [18, 15, 10, 12, 15, 18, 15, 12, 12];
 
     /// <summary>
     /// Hue rotations of the Tertiary TonalPalette, corresponding to the
     /// breakpoints in Hues.
     /// </summary>
-    private static readonly double[] TertiaryRotations = [35, 30, 20, 25, 30, 35, 30, 25, 25];
+    readonly private static double[] TertiaryRotations = [35, 30, 20, 25, 30, 35, 30, 25, 25];
 }

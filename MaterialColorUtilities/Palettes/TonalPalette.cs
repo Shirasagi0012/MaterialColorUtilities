@@ -36,7 +36,7 @@ namespace MaterialColorUtilities.Palettes;
 /// </summary>
 public class TonalPalette
 {
-    public static readonly List<int> CommonTones =
+    public readonly static List<int> CommonTones =
     [
         0,
         10,
@@ -66,9 +66,9 @@ public class TonalPalette
     ///     <item>values are colors in ARGB format.</item>
     /// </list>
     /// </summary>
-    private readonly Dictionary<int, ArgbColor> _cache = [];
+    readonly private Dictionary<int, ArgbColor> _cache = [];
 
-    private readonly bool _isFromCache;
+    readonly private bool _isFromCache;
 
     public TonalPalette(Hct hct)
     {
@@ -173,7 +173,7 @@ public class TonalPalette
         }
     }
 
-    public override string ToString()
+    override public string ToString()
     {
         return _isFromCache switch
         {
@@ -182,7 +182,7 @@ public class TonalPalette
         };
     }
 
-    public override bool Equals(object? obj)
+    override public bool Equals(object? obj)
     {
         if (obj is TonalPalette other)
         {
@@ -212,7 +212,7 @@ public class TonalPalette
         return false;
     }
 
-    public override int GetHashCode()
+    override public int GetHashCode()
     {
         if (_isFromCache) return _cache.GetHashCode();
         return HashCode.Combine(Hue, Chroma);

@@ -14,9 +14,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using MaterialColorUtilities.Utils;
+namespace MaterialColorUtilities.DynamicColors;
 
-namespace MaterialColorUtilities.DynamicColor;
+using MaterialColorUtilities.Utils;
 
 /// <summary>
 /// A class containing a value that changes with the contrast level.

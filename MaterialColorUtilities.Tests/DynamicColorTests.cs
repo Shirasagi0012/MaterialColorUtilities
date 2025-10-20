@@ -1,13 +1,14 @@
 using System.Globalization;
-using MaterialColorUtilities.DynamicColor;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Scheme;
 using MaterialColorUtilities.Utils;
 using Xunit;
-using DynamicColorType = MaterialColorUtilities.DynamicColor.DynamicColor;
-using DynamicSchemeType = MaterialColorUtilities.DynamicColor.DynamicScheme;
+using DynamicColorType = MaterialColorUtilities.DynamicColors.DynamicColor;
+using DynamicSchemeType = MaterialColorUtilities.DynamicColors.DynamicScheme;
 
 namespace MaterialColorUtilities.Tests.DynamicColor;
+
+using DynamicColors;
 
 public class DynamicColorTests
 {

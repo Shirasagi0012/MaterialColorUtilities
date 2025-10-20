@@ -14,11 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace MaterialColorUtilities.DynamicColors;
+
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Palettes;
 using MaterialColorUtilities.Utils;
-
-namespace MaterialColorUtilities.DynamicColor;
 
 /// <summary>
 /// A color that adjusts itself based on UI state provided by DynamicScheme.
@@ -45,7 +45,7 @@ public class DynamicColor
     public readonly ContrastCurve? ContrastCurve;
     public readonly Func<DynamicScheme, ToneDeltaPair>? ToneDeltaPair;
 
-    private readonly Dictionary<DynamicScheme, Hct> _hctCache = new();
+    readonly private Dictionary<DynamicScheme, Hct> _hctCache = new(); //  TODO: shall use LRU cache here, because DynamicScheme can be too dynamic :(
 
     /// <summary>
     /// The base constructor for DynamicColor.

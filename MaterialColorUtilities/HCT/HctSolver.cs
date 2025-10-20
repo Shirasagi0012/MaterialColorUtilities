@@ -20,7 +20,7 @@ namespace MaterialColorUtilities.HCT;
 
 internal static class HctSolver
 {
-    private static readonly Matrix3x3 ScaledDiscountFromLinrgb = new(
+    readonly private static Matrix3x3 ScaledDiscountFromLinrgb = new(
         0.001200833568784504,
         0.002389694492170889,
         0.0002795742885861124,
@@ -32,7 +32,7 @@ internal static class HctSolver
         0.0032979401770712076
     );
 
-    private static readonly Matrix3x3 LinrgbFromScaledDiscount = new(
+    readonly private static Matrix3x3 LinrgbFromScaledDiscount = new(
         1373.2198709594231,
         -1100.4251190754821,
         -7.278681089101213,
@@ -44,9 +44,9 @@ internal static class HctSolver
         308.7233197812385
     );
 
-    private static readonly Vector3D YFromLinrgb = new(0.2126, 0.7152, 0.0722);
+    readonly private static Vector3D YFromLinrgb = new(0.2126, 0.7152, 0.0722);
 
-    private static readonly double[] CriticalPlanes =
+    readonly private static double[] CriticalPlanes =
     [
         0.015176349177441876,
         0.045529047532325624,

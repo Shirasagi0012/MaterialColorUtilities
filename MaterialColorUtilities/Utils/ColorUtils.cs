@@ -22,7 +22,7 @@ namespace MaterialColorUtilities.Utils;
 /// </summary>
 public static class ColorUtils
 {
-    private static readonly Matrix3x3 SrgbToXyz = new(
+    readonly private static Matrix3x3 SrgbToXyz = new(
         0.41233895,
         0.35762064,
         0.18051042,
@@ -34,7 +34,7 @@ public static class ColorUtils
         0.95034478
     );
 
-    private static readonly Matrix3x3 XyzToSrgb = new(
+    readonly private static Matrix3x3 XyzToSrgb = new(
         3.2413774792388685,
         -1.5376652402851851,
         -0.49885366846268053,
@@ -49,7 +49,7 @@ public static class ColorUtils
     /// <summary>
     /// The D65 standard illuminant white point in XYZ color space.
     /// </summary>
-    internal static readonly Vector3D WhitePointD65 = new(95.047, 100.0, 108.883);
+    internal readonly static Vector3D WhitePointD65 = new(95.047, 100.0, 108.883);
 
     /// <summary>
     /// Converts RGB components to ARGB color.

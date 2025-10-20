@@ -1,9 +1,10 @@
-using MaterialColorUtilities.DynamicColor;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Tests.TestUtils;
 using Xunit;
 
 namespace MaterialColorUtilities.Tests.DynamicColor;
+
+using DynamicColors;
 
 public class DynamicSchemeTests
 {

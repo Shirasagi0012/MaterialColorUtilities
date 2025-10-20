@@ -1,4 +1,3 @@
-using MaterialColorUtilities.DynamicColor;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Scheme;
 using MaterialColorUtilities.Utils;
@@ -6,6 +5,8 @@ using MaterialColorUtilities.Tests.TestUtils;
 using Xunit;
 
 namespace MaterialColorUtilities.Tests.Scheme;
+
+using DynamicColors;
 
 public class SchemeMonochromeTests
 {

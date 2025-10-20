@@ -466,7 +466,7 @@ internal sealed class Box
     public int B1 { get; set; }
     public int Vol { get; set; }
 
-    public override string ToString()
+    override public string ToString()
     {
         return $"Box: R {R0} -> {R1} G {G0} -> {G1} B {B0} -> {B1} VOL = {Vol}";
     }

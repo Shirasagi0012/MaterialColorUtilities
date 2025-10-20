@@ -127,7 +127,7 @@ public readonly struct Matrix3x3 : IEquatable<Matrix3x3>
             m.M31 * v.X + m.M32 * v.Y + m.M33 * v.Z);
     }
 
-    public override string ToString()
+    override public string ToString()
     {
         return $"[{M11}, {M12}, {M13}; {M21}, {M22}, {M23}; {M31}, {M32}, {M33}]";
     }
@@ -139,12 +139,12 @@ public readonly struct Matrix3x3 : IEquatable<Matrix3x3>
                M31 == other.M31 && M32 == other.M32 && M33 == other.M33;
     }
 
-    public override bool Equals(object? obj)
+    override public bool Equals(object? obj)
     {
         return obj is Matrix3x3 m && Equals(m);
     }
 
-    public override int GetHashCode()
+    override public int GetHashCode()
     {
         return HashCode.Combine(HashCode.Combine(M11, M12), M13, M21, M22, M23, M31, M32, M33);
     }

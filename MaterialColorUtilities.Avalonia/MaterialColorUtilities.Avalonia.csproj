@@ -1,18 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <LangVersion>14</LangVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <LangVersion>14</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Platforms>AnyCPU;ARM64;x64</Platforms>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.6" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.3.6"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MaterialColorUtilities\MaterialColorUtilities.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\MaterialColorUtilities\MaterialColorUtilities.csproj"/>
+    </ItemGroup>
 
 </Project>

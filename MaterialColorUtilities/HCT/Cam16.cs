@@ -57,7 +57,7 @@ internal readonly record struct Cam16(
 )
 {
     // Transformation matrices as static constants
-    public static readonly Matrix3x3 XyzToConeMatrix = new(
+    public readonly static Matrix3x3 XyzToConeMatrix = new(
         0.401288,
         0.650173,
         -0.051461,
@@ -69,7 +69,7 @@ internal readonly record struct Cam16(
         0.953127
     );
 
-    public static readonly Matrix3x3 ConeToXyzMatrix = new(
+    public readonly static Matrix3x3 ConeToXyzMatrix = new(
         1.86206786,
         -1.01125463,
         0.14918677,

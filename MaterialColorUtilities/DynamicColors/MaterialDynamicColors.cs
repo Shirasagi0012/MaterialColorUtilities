@@ -14,10 +14,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace MaterialColorUtilities.DynamicColors;
+
 using MaterialColorUtilities.Dislike;
 using MaterialColorUtilities.HCT;
-
-namespace MaterialColorUtilities.DynamicColor;
 
 /// <summary>
 /// Tokens, or named colors, in the Material Design system.
@@ -41,44 +41,44 @@ public static class MaterialDynamicColors
         return s.IsDark ? SurfaceBright : SurfaceDim;
     }
 
-    public static readonly DynamicColor PrimaryPaletteKeyColor = DynamicColor.FromPalette(
+    public readonly static DynamicColor PrimaryPaletteKeyColor = DynamicColor.FromPalette(
         "primary_palette_key_color",
         s => s.PrimaryPalette,
         s => s.PrimaryPalette.KeyColor.Tone
     );
 
-    public static readonly DynamicColor SecondaryPaletteKeyColor = DynamicColor.FromPalette(
+    public readonly static DynamicColor SecondaryPaletteKeyColor = DynamicColor.FromPalette(
         "secondary_palette_key_color",
         s => s.SecondaryPalette,
         s => s.SecondaryPalette.KeyColor.Tone
     );
 
-    public static readonly DynamicColor TertiaryPaletteKeyColor = DynamicColor.FromPalette(
+    public readonly static DynamicColor TertiaryPaletteKeyColor = DynamicColor.FromPalette(
         "tertiary_palette_key_color",
         s => s.TertiaryPalette,
         s => s.TertiaryPalette.KeyColor.Tone
     );
 
-    public static readonly DynamicColor NeutralPaletteKeyColor = DynamicColor.FromPalette(
+    public readonly static DynamicColor NeutralPaletteKeyColor = DynamicColor.FromPalette(
         "neutral_palette_key_color",
         s => s.NeutralPalette,
         s => s.NeutralPalette.KeyColor.Tone
     );
 
-    public static readonly DynamicColor NeutralVariantPaletteKeyColor = DynamicColor.FromPalette(
+    public readonly static DynamicColor NeutralVariantPaletteKeyColor = DynamicColor.FromPalette(
         "neutral_variant_palette_key_color",
         s => s.NeutralVariantPalette,
         s => s.NeutralVariantPalette.KeyColor.Tone
     );
 
-    public static readonly DynamicColor Background = DynamicColor.FromPalette(
+    public readonly static DynamicColor Background = DynamicColor.FromPalette(
         "background",
         s => s.NeutralPalette,
         s => s.IsDark ? 6 : 98,
         true
     );
 
-    public static readonly DynamicColor OnBackground = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnBackground = DynamicColor.FromPalette(
         "on_background",
         s => s.NeutralPalette,
         s => s.IsDark ? 90 : 10,
@@ -86,35 +86,35 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(3, 3, 4.5, 7)
     );
 
-    public static readonly DynamicColor Surface = DynamicColor.FromPalette(
+    public readonly static DynamicColor Surface = DynamicColor.FromPalette(
         "surface",
         s => s.NeutralPalette,
         s => s.IsDark ? 6 : 98,
         true
     );
 
-    public static readonly DynamicColor SurfaceDim = DynamicColor.FromPalette(
+    public readonly static DynamicColor SurfaceDim = DynamicColor.FromPalette(
         "surface_dim",
         s => s.NeutralPalette,
         s => s.IsDark ? 6 : new ContrastCurve(87, 87, 80, 75).Get(s.ContrastLevel),
         true
     );
 
-    public static readonly DynamicColor SurfaceBright = DynamicColor.FromPalette(
+    public readonly static DynamicColor SurfaceBright = DynamicColor.FromPalette(
         "surface_bright",
         s => s.NeutralPalette,
         s => s.IsDark ? new ContrastCurve(24, 24, 29, 34).Get(s.ContrastLevel) : 98,
         true
     );
 
-    public static readonly DynamicColor SurfaceContainerLowest = DynamicColor.FromPalette(
+    public readonly static DynamicColor SurfaceContainerLowest = DynamicColor.FromPalette(
         "surface_container_lowest",
         s => s.NeutralPalette,
         s => s.IsDark ? new ContrastCurve(4, 4, 2, 0).Get(s.ContrastLevel) : 100,
         true
     );
 
-    public static readonly DynamicColor SurfaceContainerLow = DynamicColor.FromPalette(
+    public readonly static DynamicColor SurfaceContainerLow = DynamicColor.FromPalette(
         "surface_container_low",
         s => s.NeutralPalette,
         s =>
@@ -124,7 +124,7 @@ public static class MaterialDynamicColors
         true
     );
 
-    public static readonly DynamicColor SurfaceContainer = DynamicColor.FromPalette(
+    public readonly static DynamicColor SurfaceContainer = DynamicColor.FromPalette(
         "surface_container",
         s => s.NeutralPalette,
         s =>
@@ -134,7 +134,7 @@ public static class MaterialDynamicColors
         true
     );
 
-    public static readonly DynamicColor SurfaceContainerHigh = DynamicColor.FromPalette(
+    public readonly static DynamicColor SurfaceContainerHigh = DynamicColor.FromPalette(
         "surface_container_high",
         s => s.NeutralPalette,
         s =>
@@ -144,7 +144,7 @@ public static class MaterialDynamicColors
         true
     );
 
-    public static readonly DynamicColor SurfaceContainerHighest = DynamicColor.FromPalette(
+    public readonly static DynamicColor SurfaceContainerHighest = DynamicColor.FromPalette(
         "surface_container_highest",
         s => s.NeutralPalette,
         s =>
@@ -154,7 +154,7 @@ public static class MaterialDynamicColors
         true
     );
 
-    public static readonly DynamicColor OnSurface = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnSurface = DynamicColor.FromPalette(
         "on_surface",
         s => s.NeutralPalette,
         s => s.IsDark ? 90 : 10,
@@ -162,14 +162,14 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
     );
 
-    public static readonly DynamicColor SurfaceVariant = DynamicColor.FromPalette(
+    public readonly static DynamicColor SurfaceVariant = DynamicColor.FromPalette(
         "surface_variant",
         s => s.NeutralVariantPalette,
         s => s.IsDark ? 30 : 90,
         true
     );
 
-    public static readonly DynamicColor OnSurfaceVariant = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnSurfaceVariant = DynamicColor.FromPalette(
         "on_surface_variant",
         s => s.NeutralVariantPalette,
         s => s.IsDark ? 80 : 30,
@@ -177,13 +177,13 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
     );
 
-    public static readonly DynamicColor InverseSurface = DynamicColor.FromPalette(
+    public readonly static DynamicColor InverseSurface = DynamicColor.FromPalette(
         "inverse_surface",
         s => s.NeutralPalette,
         s => s.IsDark ? 90 : 20
     );
 
-    public static readonly DynamicColor InverseOnSurface = DynamicColor.FromPalette(
+    public readonly static DynamicColor InverseOnSurface = DynamicColor.FromPalette(
         "inverse_on_surface",
         s => s.NeutralPalette,
         s => s.IsDark ? 20 : 95,
@@ -191,7 +191,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
     );
 
-    public static readonly DynamicColor Outline = DynamicColor.FromPalette(
+    public readonly static DynamicColor Outline = DynamicColor.FromPalette(
         "outline",
         s => s.NeutralVariantPalette,
         s => s.IsDark ? 60 : 50,
@@ -199,7 +199,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(1.5, 3, 4.5, 7)
     );
 
-    public static readonly DynamicColor OutlineVariant = DynamicColor.FromPalette(
+    public readonly static DynamicColor OutlineVariant = DynamicColor.FromPalette(
         "outline_variant",
         s => s.NeutralVariantPalette,
         s => s.IsDark ? 30 : 80,
@@ -207,26 +207,26 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(1, 1, 3, 4.5)
     );
 
-    public static readonly DynamicColor Shadow = DynamicColor.FromPalette(
+    public readonly static DynamicColor Shadow = DynamicColor.FromPalette(
         "shadow",
         s => s.NeutralPalette,
         s => 0
     );
 
-    public static readonly DynamicColor Scrim = DynamicColor.FromPalette(
+    public readonly static DynamicColor Scrim = DynamicColor.FromPalette(
         "scrim",
         s => s.NeutralPalette,
         s => 0
     );
 
-    public static readonly DynamicColor SurfaceTint = DynamicColor.FromPalette(
+    public readonly static DynamicColor SurfaceTint = DynamicColor.FromPalette(
         "surface_tint",
         s => s.PrimaryPalette,
         s => s.IsDark ? 80 : 40,
         true
     );
 
-    public static readonly DynamicColor Primary = DynamicColor.FromPalette(
+    public readonly static DynamicColor Primary = DynamicColor.FromPalette(
         "primary",
         s => s.PrimaryPalette,
         s =>
@@ -247,7 +247,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor OnPrimary = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnPrimary = DynamicColor.FromPalette(
         "on_primary",
         s => s.PrimaryPalette,
         s =>
@@ -260,7 +260,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
     );
 
-    public static readonly DynamicColor PrimaryContainer = DynamicColor.FromPalette(
+    public readonly static DynamicColor PrimaryContainer = DynamicColor.FromPalette(
         "primary_container",
         s => s.PrimaryPalette,
         s =>
@@ -283,7 +283,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor OnPrimaryContainer = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnPrimaryContainer = DynamicColor.FromPalette(
         "on_primary_container",
         s => s.PrimaryPalette,
         s =>
@@ -298,7 +298,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
     );
 
-    public static readonly DynamicColor InversePrimary = DynamicColor.FromPalette(
+    public readonly static DynamicColor InversePrimary = DynamicColor.FromPalette(
         "inverse_primary",
         s => s.PrimaryPalette,
         s => s.IsDark ? 40 : 80,
@@ -306,7 +306,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(3, 4.5, 7, 7)
     );
 
-    public static readonly DynamicColor Secondary = DynamicColor.FromPalette(
+    public readonly static DynamicColor Secondary = DynamicColor.FromPalette(
         "secondary",
         s => s.SecondaryPalette,
         s => s.IsDark ? 80 : 40,
@@ -322,7 +322,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor OnSecondary = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnSecondary = DynamicColor.FromPalette(
         "on_secondary",
         s => s.SecondaryPalette,
         s =>
@@ -336,7 +336,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
     );
 
-    public static readonly DynamicColor SecondaryContainer = DynamicColor.FromPalette(
+    public readonly static DynamicColor SecondaryContainer = DynamicColor.FromPalette(
         "secondary_container",
         s => s.SecondaryPalette,
         s =>
@@ -365,7 +365,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor OnSecondaryContainer = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnSecondaryContainer = DynamicColor.FromPalette(
         "on_secondary_container",
         s => s.SecondaryPalette,
         s =>
@@ -380,7 +380,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
     );
 
-    public static readonly DynamicColor Tertiary = DynamicColor.FromPalette(
+    public readonly static DynamicColor Tertiary = DynamicColor.FromPalette(
         "tertiary",
         s => s.TertiaryPalette,
         s =>
@@ -401,7 +401,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor OnTertiary = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnTertiary = DynamicColor.FromPalette(
         "on_tertiary",
         s => s.TertiaryPalette,
         s =>
@@ -414,7 +414,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
     );
 
-    public static readonly DynamicColor TertiaryContainer = DynamicColor.FromPalette(
+    public readonly static DynamicColor TertiaryContainer = DynamicColor.FromPalette(
         "tertiary_container",
         s => s.TertiaryPalette,
         s =>
@@ -438,7 +438,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor OnTertiaryContainer = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnTertiaryContainer = DynamicColor.FromPalette(
         "on_tertiary_container",
         s => s.TertiaryPalette,
         s =>
@@ -453,7 +453,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
     );
 
-    public static readonly DynamicColor Error = DynamicColor.FromPalette(
+    public readonly static DynamicColor Error = DynamicColor.FromPalette(
         "error",
         s => s.ErrorPalette,
         s => s.IsDark ? 80 : 40,
@@ -463,7 +463,7 @@ public static class MaterialDynamicColors
         toneDeltaPair: s => new ToneDeltaPair(ErrorContainer, Error, 10, TonePolarity.Nearer, false)
     );
 
-    public static readonly DynamicColor OnError = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnError = DynamicColor.FromPalette(
         "on_error",
         s => s.ErrorPalette,
         s => s.IsDark ? 20 : 100,
@@ -471,7 +471,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
     );
 
-    public static readonly DynamicColor ErrorContainer = DynamicColor.FromPalette(
+    public readonly static DynamicColor ErrorContainer = DynamicColor.FromPalette(
         "error_container",
         s => s.ErrorPalette,
         s => s.IsDark ? 30 : 90,
@@ -481,7 +481,7 @@ public static class MaterialDynamicColors
         toneDeltaPair: s => new ToneDeltaPair(ErrorContainer, Error, 10, TonePolarity.Nearer, false)
     );
 
-    public static readonly DynamicColor OnErrorContainer = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnErrorContainer = DynamicColor.FromPalette(
         "on_error_container",
         s => s.ErrorPalette,
         s => s.IsDark ? 90 : 30,
@@ -489,7 +489,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
     );
 
-    public static readonly DynamicColor PrimaryFixed = DynamicColor.FromPalette(
+    public readonly static DynamicColor PrimaryFixed = DynamicColor.FromPalette(
         "primary_fixed",
         s => s.PrimaryPalette,
         s => IsMonochrome(s) ? 40.0 : 90.0,
@@ -505,7 +505,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor PrimaryFixedDim = DynamicColor.FromPalette(
+    public readonly static DynamicColor PrimaryFixedDim = DynamicColor.FromPalette(
         "primary_fixed_dim",
         s => s.PrimaryPalette,
         s => IsMonochrome(s) ? 30.0 : 80.0,
@@ -521,7 +521,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor OnPrimaryFixed = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnPrimaryFixed = DynamicColor.FromPalette(
         "on_primary_fixed",
         s => s.PrimaryPalette,
         s => IsMonochrome(s) ? 100.0 : 10.0,
@@ -530,7 +530,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
     );
 
-    public static readonly DynamicColor OnPrimaryFixedVariant = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnPrimaryFixedVariant = DynamicColor.FromPalette(
         "on_primary_fixed_variant",
         s => s.PrimaryPalette,
         s => IsMonochrome(s) ? 90.0 : 30.0,
@@ -539,7 +539,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
     );
 
-    public static readonly DynamicColor SecondaryFixed = DynamicColor.FromPalette(
+    public readonly static DynamicColor SecondaryFixed = DynamicColor.FromPalette(
         "secondary_fixed",
         s => s.SecondaryPalette,
         s => IsMonochrome(s) ? 80.0 : 90.0,
@@ -555,7 +555,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor SecondaryFixedDim = DynamicColor.FromPalette(
+    public readonly static DynamicColor SecondaryFixedDim = DynamicColor.FromPalette(
         "secondary_fixed_dim",
         s => s.SecondaryPalette,
         s => IsMonochrome(s) ? 70.0 : 80.0,
@@ -571,7 +571,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor OnSecondaryFixed = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnSecondaryFixed = DynamicColor.FromPalette(
         "on_secondary_fixed",
         s => s.SecondaryPalette,
         s => 10.0,
@@ -580,7 +580,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
     );
 
-    public static readonly DynamicColor OnSecondaryFixedVariant = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnSecondaryFixedVariant = DynamicColor.FromPalette(
         "on_secondary_fixed_variant",
         s => s.SecondaryPalette,
         s => IsMonochrome(s) ? 25.0 : 30.0,
@@ -589,7 +589,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
     );
 
-    public static readonly DynamicColor TertiaryFixed = DynamicColor.FromPalette(
+    public readonly static DynamicColor TertiaryFixed = DynamicColor.FromPalette(
         "tertiary_fixed",
         s => s.TertiaryPalette,
         s => IsMonochrome(s) ? 40.0 : 90.0,
@@ -605,7 +605,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor TertiaryFixedDim = DynamicColor.FromPalette(
+    public readonly static DynamicColor TertiaryFixedDim = DynamicColor.FromPalette(
         "tertiary_fixed_dim",
         s => s.TertiaryPalette,
         s => IsMonochrome(s) ? 30.0 : 80.0,
@@ -621,7 +621,7 @@ public static class MaterialDynamicColors
         )
     );
 
-    public static readonly DynamicColor OnTertiaryFixed = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnTertiaryFixed = DynamicColor.FromPalette(
         "on_tertiary_fixed",
         s => s.TertiaryPalette,
         s => IsMonochrome(s) ? 100.0 : 10.0,
@@ -630,7 +630,7 @@ public static class MaterialDynamicColors
         contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
     );
 
-    public static readonly DynamicColor OnTertiaryFixedVariant = DynamicColor.FromPalette(
+    public readonly static DynamicColor OnTertiaryFixedVariant = DynamicColor.FromPalette(
         "on_tertiary_fixed_variant",
         s => s.TertiaryPalette,
         s => IsMonochrome(s) ? 90.0 : 30.0,

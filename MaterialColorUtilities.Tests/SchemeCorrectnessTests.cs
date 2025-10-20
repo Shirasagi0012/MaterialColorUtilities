@@ -3,10 +3,12 @@ using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Scheme;
 using MaterialColorUtilities.Utils;
 using Xunit;
-using DynColor = MaterialColorUtilities.DynamicColor.DynamicColor;
-using DynScheme = MaterialColorUtilities.DynamicColor.DynamicScheme;
+using DynColor = MaterialColorUtilities.DynamicColors.DynamicColor;
+using DynScheme = MaterialColorUtilities.DynamicColors.DynamicScheme;
 
 namespace MaterialColorUtilities.Tests.Scheme;
+
+using DynamicColors;
 
 /// <summary>
 /// Tests that validate the correctness of color schemes across various conditions.
@@ -18,22 +20,22 @@ public class SchemeCorrectnessTests
     private const double DeltaTolerance = 0.5;
 
     private static DynScheme SchemeFromVariant(
-        MaterialColorUtilities.DynamicColor.Variant variant,
+        Variant variant,
         Hct sourceColorHct,
         bool isDark,
         double contrastLevel)
     {
         return variant switch
         {
-            MaterialColorUtilities.DynamicColor.Variant.Content => new SchemeContent(sourceColorHct, isDark, contrastLevel),
-            MaterialColorUtilities.DynamicColor.Variant.Expressive => new SchemeExpressive(sourceColorHct, isDark, contrastLevel),
-            MaterialColorUtilities.DynamicColor.Variant.Fidelity => new SchemeFidelity(sourceColorHct, isDark, contrastLevel),
-            MaterialColorUtilities.DynamicColor.Variant.FruitSalad => new SchemeFruitSalad(sourceColorHct, isDark, contrastLevel),
-            MaterialColorUtilities.DynamicColor.Variant.Monochrome => new SchemeMonochrome(sourceColorHct, isDark, contrastLevel),
-            MaterialColorUtilities.DynamicColor.Variant.Neutral => new SchemeNeutral(sourceColorHct, isDark, contrastLevel),
-            MaterialColorUtilities.DynamicColor.Variant.Rainbow => new SchemeRainbow(sourceColorHct, isDark, contrastLevel),
-            MaterialColorUtilities.DynamicColor.Variant.TonalSpot => new SchemeTonalSpot(sourceColorHct, isDark, contrastLevel),
-            MaterialColorUtilities.DynamicColor.Variant.Vibrant => new SchemeVibrant(sourceColorHct, isDark, contrastLevel),
+            Variant.Content => new SchemeContent(sourceColorHct, isDark, contrastLevel),
+            Variant.Expressive => new SchemeExpressive(sourceColorHct, isDark, contrastLevel),
+            Variant.Fidelity => new SchemeFidelity(sourceColorHct, isDark, contrastLevel),
+            Variant.FruitSalad => new SchemeFruitSalad(sourceColorHct, isDark, contrastLevel),
+            Variant.Monochrome => new SchemeMonochrome(sourceColorHct, isDark, contrastLevel),
+            Variant.Neutral => new SchemeNeutral(sourceColorHct, isDark, contrastLevel),
+            Variant.Rainbow => new SchemeRainbow(sourceColorHct, isDark, contrastLevel),
+            Variant.TonalSpot => new SchemeTonalSpot(sourceColorHct, isDark, contrastLevel),
+            Variant.Vibrant => new SchemeVibrant(sourceColorHct, isDark, contrastLevel),
             _ => throw new ArgumentException($"Unknown variant: {variant}")
         };
     }
@@ -41,7 +43,7 @@ public class SchemeCorrectnessTests
     private static void AssertContrast(
         DynColor foreground,
         DynColor background,
-        MaterialColorUtilities.DynamicColor.ContrastCurve contrastCurve,
+        ContrastCurve contrastCurve,
         DynScheme scheme)
     {
         var foregroundColor = foreground.GetHct(scheme);
@@ -88,15 +90,15 @@ public class SchemeCorrectnessTests
         uint sourceColorValue,
         bool isDark)
     {
-        var variant = (MaterialColorUtilities.DynamicColor.Variant)variantIndex;
+        var variant = (Variant)variantIndex;
         var sourceColor = Hct.From(new ArgbColor(sourceColorValue));
         var scheme = SchemeFromVariant(variant, sourceColor, isDark, contrastLevel);
 
         // Test basic contrast requirement for text on primary
         AssertContrast(
-            MaterialColorUtilities.DynamicColor.MaterialDynamicColors.OnPrimary,
-            MaterialColorUtilities.DynamicColor.MaterialDynamicColors.Primary,
-            new MaterialColorUtilities.DynamicColor.ContrastCurve(4.5, 7, 11, 21),
+            MaterialDynamicColors.OnPrimary,
+            MaterialDynamicColors.Primary,
+            new ContrastCurve(4.5, 7, 11, 21),
             scheme);
     }
 
@@ -106,7 +108,7 @@ public class SchemeCorrectnessTests
     [InlineData(2, 1.0)]  // TonalSpot
     public void OnBackgroundHasAdequateContrast(int variantIndex, double contrastLevel)
     {
-        var variant = (MaterialColorUtilities.DynamicColor.Variant)variantIndex;
+        var variant = (Variant)variantIndex;
         var sourceColor = Hct.From(new ArgbColor(0xFF0000FF));
 
         foreach (var isDark in new[] { false, true })
@@ -114,9 +116,9 @@ public class SchemeCorrectnessTests
             var scheme = SchemeFromVariant(variant, sourceColor, isDark, contrastLevel);
 
             AssertContrast(
-                MaterialColorUtilities.DynamicColor.MaterialDynamicColors.OnBackground,
-                MaterialColorUtilities.DynamicColor.MaterialDynamicColors.Background,
-                new MaterialColorUtilities.DynamicColor.ContrastCurve(3, 3, 4.5, 7),
+                MaterialDynamicColors.OnBackground,
+                MaterialDynamicColors.Background,
+                new ContrastCurve(3, 3, 4.5, 7),
                 scheme);
         }
     }
@@ -128,15 +130,15 @@ public class SchemeCorrectnessTests
     [InlineData(3)]  // Vibrant
     public void PrimaryFixedDimIsDarkerThanPrimaryFixed(int variantIndex)
     {
-        var variant = (MaterialColorUtilities.DynamicColor.Variant)variantIndex;
+        var variant = (Variant)variantIndex;
         var sourceColor = Hct.From(new ArgbColor(0xFF0000FF));
 
         foreach (var isDark in new[] { false, true })
         {
             var scheme = SchemeFromVariant(variant, sourceColor, isDark, 0.0);
 
-            var primaryFixed = MaterialColorUtilities.DynamicColor.MaterialDynamicColors.PrimaryFixed.GetHct(scheme).Tone;
-            var primaryFixedDim = MaterialColorUtilities.DynamicColor.MaterialDynamicColors.PrimaryFixedDim.GetHct(scheme).Tone;
+            var primaryFixed = MaterialDynamicColors.PrimaryFixed.GetHct(scheme).Tone;
+            var primaryFixedDim = MaterialDynamicColors.PrimaryFixedDim.GetHct(scheme).Tone;
 
             // PrimaryFixedDim should be at least 10 tones darker
             var actualDelta = primaryFixed - primaryFixedDim;
@@ -160,7 +162,7 @@ public class SchemeCorrectnessTests
 
         var contrastLevels = new[] { -1.0, 0.0, 0.5, 1.0 };
 
-        foreach (var variant in Enum.GetValues<MaterialColorUtilities.DynamicColor.Variant>())
+        foreach (var variant in Enum.GetValues<Variant>())
         {
             foreach (var contrastLevel in contrastLevels)
             {
@@ -178,7 +180,7 @@ public class SchemeCorrectnessTests
                         Assert.Equal(contrastLevel, scheme.ContrastLevel);
 
                         // Ensure key colors can be retrieved
-                        var primary = MaterialColorUtilities.DynamicColor.MaterialDynamicColors.Primary.GetHct(scheme);
+                        var primary = MaterialDynamicColors.Primary.GetHct(scheme);
                         Assert.NotNull(primary);
                         Assert.True(primary.Tone >= 0 && primary.Tone <= 100);
                     }
@@ -196,14 +198,14 @@ public class SchemeCorrectnessTests
         double contrastLevel,
         bool isDark)
     {
-        var variant = (MaterialColorUtilities.DynamicColor.Variant)variantIndex;
+        var variant = (Variant)variantIndex;
         var sourceColor = Hct.From(new ArgbColor(0xFF0000FF));
         var scheme = SchemeFromVariant(variant, sourceColor, isDark, contrastLevel);
 
         // Get surface tones
-        var surfaceDim = MaterialColorUtilities.DynamicColor.MaterialDynamicColors.SurfaceDim.GetHct(scheme).Tone;
-        var surface = MaterialColorUtilities.DynamicColor.MaterialDynamicColors.Surface.GetHct(scheme).Tone;
-        var surfaceBright = MaterialColorUtilities.DynamicColor.MaterialDynamicColors.SurfaceBright.GetHct(scheme).Tone;
+        var surfaceDim = MaterialDynamicColors.SurfaceDim.GetHct(scheme).Tone;
+        var surface = MaterialDynamicColors.Surface.GetHct(scheme).Tone;
+        var surfaceBright = MaterialDynamicColors.SurfaceBright.GetHct(scheme).Tone;
 
         if (isDark)
         {

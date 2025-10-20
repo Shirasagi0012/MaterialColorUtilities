@@ -15,12 +15,13 @@
 // limitations under the License.
 
 using MaterialColorUtilities.Dislike;
-using MaterialColorUtilities.DynamicColor;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Palettes;
 using MaterialColorUtilities.Temperature;
 
 namespace MaterialColorUtilities.Scheme;
+
+using DynamicColors;
 
 /// <summary>
 /// A scheme that places the source color in Scheme.primaryContainer.

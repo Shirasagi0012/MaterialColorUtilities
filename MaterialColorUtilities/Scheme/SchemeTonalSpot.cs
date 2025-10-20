@@ -14,12 +14,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using MaterialColorUtilities.DynamicColor;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Palettes;
 using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.Scheme;
+
+using DynamicColors;
 
 /// <summary>
 /// A Dynamic Color theme with low to medium colorfulness and a Tertiary

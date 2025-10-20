@@ -23,8 +23,8 @@ public class KeyColor(double hue, double chroma)
     public readonly double Hue = hue;
     public readonly double RequestedChroma = chroma;
 
-    private readonly Dictionary<int, double> _chromaCache = [];
-    private readonly double _maxChromaValue = 200.0;
+    readonly private Dictionary<int, double> _chromaCache = [];
+    readonly private double _maxChromaValue = 200.0;
 
     public Hct Create()
     {

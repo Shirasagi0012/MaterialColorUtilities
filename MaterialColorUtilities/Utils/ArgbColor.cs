@@ -87,12 +87,12 @@ public struct ArgbColor : IEquatable<ArgbColor>
         return _value == other._value;
     }
 
-    public override bool Equals(object? obj)
+    override public bool Equals(object? obj)
     {
         return obj is ArgbColor other && Equals(other);
     }
 
-    public override int GetHashCode()
+    override public int GetHashCode()
     {
         return _value;
     }
@@ -105,5 +105,10 @@ public struct ArgbColor : IEquatable<ArgbColor>
     public static bool operator !=(ArgbColor left, ArgbColor right)
     {
         return !(left == right);
+    }
+
+    override public string ToString()
+    {
+        return $"#{Value:X8}";
     }
 }

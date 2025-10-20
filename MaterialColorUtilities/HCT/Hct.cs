@@ -16,10 +16,6 @@
 
 using MaterialColorUtilities.Utils;
 
-//[assembly: InternalsVisibleTo("MaterialColorUtilities.Avalonia")]
-//[assembly: InternalsVisibleTo("MaterialColorUtilities.Tests")]
-//[assembly: InternalsVisibleTo("MaterialColorUtilities.Benchmarks")]
-
 namespace MaterialColorUtilities.HCT;
 
 /// <summary>
@@ -27,7 +23,7 @@ namespace MaterialColorUtilities.HCT;
 /// accurate color measurement system that can also accurately render what
 /// colors will appear as in different lighting environments.
 /// </summary>
-public struct Hct
+public struct Hct : IEquatable<Hct>
 {
     private double _hue;
     private double _chroma;
@@ -158,12 +154,12 @@ public struct Hct
 
     public ArgbColor ToArgb() => Argb;
 
-    public override int GetHashCode()
+    override public int GetHashCode()
     {
         return HashCode.Combine(_argb);
     }
 
-    public override bool Equals(object? obj)
+    override public bool Equals(object? obj)
     {
         return obj is Hct other && _argb.Equals(other._argb);
     }
@@ -173,7 +169,7 @@ public struct Hct
         return _argb.Equals(other._argb);
     }
 
-    public override string ToString()
+    override public string ToString()
     {
         return $"HCT: {_hue:F1}°, {_chroma:F1}, {_tone:F1} (ARGB: {_argb.Value:X8})";
     }
@@ -212,5 +208,14 @@ public struct Hct
         );
 
         return recastHct;
+    }
+    public static bool operator ==(Hct left, Hct right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(Hct left, Hct right)
+    {
+        return !(left == right);
     }
 }

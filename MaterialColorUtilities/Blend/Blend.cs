@@ -52,7 +52,7 @@ public static class Blend
     /// <returns>The blended ARGB color.</returns>
     public static ArgbColor HctHue(ArgbColor from, ArgbColor to, double amount)
     {
-        var ucs = cam16Ucs(from, to, amount);
+        var ucs = Cam16Ucs(from, to, amount);
         var ucsCam = Cam16.FromArgb(ucs);
         var fromCam = Cam16.FromArgb(from);
         var blended = Hct.From(ucsCam.Hue, fromCam.Chroma, ColorUtils.LstarFromArgb(from));
@@ -66,7 +66,7 @@ public static class Blend
     /// <param name="to">The ARGB color to blend to.</param>
     /// <param name="amount">The blend amount (0.0 to 1.0).</param>
     /// <returns>The blended ARGB color.</returns>
-    public static ArgbColor cam16Ucs(ArgbColor from, ArgbColor to, double amount)
+    public static ArgbColor Cam16Ucs(ArgbColor from, ArgbColor to, double amount)
     {
         var fromCam = Cam16.FromArgb(from);
         var toCam = Cam16.FromArgb(to);

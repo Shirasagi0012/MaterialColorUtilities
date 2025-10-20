@@ -14,11 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace MaterialColorUtilities.DynamicColors;
+
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Palettes;
 using MaterialColorUtilities.Utils;
-
-namespace MaterialColorUtilities.DynamicColor;
 
 /// <summary>
 /// Constructed by a set of values representing the current UI state (such as
@@ -42,7 +42,7 @@ public class DynamicScheme(
     /// <summary>
     /// The source color of the theme as an ARGB integer.
     /// </summary>
-    public readonly int SourceColorArgb = sourceColorHct.Argb.Value;
+    public readonly ArgbColor SourceColorArgb = sourceColorHct.Argb;
 
     /// <summary>
     /// The source color of the theme in HCT.
