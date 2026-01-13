@@ -6,6 +6,25 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Platforms>AnyCPU;ARM64;x64</Platforms>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>	
+	
+	<PropertyGroup>
+		<PackageId>Shirasagi0012.MaterialColorUtilities</PackageId>
+		<Version>0.0.1</Version>
+		<Authors>Shirasagi0012</Authors>
+		<Description>.NET port of material-color-utilities by Google</Description>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>material design 3;material design;material 3;color;hct;tonal</PackageTags>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageOutputPath>$(MSBuildThisFileDirectory)..\artifacts</PackageOutputPath>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
 </Project>
