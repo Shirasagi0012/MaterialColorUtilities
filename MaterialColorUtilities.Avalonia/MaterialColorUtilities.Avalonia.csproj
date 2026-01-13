@@ -6,6 +6,21 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Platforms>AnyCPU;ARM64;x64</Platforms>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>Shirasagi0012.MaterialColorUtilities.Avalonia</PackageId>
+        <Version>0.0.1</Version>
+        <Authors>Shirasagi0012</Authors>
+        <Description>Avalonia integration for Material Color Utilities with Material 3 dynamic color resources.</Description>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>avalonia;material-design;material;color;hct;tonal;dynamic-color</PackageTags>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageOutputPath>$(MSBuildThisFileDirectory)..\artifacts</PackageOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,6 +29,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\MaterialColorUtilities\MaterialColorUtilities.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="README.md" />
     </ItemGroup>
 
 </Project>
