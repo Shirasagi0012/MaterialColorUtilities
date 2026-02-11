@@ -148,10 +148,7 @@ internal readonly record struct Cam16(
         // Hue
         var atan2 = Math.Atan2(b, a);
         var atanDegrees = atan2 * 180.0 / Math.PI;
-        var hue =
-            atanDegrees < 0 ? atanDegrees + 360.0
-            : atanDegrees >= 360 ? atanDegrees - 360
-            : atanDegrees;
+        var hue = MathUtils.SanitizeDegrees(atanDegrees);
         var hueRadians = hue * Math.PI / 180.0;
         System.Diagnostics.Debug.Assert(hue >= 0 && hue < 360, $"hue was really {hue}");
 
