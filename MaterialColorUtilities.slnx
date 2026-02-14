@@ -1,4 +1,11 @@
 <Solution>
+  <Folder Name="/Solution FIles/">
+    <File Path=".gitignore" />
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE.txt" />
+    <File Path="MaterialColorUtilities.sln.DotSettings" />
+    <File Path="README.md" />
+  </Folder>
   <Project Path="MaterialColorUtilities.Avalonia/MaterialColorUtilities.Avalonia.csproj" Id="8c35c826-c850-4a39-a577-b188e85ace4b" />
   <Project Path="MaterialColorUtilities.Tests/MaterialColorUtilities.Tests.csproj" />
   <Project Path="MaterialColorUtilities/MaterialColorUtilities.csproj" />
