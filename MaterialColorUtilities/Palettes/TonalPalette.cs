@@ -27,9 +27,9 @@ namespace MaterialColorUtilities.Palettes;
 /// <list type="number">
 ///     <item><see cref="TonalPalette(double, double)"/> From hue and chroma. (preferred)</item>
 ///     <item>
-///         <see cref="FromList"/> From a fixed-size (<see cref="TonalPalette.CommonSize"/>) list of ints
-///         representing ARBG colors. Correctness (constant hue and chroma) of the input
-///         is not enforced. <see cref="Get"/> will only return the input colors, corresponding to
+///         <see cref="FromList"/> From a fixed-size (<see cref="TonalPalette.CommonSize"/>) list of
+///         ARGB colors. Correctness (constant hue and chroma) of the input is not enforced.
+///         <see cref="Get"/> will only return the input colors, corresponding to
 ///         <see cref="CommonTones"/>. This also initializes the key color to black.
 ///     </item>
 /// </list>
@@ -85,14 +85,6 @@ public class TonalPalette
         KeyColor = new KeyColor(hue, chroma).Create();
         _isFromCache = false;
     }
-
-    ///// <summary>
-    ///// Create a Tonal Palette from hue and chroma of hct.
-    ///// </summary>
-    //public static TonalPalette FromHct(Hct hct)
-    //{
-    //    return new TonalPalette(hct);
-    //}
 
     private TonalPalette(Dictionary<int, ArgbColor> cache, double hue, double chroma)
     {
