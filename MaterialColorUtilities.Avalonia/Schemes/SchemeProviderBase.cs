@@ -29,13 +29,13 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
 
     protected SchemeProviderBase(Color color) : this()
     {
-        this[!ColorProperty] = new CustomColor(color).ColorBinding;
+        Color = color;
     }
 
     protected SchemeProviderBase(string colorString) : this()
     {
         if (global::Avalonia.Media.Color.TryParse(s: colorString, color: out var color))
-            this[!ColorProperty] = new CustomColor(color).ColorBinding;
+            Color = color;
         else
             throw new FormatException($"'{colorString}' is not a valid color string.");
     }
@@ -72,8 +72,6 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
         if (e.Property == ColorProperty || e.Property == ContrastLevelProperty)
             OnSchemeChanged();
     }
-
-    private void OnColorProviderChanged(object? sender, EventArgs e) => OnSchemeChanged();
 
     private void OnSchemeChanged()
     {
