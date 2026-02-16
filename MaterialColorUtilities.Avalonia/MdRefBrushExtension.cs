@@ -4,20 +4,19 @@ using MaterialColorUtilities.Avalonia.Internal;
 
 namespace MaterialColorUtilities.Avalonia;
 
-public class RefColorExtension
+public class MdRefBrushExtension
 {
-    public RefColorExtension()
+    public MdRefBrushExtension()
     {
     }
 
-    public RefColorExtension(RefPaletteToken palette, byte tone)
+    public MdRefBrushExtension(RefPaletteToken palette, byte tone)
     {
         Palette = palette;
         Tone = tone;
     }
 
-    [ConstructorArgument("palette")]
-    public RefPaletteToken Palette { get; set; }
+    [ConstructorArgument("palette")] public RefPaletteToken Palette { get; set; }
 
     [ConstructorArgument("tone")]
     public byte Tone
@@ -30,6 +29,6 @@ public class RefColorExtension
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        return MaterialColorRuntime.ProvideColor(serviceProvider, Palette, Tone);
+        return MaterialColorRuntime.ProvideRefBrushBinding(serviceProvider, Palette, Tone);
     }
 }

@@ -4,21 +4,21 @@ using MaterialColorUtilities.Avalonia.Internal;
 
 namespace MaterialColorUtilities.Avalonia;
 
-public class SysColorExtension
+public class MdSysBrushExtension
 {
-    public SysColorExtension()
+    public MdSysBrushExtension()
     {
     }
 
-    public SysColorExtension(SysColorToken token)
+    public MdSysBrushExtension(SysColorToken token)
     {
         Token = token;
-    }    
-    
-    public SysColorExtension(SysColorToken token, string customKey)
+    }
+
+    public MdSysBrushExtension(SysColorToken token, string customKey)
     {
-        if (token is SysColorToken.Custom 
-            or SysColorToken.CustomContainer 
+        if (token is SysColorToken.Custom
+            or SysColorToken.CustomContainer
             or SysColorToken.OnCustom
             or SysColorToken.OnCustomContainer)
         {
@@ -30,7 +30,7 @@ public class SysColorExtension
             throw new ArgumentException($"The token '{token}' does not support a custom key.", nameof(token));
         }
     }
-        
+
     [ConstructorArgument("customKey")]
     public string? CustomKey { get; set; }
 
@@ -39,6 +39,6 @@ public class SysColorExtension
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        return MaterialColorRuntime.ProvideColor(serviceProvider, Token);
+        return MaterialColorRuntime.ProvideSysBrushBinding(serviceProvider, Token, CustomKey);
     }
 }

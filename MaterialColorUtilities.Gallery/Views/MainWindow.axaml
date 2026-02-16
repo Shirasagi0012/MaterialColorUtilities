@@ -8,19 +8,13 @@
         x:Class="MaterialColorUtilities.Gallery.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="MaterialColorUtilities.Gallery">
+        Title="MaterialColorUtilities.Gallery"
+        mcu:MaterialColor.Scheme="{mcu:MaterialColorScheme {mcu:TonalSpotScheme Color=Green}}">
 
-    <Design.DataContext>
-        <vm:MainWindowViewModel />
-    </Design.DataContext>
-
-    <Grid x:Name="MainGrid">
-        <Border
-            BorderThickness="2"
-            Padding="16">
-            <TextBlock x:Name="TestTxtBlock"
-                       Text="Typed Sys/Ref tokens + reactive palette binding" />
-        </Border>
-    </Grid>
+    <TextBlock Background="{mcu:MdSysBrush Primary}"
+               Foreground="{mcu:MdSysBrush OnPrimary}"
+               Text="Material Color Utilities" 
+               HorizontalAlignment="Center" 
+               VerticalAlignment="Center"/>
 
 </Window>

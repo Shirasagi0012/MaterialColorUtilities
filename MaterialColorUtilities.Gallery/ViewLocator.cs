@@ -5,7 +5,6 @@ using Avalonia.Controls.Templates;
 using MaterialColorUtilities.Gallery.ViewModels;
 
 namespace MaterialColorUtilities.Gallery;
-
 /// <summary>
 /// Given a view model, returns the corresponding view if possible.
 /// </summary>

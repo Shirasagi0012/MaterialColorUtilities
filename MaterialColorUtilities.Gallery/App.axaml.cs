@@ -1,8 +1,8 @@
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using MaterialColorUtilities.Gallery.ViewModels;
 using MaterialColorUtilities.Gallery.Views;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Collections;
@@ -15,7 +14,7 @@ using ArgbColor = MaterialColorUtilities.Utils.ArgbColor;
 
 namespace MaterialColorUtilities.Avalonia;
 
-public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
+public class MaterialColorScheme : AvaloniaObject
 {
     public static readonly DirectProperty<MaterialColorScheme, ISchemeProvider?> SchemeProperty =
         AvaloniaProperty.RegisterDirect<MaterialColorScheme, ISchemeProvider?>(
@@ -24,8 +23,27 @@ public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
             (scheme, provider) => scheme.Scheme = provider
         );
 
-    public DynamicScheme? LightScheme { get; private set; }
-    public DynamicScheme? DarkScheme { get; private set; }
+    public static readonly DirectProperty<MaterialColorScheme, DynamicScheme?> LightSchemeProperty =
+        AvaloniaProperty.RegisterDirect<MaterialColorScheme, DynamicScheme?>(
+            nameof(LightScheme),
+            scheme => scheme.LightScheme
+        );
+
+    public static readonly DirectProperty<MaterialColorScheme, DynamicScheme?> DarkSchemeProperty =
+        AvaloniaProperty.RegisterDirect<MaterialColorScheme, DynamicScheme?>(
+            nameof(DarkScheme),
+            scheme => scheme.DarkScheme
+        );
+
+    public static readonly DirectProperty<MaterialColorScheme, int> RevisionProperty =
+        AvaloniaProperty.RegisterDirect<MaterialColorScheme, int>(
+            nameof(Revision),
+            scheme => scheme.Revision
+        );
+
+    private DynamicScheme? _lightScheme;
+    private DynamicScheme? _darkScheme;
+    private int _revision;
     private Dictionary<string, TonalPalette> _customPalettes = new(StringComparer.OrdinalIgnoreCase);
 
     public MaterialColorScheme()
@@ -34,7 +52,31 @@ public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
         Refresh();
     }
 
+    public MaterialColorScheme(ISchemeProvider scheme)
+    {
+        CustomColors.CollectionChanged += OnCustomColorsChanged;
+        Scheme = scheme;
+    }
+
     public event EventHandler? Changed;
+
+    public DynamicScheme? LightScheme
+    {
+        get => _lightScheme;
+        private set => SetAndRaise(LightSchemeProperty, ref _lightScheme, value);
+    }
+
+    public DynamicScheme? DarkScheme
+    {
+        get => _darkScheme;
+        private set => SetAndRaise(DarkSchemeProperty, ref _darkScheme, value);
+    }
+
+    public int Revision
+    {
+        get => _revision;
+        private set => SetAndRaise(RevisionProperty, ref _revision, value);
+    }
 
     public ISchemeProvider? Scheme
     {
@@ -65,16 +107,21 @@ public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
         return ResolveSysArgb(scheme, token)?.ToAvaloniaColor();
     }
 
-    public Color? Resolve(RefPaletteToken palette, byte tone)
+    public Color? Resolve(RefPaletteToken palette, byte tone, ThemeVariant themeVariant)
     {
         if (tone > 100)
             throw new ArgumentOutOfRangeException(nameof(tone), "Tone must be in range 0..100.");
 
-        var scheme = ResolveDynamicScheme(ThemeVariant.Default);
+        var scheme = ResolveDynamicScheme(themeVariant);
         if (scheme is null)
             return null;
 
         return ResolveRefArgb(scheme, palette, tone).ToAvaloniaColor();
+    }
+
+    public Color? Resolve(RefPaletteToken palette, byte tone)
+    {
+        return Resolve(palette, tone, ThemeVariant.Default);
     }
 
     public Color? Resolve(string key, SysColorToken role, ThemeVariant themeVariant)
@@ -174,7 +221,7 @@ public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
         };
 
     private DynamicScheme? ResolveDynamicScheme(ThemeVariant variant) =>
-        IsDark(variant) ? _darkScheme ?? _lightScheme : _lightScheme ?? _darkScheme;
+        IsDark(variant) ? DarkScheme ?? LightScheme : LightScheme ?? DarkScheme;
 
     private static bool IsDark(ThemeVariant variant)
     {
@@ -234,23 +281,24 @@ public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
 
         try
         {
-            _lightScheme = provider?.CreateScheme(ThemeVariant.Light);
-            _darkScheme = provider?.CreateScheme(ThemeVariant.Dark);
+            LightScheme = provider?.CreateScheme(ThemeVariant.Light);
+            DarkScheme = provider?.CreateScheme(ThemeVariant.Dark);
         }
         catch
         {
-            _lightScheme = null;
-            _darkScheme = null;
+            LightScheme = null;
+            DarkScheme = null;
         }
 
         _customPalettes = BuildCustomPalettes();
+        Revision = unchecked(Revision + 1);
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
     private Dictionary<string, TonalPalette> BuildCustomPalettes()
     {
         var result = new Dictionary<string, TonalPalette>(StringComparer.OrdinalIgnoreCase);
-        var sourceArgb = _lightScheme?.SourceColorArgb ?? _darkScheme?.SourceColorArgb;
+        var sourceArgb = LightScheme?.SourceColorArgb ?? DarkScheme?.SourceColorArgb;
 
         foreach (var entry in CustomColors)
         {
@@ -270,4 +318,6 @@ public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
 
         return result;
     }
+
+    public MaterialColorScheme ProvideTypedValue(IServiceProvider serviceProvider) => this;
 }

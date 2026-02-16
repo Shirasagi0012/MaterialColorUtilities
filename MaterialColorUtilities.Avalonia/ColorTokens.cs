@@ -51,7 +51,10 @@ public enum SysColorToken
     TertiaryFixedDim,
     OnTertiaryFixed,
     OnTertiaryFixedVariant,
-    Custom,OnCustom,CustomContainer,OnCustomContainer
+    Custom,
+    OnCustom,
+    CustomContainer,
+    OnCustomContainer
 }
 
 public enum RefPaletteToken
@@ -61,6 +64,5 @@ public enum RefPaletteToken
     Tertiary,
     Neutral,
     NeutralVariant,
-    Error,
-    Custom
+    Error
 }
