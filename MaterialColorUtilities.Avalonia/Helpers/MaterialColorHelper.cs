@@ -71,9 +71,6 @@ internal static class MaterialColorHelper
         Color? fallback = null
     )
     {
-        if (tone > 100)
-            throw new ArgumentOutOfRangeException(nameof(tone), "Tone must be in range 0..100.");
-
         var fallbackColor = fallback ?? Colors.Transparent;
         var scheme = ResolveScheme(serviceProvider);
         if (scheme is null)
@@ -270,7 +267,7 @@ internal static class MaterialColorHelper
         return null;
     }
 
-    private static bool RequiresCustomKey(SysColorToken token) =>
+    internal static bool RequiresCustomKey(SysColorToken token) =>
         token is SysColorToken.Custom
             or SysColorToken.OnCustom
             or SysColorToken.CustomContainer

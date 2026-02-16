@@ -1,6 +1,6 @@
 using System;
 using Avalonia.Markup.Xaml;
-using MaterialColorUtilities.Avalonia.Helpers;
+using static MaterialColorUtilities.Avalonia.Helpers.MaterialColorHelper;
 
 namespace MaterialColorUtilities.Avalonia;
 
@@ -17,18 +17,11 @@ public class MdSysColorExtension
 
     public MdSysColorExtension(SysColorToken token, string customKey)
     {
-        if (token is SysColorToken.Custom
-            or SysColorToken.CustomContainer
-            or SysColorToken.OnCustom
-            or SysColorToken.OnCustomContainer)
-        {
-            Token = token;
-            CustomKey = customKey;
-        }
-        else
-        {
+        if (!RequiresCustomKey(token))
             throw new ArgumentException($"The token '{token}' does not support a custom key.", nameof(token));
-        }
+
+        Token = token;
+        CustomKey = customKey;
     }
 
     [ConstructorArgument("customKey")] public string? CustomKey { get; set; }
@@ -37,6 +30,6 @@ public class MdSysColorExtension
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        return MaterialColorHelper.ProvideSysColorBinding(serviceProvider, Token, CustomKey);
+        return ProvideSysColorBinding(serviceProvider, Token, CustomKey);
     }
 }

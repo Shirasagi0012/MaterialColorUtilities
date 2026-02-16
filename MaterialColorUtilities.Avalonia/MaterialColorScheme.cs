@@ -111,19 +111,11 @@ public class MaterialColorScheme : AvaloniaObject
 
     public Color? Resolve(RefPaletteToken palette, byte tone, ThemeVariant themeVariant)
     {
-        if (tone > 100)
-            throw new ArgumentOutOfRangeException(nameof(tone), "Tone must be in range 0..100.");
-
         var scheme = ResolveDynamicScheme(themeVariant);
         if (scheme is null)
             return null;
 
         return ResolveRefArgb(scheme, palette, tone).ToAvaloniaColor();
-    }
-
-    public Color? Resolve(RefPaletteToken palette, byte tone)
-    {
-        return Resolve(palette, tone, ThemeVariant.Default);
     }
 
     public Color? Resolve(string key, SysColorToken role, ThemeVariant themeVariant)
@@ -138,8 +130,6 @@ public class MaterialColorScheme : AvaloniaObject
         var tone = GetCustomRoleTone(role, IsDark(themeVariant));
         return palette.Get(tone).ToAvaloniaColor();
     }
-
-    public MaterialColorScheme ProvideValue(IServiceProvider serviceProvider) => this;
 
     private static ArgbColor? ResolveSysArgb(DynamicScheme scheme, SysColorToken token) =>
         token switch
