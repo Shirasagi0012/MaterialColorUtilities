@@ -1,21 +1,21 @@
 using System;
 using Avalonia.Markup.Xaml;
-using MaterialColorUtilities.Avalonia.Internal;
+using MaterialColorUtilities.Avalonia.Helpers;
 
 namespace MaterialColorUtilities.Avalonia;
 
-public class MdSysBrushExtension
+public class MdSysColorExtension
 {
-    public MdSysBrushExtension()
+    public MdSysColorExtension()
     {
     }
 
-    public MdSysBrushExtension(SysColorToken token)
+    public MdSysColorExtension(SysColorToken token)
     {
         Token = token;
     }
 
-    public MdSysBrushExtension(SysColorToken token, string customKey)
+    public MdSysColorExtension(SysColorToken token, string customKey)
     {
         if (token is SysColorToken.Custom
             or SysColorToken.CustomContainer
@@ -31,14 +31,12 @@ public class MdSysBrushExtension
         }
     }
 
-    [ConstructorArgument("customKey")]
-    public string? CustomKey { get; set; }
+    [ConstructorArgument("customKey")] public string? CustomKey { get; set; }
 
-    [ConstructorArgument("token")]
-    public SysColorToken Token { get; set; }
+    [ConstructorArgument("token")] public SysColorToken Token { get; set; }
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        return MaterialColorRuntime.ProvideSysBrushBinding(serviceProvider, Token, CustomKey);
+        return MaterialColorHelper.ProvideSysColorBinding(serviceProvider, Token, CustomKey);
     }
 }

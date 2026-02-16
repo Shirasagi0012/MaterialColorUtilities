@@ -1,16 +1,16 @@
 using System;
 using Avalonia.Markup.Xaml;
-using MaterialColorUtilities.Avalonia.Internal;
+using MaterialColorUtilities.Avalonia.Helpers;
 
 namespace MaterialColorUtilities.Avalonia;
 
-public class MdRefColorExtension
+public class MdRefBrushExtension
 {
-    public MdRefColorExtension()
+    public MdRefBrushExtension()
     {
     }
 
-    public MdRefColorExtension(RefPaletteToken palette, byte tone)
+    public MdRefBrushExtension(RefPaletteToken palette, byte tone)
     {
         Palette = palette;
         Tone = tone;
@@ -29,6 +29,6 @@ public class MdRefColorExtension
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        return MaterialColorRuntime.ProvideRefColorBinding(serviceProvider, Palette, Tone);
+        return MaterialColorHelper.ProvideRefBrushBinding(serviceProvider, Palette, Tone);
     }
 }

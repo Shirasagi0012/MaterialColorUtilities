@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Avalonia;
 using Avalonia.Collections;
+using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Styling;
@@ -78,6 +79,7 @@ public class MaterialColorScheme : AvaloniaObject
         private set => SetAndRaise(RevisionProperty, ref _revision, value);
     }
 
+    [ConstructorArgument("scheme")]
     public ISchemeProvider? Scheme
     {
         get;
@@ -317,6 +319,17 @@ public class MaterialColorScheme : AvaloniaObject
         }
 
         return result;
+    }
+}
+
+public class MaterialColorSchemeExtension : MaterialColorScheme
+{
+    public MaterialColorSchemeExtension()
+    {
+    }
+
+    public MaterialColorSchemeExtension(ISchemeProvider scheme) : base(scheme)
+    {
     }
 
     public MaterialColorScheme ProvideTypedValue(IServiceProvider serviceProvider) => this;

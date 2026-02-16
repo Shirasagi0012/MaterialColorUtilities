@@ -13,9 +13,9 @@ using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Styling;
 
-namespace MaterialColorUtilities.Avalonia.Internal;
+namespace MaterialColorUtilities.Avalonia.Helpers;
 
-internal static class MaterialColorRuntime
+internal static class MaterialColorHelper
 {
     private static readonly IBrush TransparentBrush = new ImmutableSolidColorBrush(Colors.Transparent);
     private static readonly Dictionary<uint, IBrush> BrushCache = [];
@@ -227,7 +227,10 @@ internal static class MaterialColorRuntime
 
     private static IEnumerable<object> EnumerateContextObjects(IServiceProvider serviceProvider)
     {
-        if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget { TargetObject: { } targetObject })
+        if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget
+            {
+                TargetObject: { } targetObject
+            })
             yield return targetObject;
 
         if (serviceProvider.GetService(typeof(IAvaloniaXamlIlParentStackProvider)) is
@@ -311,5 +314,4 @@ internal static class MaterialColorRuntime
             return fallbackColor;
         }
     }
-
 }
