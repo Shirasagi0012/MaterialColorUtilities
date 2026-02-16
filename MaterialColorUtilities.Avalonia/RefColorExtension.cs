@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Markup.Xaml;
 using MaterialColorUtilities.Avalonia.Internal;
 
@@ -29,6 +30,6 @@ public class RefColorExtension
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        return MaterialColorRuntime.ProvideColor(serviceProvider, (scheme, theme) => scheme.Resolve(Palette, Tone, theme));
+        return MaterialColorRuntime.ProvideColor(serviceProvider, Palette, Tone);
     }
 }

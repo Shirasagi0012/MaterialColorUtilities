@@ -1,5 +1,8 @@
+using System;
 using Avalonia;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.XamlIl.Runtime;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -10,14 +13,7 @@ internal delegate Color? MaterialColorResolver(MaterialColorScheme scheme, Theme
 
 internal static class MaterialColorRuntime
 {
-    private sealed class MaterialColorRuntimeHost : AvaloniaObject;
-
-    private static readonly AttachedProperty<Dictionary<AvaloniaProperty, IDisposable>?> RuntimeSubscriptionsProperty =
-        AvaloniaProperty.RegisterAttached<MaterialColorRuntimeHost, AvaloniaObject, Dictionary<AvaloniaProperty, IDisposable>?>(
-            "RuntimeSubscriptions"
-        );
-
-    public static AvaloniaObject? ResolveAnchor(IServiceProvider serviceProvider)
+    private static AvaloniaObject? ResolveAnchor(IServiceProvider serviceProvider)
     {
         if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget
             {
@@ -40,49 +36,48 @@ internal static class MaterialColorRuntime
         return null;
     }
 
-    public static object ProvideColor(IServiceProvider serviceProvider, SysColorToken token, Color? fallback = null)
+    private static MaterialColorScheme? ResolveScheme(AvaloniaObject? anchor)
+    {
+        return MaterialColor.GetScheme(anchor);
+    }
+
+    public static Color ProvideColor(IServiceProvider serviceProvider, SysColorToken token, Color? fallback = null)
     {
         var fallbackColor = fallback ?? Colors.Transparent;
         var anchor = ResolveAnchor(serviceProvider);
-        var value = ResolveColor(anchor, token, fallbackColor);
-
-        if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget
-            {
-                TargetObject: AvaloniaObject target,
-                TargetProperty: AvaloniaProperty property
-            })
-        {
-            if (property.PropertyType != typeof(Color) && property.PropertyType != typeof(Color?))
-                return value;
-
-            AttachSubscription(target, property, anchor, token, fallbackColor);
-        }
-
+        var scheme = MaterialColor.GetScheme(anchor);
+        var theme = GetThemeVariant(anchor);
+        var value = ResolveColor(scheme, token, theme, fallbackColor);
         return value;
     }
 
-    public static object ProvideBrush(IServiceProvider serviceProvider, SysColorToken token, Color? fallback = null)
+    public static IBinding ProvideColorBinding(
+        IServiceProvider serviceProvider,
+        SysColorToken token,
+        Color? fallback = null
+    )
     {
         var fallbackColor = fallback ?? Colors.Transparent;
         var anchor = ResolveAnchor(serviceProvider);
-        var brush = new SolidColorBrush(ResolveColor(anchor, token, fallbackColor));
-        AttachSubscription(brush, SolidColorBrush.ColorProperty, anchor, token, fallbackColor);
-        return brush;
+        var scheme = MaterialColor.GetScheme(anchor);
+        var theme = GetThemeVariant(anchor);
+        
+    }
+    
+    public static Color ProvideColor(IServiceProvider serviceProvider, RefPaletteToken token, byte tone, Color? fallback = null)
+    {
+        var fallbackColor = fallback ?? Colors.Transparent;
+        var anchor = ResolveAnchor(serviceProvider);
+        var scheme = MaterialColor.GetScheme(anchor);
+        var value = ResolveColor(scheme, token, tone, fallbackColor);
+        return value;
     }
 
-    private static Color ResolveColor(AvaloniaObject? anchor, SysColorToken token, Color fallback)
+    private static Color ResolveColor(MaterialColorScheme? scheme, SysColorToken token, ThemeVariant theme, Color fallback)
     {
-        if (anchor is null)
-            return fallback;
-
-        var scheme = MaterialColor.GetScheme(anchor);
-        if (scheme is null)
-            return fallback;
-
         try
         {
-            var theme = GetThemeVariant(anchor);
-            return scheme.Resolve(token, theme) ?? fallback;
+            return scheme?.Resolve(token, theme) ?? fallback;
         }
         catch
         {
@@ -90,163 +85,35 @@ internal static class MaterialColorRuntime
         }
     }
 
-    private static void AttachSubscription(
-        AvaloniaObject target,
-        AvaloniaProperty property,
-        AvaloniaObject? anchor,
+    private static IBinding ResolveColorBinding(
+        MaterialColorScheme scheme,
         SysColorToken token,
+        ThemeVariant theme,
         Color fallback
     )
     {
-        if (anchor is null)
-            return;
-
-        var subscriptions = target.GetValue(RuntimeSubscriptionsProperty);
-        if (subscriptions is null)
+        var color = scheme?.Resolve(token, theme) ?? fallback;
+        return new CompiledBindingExtension()
         {
-            subscriptions = new Dictionary<AvaloniaProperty, IDisposable>();
-            target.SetValue(RuntimeSubscriptionsProperty, subscriptions);
-        }
-
-        if (subscriptions.TryGetValue(property, out var current))
-            current.Dispose();
-
-        var runtimeSubscription = new RuntimeSubscription(target, property, anchor, resolver, fallback);
-        subscriptions[property] = runtimeSubscription;
+            Path = "",
+            Priority = BindingPriority.Style,
+            Source = scheme,
+            FallbackValue = fallback,
+        };
     }
 
-    private sealed class RuntimeSubscription : IDisposable
+    private static Color ResolveColor(MaterialColorScheme? scheme, RefPaletteToken token, byte tone, Color fallback)
     {
-        private readonly WeakReference<AvaloniaObject> _targetReference;
-        private readonly AvaloniaProperty _targetProperty;
-        private readonly AvaloniaObject _anchor;
-        private readonly MaterialColorResolver _resolver;
-        private readonly Color _fallback;
-
-        private IDisposable? _schemeReferenceSubscription;
-        private IThemeVariantHost? _themeHost;
-        private MaterialColorScheme? _scheme;
-        private bool _disposed;
-
-        public RuntimeSubscription(
-            AvaloniaObject target,
-            AvaloniaProperty targetProperty,
-            AvaloniaObject anchor,
-            MaterialColorResolver resolver,
-            Color fallback
-        )
+        try
         {
-            _targetReference = new WeakReference<AvaloniaObject>(target);
-            _targetProperty = targetProperty;
-            _anchor = anchor;
-            _resolver = resolver;
-            _fallback = fallback;
-
-            _schemeReferenceSubscription = _anchor.GetObservable(MaterialColor.SchemeProperty)
-                .Subscribe(new ActionObserver<MaterialColorScheme?>(_ => OnSchemeReferenceChanged()));
-
-            _themeHost = _anchor as IThemeVariantHost;
-            if (_themeHost is not null)
-                _themeHost.ActualThemeVariantChanged += OnThemeVariantChanged;
-
-            OnSchemeReferenceChanged();
+            return scheme?.Resolve(token, tone) ?? fallback;
         }
-
-        public void Dispose()
+        catch
         {
-            if (_disposed)
-                return;
-
-            _disposed = true;
-            _schemeReferenceSubscription?.Dispose();
-            _schemeReferenceSubscription = null;
-
-            if (_themeHost is not null)
-            {
-                _themeHost.ActualThemeVariantChanged -= OnThemeVariantChanged;
-                _themeHost = null;
-            }
-
-            if (_scheme is not null)
-            {
-                _scheme.Changed -= OnSchemeChanged;
-                _scheme = null;
-            }
-        }
-
-        private void OnSchemeReferenceChanged()
-        {
-            if (_disposed)
-                return;
-
-            var next = MaterialColor.GetScheme(_anchor);
-            if (ReferenceEquals(_scheme, next))
-            {
-                Apply();
-                return;
-            }
-
-            if (_scheme is not null)
-                _scheme.Changed -= OnSchemeChanged;
-
-            _scheme = next;
-
-            if (_scheme is not null)
-                _scheme.Changed += OnSchemeChanged;
-
-            Apply();
-        }
-
-        private void OnSchemeChanged(object? sender, EventArgs e) => Apply();
-
-        private void OnThemeVariantChanged(object? sender, EventArgs e) => Apply();
-
-        private void Apply()
-        {
-            if (_disposed)
-                return;
-
-            if (!_targetReference.TryGetTarget(out var target))
-            {
-                Dispose();
-                return;
-            }
-
-            var color = ResolveColor();
-            target.SetValue(_targetProperty, color);
-        }
-
-        private Color ResolveColor()
-        {
-            if (_scheme is null)
-                return _fallback;
-
-            try
-            {
-                var theme = GetThemeVariant(_anchor);
-                return _resolver(_scheme, theme) ?? _fallback;
-            }
-            catch
-            {
-                return _fallback;
-            }
+            return fallback;
         }
     }
-
-    private sealed class ActionObserver<T>(Action<T> onNext) : IObserver<T>
-    {
-        public void OnNext(T value) => onNext(value);
-
-        public void OnCompleted()
-        {
-        }
-
-        public void OnError(Exception error)
-        {
-        }
-    }
-
-    private static ThemeVariant GetThemeVariant(AvaloniaObject anchor)
+    private static ThemeVariant GetThemeVariant(AvaloniaObject? anchor)
     {
         if (anchor is IThemeVariantHost host)
             return host.ActualThemeVariant;

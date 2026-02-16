@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Media;
@@ -11,7 +15,7 @@ using ArgbColor = MaterialColorUtilities.Utils.ArgbColor;
 
 namespace MaterialColorUtilities.Avalonia;
 
-public class MaterialColorScheme : AvaloniaObject
+public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
 {
     public static readonly DirectProperty<MaterialColorScheme, ISchemeProvider?> SchemeProperty =
         AvaloniaProperty.RegisterDirect<MaterialColorScheme, ISchemeProvider?>(
@@ -20,8 +24,8 @@ public class MaterialColorScheme : AvaloniaObject
             (scheme, provider) => scheme.Scheme = provider
         );
 
-    private DynamicScheme? _lightScheme;
-    private DynamicScheme? _darkScheme;
+    public DynamicScheme? LightScheme { get; private set; }
+    public DynamicScheme? DarkScheme { get; private set; }
     private Dictionary<string, TonalPalette> _customPalettes = new(StringComparer.OrdinalIgnoreCase);
 
     public MaterialColorScheme()
@@ -61,12 +65,12 @@ public class MaterialColorScheme : AvaloniaObject
         return ResolveSysArgb(scheme, token)?.ToAvaloniaColor();
     }
 
-    public Color? Resolve(RefPaletteToken palette, byte tone, ThemeVariant themeVariant)
+    public Color? Resolve(RefPaletteToken palette, byte tone)
     {
         if (tone > 100)
             throw new ArgumentOutOfRangeException(nameof(tone), "Tone must be in range 0..100.");
 
-        var scheme = ResolveDynamicScheme(themeVariant);
+        var scheme = ResolveDynamicScheme(ThemeVariant.Default);
         if (scheme is null)
             return null;
 

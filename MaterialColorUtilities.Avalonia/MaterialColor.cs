@@ -8,9 +8,9 @@ public class MaterialColor : AvaloniaObject
         AvaloniaProperty.RegisterAttached<MaterialColor, AvaloniaObject, MaterialColorScheme?>(
             "Scheme", inherits: true);
 
-    public static MaterialColorScheme? GetScheme(AvaloniaObject element)
+    public static MaterialColorScheme? GetScheme(AvaloniaObject? element)
     {
-        return element.GetValue(SchemeProperty);
+        return element?.GetValue(SchemeProperty);
     }
 
     public static void SetScheme(AvaloniaObject element, MaterialColorScheme? value)
