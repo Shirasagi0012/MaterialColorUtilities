@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Collections;
@@ -15,7 +16,7 @@ using ArgbColor = MaterialColorUtilities.Utils.ArgbColor;
 
 namespace MaterialColorUtilities.Avalonia;
 
-public class MaterialColorScheme : AvaloniaObject
+public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
 {
     public static readonly DirectProperty<MaterialColorScheme, ISchemeProvider?> SchemeProperty =
         AvaloniaProperty.RegisterDirect<MaterialColorScheme, ISchemeProvider?>(
@@ -55,8 +56,6 @@ public class MaterialColorScheme : AvaloniaObject
         CustomColors.CollectionChanged += OnCustomColorsChanged;
         Scheme = scheme;
     }
-
-    public event EventHandler? Changed;
 
     public DynamicScheme? LightScheme
     {

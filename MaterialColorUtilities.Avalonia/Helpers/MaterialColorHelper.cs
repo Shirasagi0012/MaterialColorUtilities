@@ -185,8 +185,8 @@ internal static class MaterialColorHelper
             FallbackValue = fallbackColor,
             Bindings =
             {
-                revisionBinding,
-                themeBinding
+                themeBinding,
+                revisionBinding
             },
             Converter = new FuncMultiValueConverter<object?, Color>(values =>
                 (values as IList<object?> ?? values.ToList()) switch
