@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Avalonia;
+using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Data.Core;
@@ -182,14 +183,11 @@ internal static class MaterialColorHelper
                 themeBinding
             },
             Converter = new FuncMultiValueConverter<object?, Color>(values =>
-            {
-                var theme = defaultTheme;
-                var list = values as IList<object?> ?? values.ToList();
-                if (list.Count > 1 && list[1] is ThemeVariant variant)
-                    theme = variant;
-
-                return resolveColor(theme);
-            })
+                (values as IList<object?> ?? values.ToList()) switch
+                {
+                    [ThemeVariant variant, ..] => resolveColor(variant),
+                    _ => resolveColor(defaultTheme)
+                })
         };
     }
 
