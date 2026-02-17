@@ -1,20 +1,36 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:MaterialColorUtilities.Gallery.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:mcu="clr-namespace:MaterialColorUtilities.Avalonia;assembly=MaterialColorUtilities.Avalonia"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="MaterialColorUtilities.Gallery.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="MaterialColorUtilities.Gallery"
-        mcu:MaterialColor.Scheme="{mcu:MaterialColorScheme {mcu:TonalSpotScheme Color=Green}}">
+<Window
+	x:Class="MaterialColorUtilities.Gallery.Views.MainWindow"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:mcu="clr-namespace:MaterialColorUtilities.Avalonia;assembly=MaterialColorUtilities.Avalonia"
+	xmlns:vm="using:MaterialColorUtilities.Gallery.ViewModels"
+	Title="MaterialColorUtilities.Gallery"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	mcu:MaterialColor.Scheme="{mcu:MaterialColorScheme {mcu:TonalSpotScheme Color=Green}}"
+	x:DataType="vm:MainWindowViewModel"
+	Icon="/Assets/avalonia-logo.ico"
+	mc:Ignorable="d">
+	<ThemeVariantScope RequestedThemeVariant="{Binding #ThemeSwitcher.((ComboBoxItem)SelectedItem).Content, FallbackValue={x:Static ThemeVariant.Default}}">
+		<StackPanel Background="{mcu:MdSysColor Primary}">
 
-    <TextBlock Background="{mcu:MdSysBrush Primary}"
-               Foreground="{mcu:MdSysBrush OnPrimary}"
-               Text="Material Color Utilities" 
-               HorizontalAlignment="Center" 
-               VerticalAlignment="Center"/>
+			<TextBlock
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				FontSize="40"
+				Foreground="{mcu:MdSysColor OnPrimary}"
+				Text="Material Color Utilities" />
 
+			<ComboBox
+				x:Name="ThemeSwitcher"
+				HorizontalAlignment="Center"
+				SelectedIndex="0">
+				<ComboBoxItem Content="{x:Static ThemeVariant.Default}" />
+				<ComboBoxItem Content="{x:Static ThemeVariant.Light}" />
+				<ComboBoxItem Content="{x:Static ThemeVariant.Dark}" />
+			</ComboBox>
+		</StackPanel>
+	</ThemeVariantScope>
 </Window>

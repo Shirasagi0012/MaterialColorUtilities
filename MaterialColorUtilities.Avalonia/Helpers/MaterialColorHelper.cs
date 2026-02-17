@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Avalonia;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
@@ -36,8 +37,23 @@ internal static class MaterialColorHelper
             typeof(ThemeVariant)
         );
 
+    public static (IProvideValueTarget, IAvaloniaXamlIlParentStackProvider) GetContextServices(
+        IServiceProvider services
+    )
+    {
+        if (services.GetService(typeof(IProvideValueTarget)) is not IProvideValueTarget target)
+            throw new InvalidOperationException($"Service '{nameof(IProvideValueTarget)}' not found.");
+
+        if (services.GetService(typeof(IAvaloniaXamlIlParentStackProvider)) is not IAvaloniaXamlIlParentStackProvider
+            parentStack)
+            throw new InvalidOperationException($"Service '{nameof(IAvaloniaXamlIlParentStackProvider)}' not found.");
+
+        return (target, parentStack);
+    }
+
     public static IBinding ProvideSysColorBinding(
-        IServiceProvider serviceProvider,
+        IProvideValueTarget target,
+        IAvaloniaXamlIlParentStackProvider parentStack,
         SysColorToken token,
         string? customKey = null,
         Color? fallback = null
@@ -49,7 +65,7 @@ internal static class MaterialColorHelper
         }
 
         var fallbackColor = fallback ?? Colors.Transparent;
-        var scheme = ResolveScheme(serviceProvider);
+        var (scheme, themeHost) = ResolveSchemeAndThemeHost(target, parentStack);
         if (scheme is null)
         {
             return CreateConstantBinding(fallbackColor);
@@ -57,7 +73,7 @@ internal static class MaterialColorHelper
 
         var normalizedKey = customKey?.Trim();
         return CreateThemeAwareBinding(
-            serviceProvider,
+            themeHost,
             scheme,
             fallbackColor,
             theme => ResolveSysColor(scheme, token, normalizedKey, theme, fallbackColor)
@@ -65,21 +81,22 @@ internal static class MaterialColorHelper
     }
 
     public static IBinding ProvideRefColorBinding(
-        IServiceProvider serviceProvider,
+        IProvideValueTarget target,
+        IAvaloniaXamlIlParentStackProvider parentStack,
         RefPaletteToken token,
         byte tone,
         Color? fallback = null
     )
     {
         var fallbackColor = fallback ?? Colors.Transparent;
-        var scheme = ResolveScheme(serviceProvider);
+        var (scheme, themeHost) = ResolveSchemeAndThemeHost(target, parentStack);
         if (scheme is null)
         {
             return CreateConstantBinding(fallbackColor);
         }
 
         return CreateThemeAwareBinding(
-            serviceProvider,
+            themeHost,
             scheme,
             fallbackColor,
             theme => ResolveRefColor(scheme, token, tone, theme, fallbackColor)
@@ -87,26 +104,28 @@ internal static class MaterialColorHelper
     }
 
     public static IBinding ProvideSysBrushBinding(
-        IServiceProvider serviceProvider,
+        IProvideValueTarget target,
+        IAvaloniaXamlIlParentStackProvider parentStack,
         SysColorToken token,
         string? customKey = null,
         IBrush? fallback = null
     )
     {
         var fallbackBrush = fallback ?? TransparentBrush;
-        var colorBinding = ProvideSysColorBinding(serviceProvider, token, customKey);
+        var colorBinding = ProvideSysColorBinding(target, parentStack, token, customKey);
         return CreateBrushBinding(colorBinding, fallbackBrush);
     }
 
     public static IBinding ProvideRefBrushBinding(
-        IServiceProvider serviceProvider,
+        IProvideValueTarget target,
+        IAvaloniaXamlIlParentStackProvider parentStack,
         RefPaletteToken token,
         byte tone,
         IBrush? fallback = null
     )
     {
         var fallbackBrush = fallback ?? TransparentBrush;
-        var colorBinding = ProvideRefColorBinding(serviceProvider, token, tone);
+        var colorBinding = ProvideRefColorBinding(target, parentStack, token, tone);
         return CreateBrushBinding(colorBinding, fallbackBrush);
     }
 
@@ -162,13 +181,12 @@ internal static class MaterialColorHelper
     }
 
     private static IBinding CreateThemeAwareBinding(
-        IServiceProvider serviceProvider,
+        IThemeVariantHost? themeHost,
         MaterialColorScheme scheme,
         Color fallbackColor,
         Func<ThemeVariant, Color> resolveColor
     )
     {
-        var themeHost = ResolveThemeHost(serviceProvider);
         var defaultTheme = themeHost?.ActualThemeVariant ?? ThemeVariant.Light;
 
         var themeBinding = themeHost is not null
@@ -222,49 +240,66 @@ internal static class MaterialColorHelper
         };
     }
 
-    private static IEnumerable<object> EnumerateContextObjects(IServiceProvider serviceProvider)
+    private static IEnumerable<object> EnumerateContextObjects(
+        IProvideValueTarget target,
+        IAvaloniaXamlIlParentStackProvider parentStack
+    )
     {
-        if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget
-            {
-                TargetObject: { } targetObject
-            })
+        if (target is { TargetObject: { } targetObject })
             yield return targetObject;
 
-        if (serviceProvider.GetService(typeof(IAvaloniaXamlIlParentStackProvider)) is
-            IAvaloniaXamlIlEagerParentStackProvider { Parents: { } parents })
+        if (parentStack is { Parents: { } parents })
         {
             foreach (var parent in parents)
+
+                yield return parent;
+        }
+    }
+
+    public static bool ShouldProvideBrush(IProvideValueTarget provideValueTarget)
+    {
+        var targetType = provideValueTarget.TargetProperty switch
+        {
+            AvaloniaProperty avaloniaProperty => avaloniaProperty.PropertyType,
+            PropertyInfo propertyInfo => propertyInfo.PropertyType,
+            _ => null
+        };
+
+        if (targetType is null)
+            return true;
+
+        var underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+        if (underlyingType == typeof(Color))
+            return false;
+
+        return true;
+    }
+
+    private static (MaterialColorScheme?, IThemeVariantHost?) ResolveSchemeAndThemeHost(
+        IProvideValueTarget target,
+        IAvaloniaXamlIlParentStackProvider parentStack
+    )
+    {
+        MaterialColorScheme? scheme = null;
+        IThemeVariantHost? themeHost = null;
+        foreach (var context in EnumerateContextObjects(target, parentStack))
+        {
+            if (context is AvaloniaObject avaloniaObject && scheme is null)
             {
-                if (parent is not null)
-                    yield return parent;
+                scheme = MaterialColor.GetScheme(avaloniaObject);
             }
-        }
-    }
 
-    private static MaterialColorScheme? ResolveScheme(IServiceProvider serviceProvider)
-    {
-        foreach (var context in EnumerateContextObjects(serviceProvider))
-        {
-            if (context is not AvaloniaObject avaloniaObject)
-                continue;
+            if (context is IThemeVariantHost host && themeHost is null)
+            {
+                themeHost = host;
+            }
 
-            var scheme = MaterialColor.GetScheme(avaloniaObject);
-            if (scheme is not null)
-                return scheme;
+            if (scheme is not null && themeHost is not null)
+                break;
         }
 
-        return null;
-    }
-
-    private static IThemeVariantHost? ResolveThemeHost(IServiceProvider serviceProvider)
-    {
-        foreach (var context in EnumerateContextObjects(serviceProvider))
-        {
-            if (context is IThemeVariantHost themeHost)
-                return themeHost;
-        }
-
-        return null;
+        return (scheme, themeHost);
     }
 
     internal static bool RequiresCustomKey(SysColorToken token) =>

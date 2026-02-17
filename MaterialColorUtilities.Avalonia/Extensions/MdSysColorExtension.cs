@@ -30,6 +30,10 @@ public class MdSysColorExtension
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        return ProvideSysColorBinding(serviceProvider, Token, CustomKey);
+        var (target, parentStack) = GetContextServices(serviceProvider);
+
+        return ShouldProvideBrush(target)
+            ? ProvideSysBrushBinding(target, parentStack, Token, CustomKey)
+            : ProvideSysColorBinding(target, parentStack, Token, CustomKey);
     }
 }
