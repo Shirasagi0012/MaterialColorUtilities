@@ -14,6 +14,7 @@ using Avalonia.Markup.Xaml.XamlIl.Runtime;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Styling;
+using MaterialColorUtilities.DynamicColors;
 
 namespace MaterialColorUtilities.Avalonia.Helpers;
 
@@ -21,14 +22,6 @@ internal static class MaterialColorHelper
 {
     private static readonly IBrush TransparentBrush = new ImmutableSolidColorBrush(Colors.Transparent);
     private static readonly Dictionary<uint, IBrush> BrushCache = [];
-
-    private static readonly ClrPropertyInfo SchemeRevisionPropertyInfo =
-        new(
-            nameof(MaterialColorScheme.Revision),
-            target => ((MaterialColorScheme)target).Revision,
-            (_, _) => { },
-            typeof(int)
-        );
 
     private static readonly ClrPropertyInfo ThemeVariantPropertyInfo =
         new(
@@ -65,7 +58,8 @@ internal static class MaterialColorHelper
 
         var fallbackColor = fallback ?? Colors.Transparent;
         var (scheme, themeHost) = ResolveSchemeAndThemeHost(target, parentStack);
-        if (scheme is null) return CreateConstantBinding(fallbackColor);
+        if (scheme is null)
+            return CreateConstantBinding(fallbackColor);
 
         var normalizedKey = customKey?.Trim();
         return CreateThemeAwareBinding(
@@ -90,7 +84,8 @@ internal static class MaterialColorHelper
 
         var fallbackColor = fallback ?? Colors.Transparent;
         var (scheme, themeHost) = ResolveSchemeAndThemeHost(target, parentStack);
-        if (scheme is null) return CreateConstantBinding(fallbackColor);
+        if (scheme is null)
+            return CreateConstantBinding(fallbackColor);
 
         var normalizedKey = customKey?.Trim();
         return CreateThemeAwareBinding(
@@ -173,31 +168,27 @@ internal static class MaterialColorHelper
     {
         var defaultTheme = themeHost?.ActualThemeVariant ?? ThemeVariant.Light;
 
+        var converter =
+            new FuncValueConverter<ThemeVariant, Color>(variant =>
+                variant switch
+                {
+                    { } => resolveColor(variant),
+                    _ => resolveColor(defaultTheme)
+                });
+
         var themeBinding = themeHost is { }
-            ? CreateCompiledBinding(themeHost, ThemeVariantPropertyInfo, defaultTheme)
+            ? CreateCompiledBinding(themeHost, ThemeVariantPropertyInfo, fallbackColor, converter)
             : CreateConstantBinding(defaultTheme);
 
-        var revisionBinding = CreateCompiledBinding(scheme, SchemeRevisionPropertyInfo, 0);
-
-        return new MultiBinding
-        {
-            Priority = BindingPriority.Style,
-            FallbackValue = fallbackColor,
-            Bindings =
-            {
-                themeBinding,
-                revisionBinding
-            },
-            Converter = new FuncMultiValueConverter<object?, Color>(values =>
-                (values as IList<object?> ?? values.ToList()) switch
-                {
-                    [ThemeVariant variant, ..] => resolveColor(variant),
-                    _ => resolveColor(defaultTheme)
-                })
-        };
+        return themeBinding;
     }
 
-    private static IBinding CreateCompiledBinding(object source, ClrPropertyInfo propertyInfo, object fallbackValue)
+    private static IBinding CreateCompiledBinding(
+        object source,
+        ClrPropertyInfo propertyInfo,
+        object fallbackValue,
+        IValueConverter? converter = null
+    )
     {
         return new CompiledBindingExtension
         {
@@ -207,7 +198,8 @@ internal static class MaterialColorHelper
             FallbackValue = fallbackValue,
             Path = new CompiledBindingPathBuilder()
                 .Property(propertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
-                .Build()
+                .Build(),
+            Converter = converter
         };
     }
 
@@ -241,7 +233,8 @@ internal static class MaterialColorHelper
                 AvaloniaProperty avaloniaProperty => avaloniaProperty.PropertyType,
                 PropertyInfo propertyInfo => propertyInfo.PropertyType,
                 _ => null
-            } is not { } type) return true;
+            } is not { } type)
+            return true;
 
         return type != typeof(Color) && type != typeof(Color?);
     }
@@ -258,7 +251,8 @@ internal static class MaterialColorHelper
             if (context is AvaloniaObject avaloniaObject && scheme is null)
                 scheme = MaterialColor.GetScheme(avaloniaObject);
 
-            if (context is IThemeVariantHost host && themeHost is null) themeHost = host;
+            if (context is IThemeVariantHost host && themeHost is null)
+                themeHost = host;
 
             if (scheme is { } && themeHost is { })
                 break;

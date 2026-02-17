@@ -37,12 +37,6 @@ public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
             scheme => scheme.DarkScheme
         );
 
-    public static readonly DirectProperty<MaterialColorScheme, int> RevisionProperty =
-        AvaloniaProperty.RegisterDirect<MaterialColorScheme, int>(
-            nameof(Revision),
-            scheme => scheme.Revision
-        );
-
     private Dictionary<string, TonalPalette> _customPalettes = new(StringComparer.OrdinalIgnoreCase);
 
     public MaterialColorScheme()
@@ -67,12 +61,6 @@ public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
     {
         get;
         private set => SetAndRaise(DarkSchemeProperty, ref field, value);
-    }
-
-    public int Revision
-    {
-        get;
-        private set => SetAndRaise(RevisionProperty, ref field, value);
     }
 
     [ConstructorArgument("scheme")]
@@ -298,8 +286,6 @@ public class MaterialColorScheme : AvaloniaObject, INotifyPropertyChanged
         }
 
         _customPalettes = BuildCustomPalettes();
-        Revision = unchecked(Revision + 1);
-        Changed?.Invoke(this, EventArgs.Empty);
     }
 
     private Dictionary<string, TonalPalette> BuildCustomPalettes()
