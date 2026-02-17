@@ -59,7 +59,7 @@ internal static class MaterialColorHelper
         Color? fallback = null
     )
     {
-        if (RequiresCustomKey(token) && String.IsNullOrWhiteSpace(customKey))
+        if (TokenHelper.IsCustom(token) && String.IsNullOrWhiteSpace(customKey))
             throw new InvalidOperationException($"Token '{token}' requires a non-empty custom key.");
 
         var fallbackColor = fallback ?? Colors.Transparent;
@@ -129,18 +129,12 @@ internal static class MaterialColorHelper
             FallbackValue = fallbackBrush,
             Bindings = { colorBinding },
             Converter = new FuncMultiValueConverter<object?, IBrush>(values =>
-            {
-                var list = values as IList<object?> ?? values.ToList();
-                return list switch
+                (values as IList<object?> ?? values.ToList()) switch
                 {
-                    [BindingNotification { Value: Color color }, ..] => GetCachedBrush(color),
-                    [BindingNotification { Value: IBrush brush }, ..] => brush,
-                    [BindingNotification, ..] => fallbackBrush,
                     [Color color, ..] => GetCachedBrush(color),
                     [IBrush brush, ..] => brush,
                     _ => fallbackBrush
-                };
-            })
+                })
         };
     }
 
@@ -233,28 +227,19 @@ internal static class MaterialColorHelper
 
         if (parentStack is { Parents: { } parents })
             foreach (var parent in parents)
-
                 yield return parent;
     }
 
     public static bool ShouldProvideBrush(IProvideValueTarget provideValueTarget)
     {
-        var targetType = provideValueTarget.TargetProperty switch
-        {
-            AvaloniaProperty avaloniaProperty => avaloniaProperty.PropertyType,
-            PropertyInfo propertyInfo => propertyInfo.PropertyType,
-            _ => null
-        };
+        if (provideValueTarget.TargetProperty switch
+            {
+                AvaloniaProperty avaloniaProperty => avaloniaProperty.PropertyType,
+                PropertyInfo propertyInfo => propertyInfo.PropertyType,
+                _ => null
+            } is not { } type) return true;
 
-        if (targetType is null)
-            return true;
-
-        var underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
-
-        if (underlyingType == typeof(Color))
-            return false;
-
-        return true;
+        return type != typeof(Color) && type != typeof(Color?);
     }
 
     private static (MaterialColorScheme?, IThemeVariantHost?) ResolveSchemeAndThemeHost(
@@ -278,13 +263,6 @@ internal static class MaterialColorHelper
         return (scheme, themeHost);
     }
 
-    internal static bool RequiresCustomKey(SysColorToken token)
-    {
-        return token is SysColorToken.Custom
-            or SysColorToken.OnCustom
-            or SysColorToken.CustomContainer
-            or SysColorToken.OnCustomContainer;
-    }
 
     private static Color ResolveSysColor(
         MaterialColorScheme scheme,
@@ -296,7 +274,7 @@ internal static class MaterialColorHelper
     {
         try
         {
-            if (RequiresCustomKey(token))
+            if (TokenHelper.IsCustom(token))
                 return scheme.Resolve(customKey!, token, themeVariant) ?? fallbackColor;
 
             return scheme.Resolve(token, themeVariant) ?? fallbackColor;

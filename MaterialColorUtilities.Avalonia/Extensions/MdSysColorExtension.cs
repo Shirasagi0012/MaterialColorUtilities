@@ -17,7 +17,7 @@ public class MdSysColorExtension
 
     public MdSysColorExtension(SysColorToken token, string customKey)
     {
-        if (!RequiresCustomKey(token))
+        if (!TokenHelper.IsCustom(token))
             throw new ArgumentException($"The token '{token}' does not support a custom key.", nameof(token));
 
         Token = token;

@@ -66,3 +66,21 @@ public enum RefPaletteToken
     NeutralVariant,
     Error
 }
+
+public static class TokenHelper
+{
+    public static bool IsCustom(SysColorToken token)
+    {
+        return token is SysColorToken.Custom
+            or SysColorToken.OnCustom
+            or SysColorToken.CustomContainer
+            or SysColorToken.OnCustomContainer;
+    }
+
+
+    // TODO: custom palette not implemented now, reserved for later.
+    public static bool IsCustom(RefPaletteToken token)
+    {
+        return false;
+    }
+}
