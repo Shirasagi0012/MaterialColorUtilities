@@ -64,6 +64,7 @@ internal static class MaterialColorHelper
         var normalizedKey = customKey?.Trim();
         return CreateThemeAwareBinding(
             themeHost,
+            target.TargetObject,
             scheme,
             fallbackColor,
             theme => ResolveSysColor(scheme, token, normalizedKey, theme, fallbackColor)
@@ -90,6 +91,7 @@ internal static class MaterialColorHelper
         var normalizedKey = customKey?.Trim();
         return CreateThemeAwareBinding(
             themeHost,
+            target.TargetObject,
             scheme,
             fallbackColor,
             theme => ResolveRefColor(scheme, token, tone, normalizedKey, theme, fallbackColor)
@@ -161,6 +163,7 @@ internal static class MaterialColorHelper
 
     private static IBinding CreateThemeAwareBinding(
         IThemeVariantHost? themeHost,
+        object target,
         MaterialColorScheme scheme,
         Color fallbackColor,
         Func<ThemeVariant, Color> resolveColor
@@ -176,31 +179,25 @@ internal static class MaterialColorHelper
                     _ => resolveColor(defaultTheme)
                 });
 
-        var themeBinding = themeHost is { }
-            ? CreateCompiledBinding(themeHost, ThemeVariantPropertyInfo, fallbackColor, converter)
-            : CreateConstantBinding(defaultTheme);
-
-        return themeBinding;
-    }
-
-    private static IBinding CreateCompiledBinding(
-        object source,
-        ClrPropertyInfo propertyInfo,
-        object fallbackValue,
-        IValueConverter? converter = null
-    )
-    {
-        return new CompiledBindingExtension
+        var compiledBinding = (IBinding)new CompiledBindingExtension
         {
             Mode = BindingMode.OneWay,
             Priority = BindingPriority.Style,
-            Source = source,
-            FallbackValue = fallbackValue,
+            Source = themeHost,
+            FallbackValue = fallbackColor,
             Path = new CompiledBindingPathBuilder()
-                .Property(propertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
+                .Property(ThemeVariantPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
                 .Build(),
             Converter = converter
         };
+
+        var constantBinding = CreateConstantBinding(defaultTheme);
+
+        var themeBinding = themeHost is { }
+            ? compiledBinding
+            : constantBinding;
+
+        return themeBinding;
     }
 
     private static IBinding CreateConstantBinding(object value)
@@ -246,7 +243,9 @@ internal static class MaterialColorHelper
     {
         MaterialColorScheme? scheme = null;
         IThemeVariantHost? themeHost = null;
-        foreach (var context in EnumerateContextObjects(target, parentStack))
+        // TODO: debug | foreach (var context in EnumerateContextObjects(target, parentStack))
+        var list = EnumerateContextObjects(target, parentStack).ToList();
+        foreach (var context in list)
         {
             if (context is AvaloniaObject avaloniaObject && scheme is null)
                 scheme = MaterialColor.GetScheme(avaloniaObject);
@@ -273,9 +272,9 @@ internal static class MaterialColorHelper
         try
         {
             if (TokenHelper.IsCustom(token))
-                return scheme.Resolve(customKey!, token, themeVariant) ?? fallbackColor;
+                return scheme.Internal.ResolveSys(token, themeVariant, customKey) ?? fallbackColor;
 
-            return scheme.Resolve(token, themeVariant) ?? fallbackColor;
+            return scheme.Internal.ResolveSys(token, themeVariant) ?? fallbackColor;
         }
         catch
         {
@@ -295,9 +294,9 @@ internal static class MaterialColorHelper
         try
         {
             if (TokenHelper.IsCustom(token))
-                return scheme.Resolve(customKey!, token, tone, themeVariant) ?? fallbackColor;
+                return scheme.Internal.ResolveRef(token, tone, customKey) ?? fallbackColor;
 
-            return scheme.Resolve(token, tone, themeVariant) ?? fallbackColor;
+            return scheme.Internal.ResolveRef(token, tone) ?? fallbackColor;
         }
         catch
         {

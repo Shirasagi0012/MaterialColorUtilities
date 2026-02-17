@@ -6,9 +6,10 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:mcu="clr-namespace:MaterialColorUtilities.Avalonia;assembly=MaterialColorUtilities.Avalonia"
 	xmlns:vm="using:MaterialColorUtilities.Gallery.ViewModels"
+	xmlns:views="using:MaterialColorUtilities.Gallery.Views"
 	Title="MaterialColorUtilities.Gallery"
-	d:DesignHeight="450"
-	d:DesignWidth="800"
+	d:DesignHeight="720"
+	d:DesignWidth="1200"
 	x:DataType="vm:MainWindowViewModel"
 	Icon="/Assets/avalonia-logo.ico"
 	mc:Ignorable="d">
@@ -21,45 +22,41 @@
 		</mcu:MaterialColorScheme>
 	</mcu:MaterialColor.Scheme>
 	<ThemeVariantScope RequestedThemeVariant="{Binding #ThemeSwitcher.((ComboBoxItem)SelectedItem).Content, FallbackValue={x:Static ThemeVariant.Dark}}">
-		<StackPanel Background="{mcu:MdSysColor Primary}">
-
-			<TextBlock
-				Margin="0,12,0,0"
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center"
-				FontSize="40"
-				Foreground="{mcu:MdSysColor OnPrimary}"
-				Text="Material Color Utilities" />
-
+		<DockPanel LastChildFill="True">
 			<Border
-				Margin="16,12,16,0"
-				Padding="16"
-				Background="{mcu:MdSysColor Custom, Favorite}">
-				<TextBlock
-					HorizontalAlignment="Center"
-					Foreground="{mcu:MdSysColor OnCustom, Favorite}"
-					Text="Sys custom role (Favorite)" />
+				Background="{mcu:MdSysColor SurfaceContainerLow}"
+				DockPanel.Dock="Top"
+				Padding="16">
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" RowDefinitions="Auto Auto" RowSpacing="12">
+					<TextBlock
+						FontSize="28"
+						FontWeight="SemiBold"
+						Foreground="{mcu:MdSysColor OnSurface}"
+						Grid.ColumnSpan="2"
+						Text="Material Color Utilities - Color Scheme" />
+					<TextBlock
+						Foreground="{mcu:MdSysColor OnSurfaceVariant}"
+						Grid.Row="1"
+						Text="Migrated from legacy DynamicResource keys to refactored MdSysColor tokens." />
+					<ComboBox
+						x:Name="ThemeSwitcher"
+						Grid.Column="1"
+						Grid.Row="1"
+						SelectedIndex="0"
+						Width="140">
+						<ComboBoxItem Content="{x:Static ThemeVariant.Default}" />
+						<ComboBoxItem Content="{x:Static ThemeVariant.Light}" />
+						<ComboBoxItem Content="{x:Static ThemeVariant.Dark}" />
+					</ComboBox>
+				</Grid>
 			</Border>
 
-			<Border
-				Margin="16,12,16,0"
-				Padding="16"
-				Background="{mcu:MdRefPalette Custom, 60, Favorite}">
-				<TextBlock
-					HorizontalAlignment="Center"
-					Foreground="{mcu:MdSysColor OnPrimary}"
-					Text="Ref custom palette tone 60 (Favorite)" />
-			</Border>
-
-			<ComboBox
-				x:Name="ThemeSwitcher"
-				Margin="0,12,0,0"
-				HorizontalAlignment="Center"
-				SelectedIndex="0">
-				<ComboBoxItem Content="{x:Static ThemeVariant.Default}" />
-				<ComboBoxItem Content="{x:Static ThemeVariant.Light}" />
-				<ComboBoxItem Content="{x:Static ThemeVariant.Dark}" />
-			</ComboBox>
-		</StackPanel>
+			<ScrollViewer
+				HorizontalScrollBarVisibility="Auto"
+				Margin="16"
+				VerticalScrollBarVisibility="Auto">
+				<views:ColorSchemeView />
+			</ScrollViewer>
+		</DockPanel>
 	</ThemeVariantScope>
 </Window>

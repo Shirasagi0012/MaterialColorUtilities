@@ -1,0 +1,469 @@
+<UserControl
+	x:Class="MaterialColorUtilities.Gallery.Views.ColorSchemeView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:mcu="clr-namespace:MaterialColorUtilities.Avalonia;assembly=MaterialColorUtilities.Avalonia"
+	d:DesignHeight="650"
+	d:DesignWidth="1000"
+	mc:Ignorable="d">
+	<UserControl.Styles>
+		<Style Selector="TextBlock.label-medium">
+			<Setter Property="FontSize" Value="12" />
+			<Setter Property="FontWeight" Value="Medium" />
+		</Style>
+
+		<Style Selector="Border#ColorTable TextBlock">
+			<Setter Property="Padding" Value="16 8" />
+			<Setter Property="HorizontalAlignment" Value="Left" />
+			<Setter Property="VerticalAlignment" Value="Top" />
+			<Setter Property="TextWrapping" Value="Wrap" />
+		</Style>
+
+		<Style Selector="Border#ColorTable Border">
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Stretch" />
+			<Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Duration="0:0:0.2" Property="Background" />
+				</Transitions>
+			</Setter>
+		</Style>
+
+		<Style Selector="Grid.single-width">
+			<Setter Property="Width" Value="196" />
+		</Style>
+
+		<Style Selector="Grid.triple-width">
+			<Setter Property="Width" Value="596" />
+		</Style>
+
+		<Style Selector="Grid#BaseColors Grid Border:nth-child(1)">
+			<Setter Property="Height" Value="56" />
+		</Style>
+		<Style Selector="Grid#BaseColors Grid Border:nth-child(2)">
+			<Setter Property="Height" Value="40" />
+		</Style>
+		<Style Selector="Grid#BaseColors Grid Border:nth-child(3)">
+			<Setter Property="Height" Value="56" />
+		</Style>
+		<Style Selector="Grid#BaseColors Grid Border:nth-child(4)">
+			<Setter Property="Height" Value="40" />
+		</Style>
+
+		<Style Selector="Grid#ErrorColors Border:nth-child(1)">
+			<Setter Property="Height" Value="56" />
+		</Style>
+		<Style Selector="Grid#ErrorColors Border:nth-child(2)">
+			<Setter Property="Height" Value="40" />
+		</Style>
+		<Style Selector="Grid#ErrorColors Border:nth-child(3)">
+			<Setter Property="Height" Value="56" />
+		</Style>
+		<Style Selector="Grid#ErrorColors Border:nth-child(4)">
+			<Setter Property="Height" Value="40" />
+		</Style>
+
+		<Style Selector="Grid#BaseFixedColors Grid Border:nth-child(1)">
+			<Setter Property="Height" Value="56" />
+		</Style>
+		<Style Selector="Grid#BaseFixedColors Grid Border:nth-child(2)">
+			<Setter Property="Height" Value="56" />
+		</Style>
+		<Style Selector="Grid#BaseFixedColors Grid Border:nth-child(3)">
+			<Setter Property="Height" Value="36" />
+		</Style>
+		<Style Selector="Grid#BaseFixedColors Grid Border:nth-child(4)">
+			<Setter Property="Height" Value="36" />
+		</Style>
+
+		<Style Selector="Grid#BackgroundColors Border:nth-child(1)">
+			<Setter Property="Height" Value="72" />
+		</Style>
+		<Style Selector="Grid#BackgroundColors Border:nth-child(2)">
+			<Setter Property="Height" Value="56" />
+		</Style>
+
+		<Style Selector="Grid#SurfaceColors Grid:nth-child(1)">
+			<Setter Property="Height" Value="64" />
+		</Style>
+		<Style Selector="Grid#SurfaceColors Grid:nth-child(2)">
+			<Setter Property="Height" Value="72" />
+		</Style>
+		<Style Selector="Grid#SurfaceColors Grid:nth-child(3)">
+			<Setter Property="Height" Value="40" />
+		</Style>
+
+		<Style Selector="Grid#OtherColors > Grid:nth-child(1)">
+			<Setter Property="Height" Value="72" />
+		</Style>
+		<Style Selector="Grid#OtherColors > Border:nth-child(2)">
+			<Setter Property="Height" Value="40" />
+		</Style>
+		<Style Selector="Grid#OtherColors > Grid:nth-child(3)">
+			<Setter Property="Height" Value="40" />
+		</Style>
+	</UserControl.Styles>
+
+	<Border x:Name="ColorTable">
+		<Grid
+			ColumnDefinitions="Auto Auto"
+			ColumnSpacing="16"
+			RowDefinitions="Auto Auto Auto Auto"
+			RowSpacing="16">
+			<!-- Base Colors -->
+			<Grid
+				x:Name="BaseColors"
+				ColumnDefinitions="* * *"
+				ColumnSpacing="4">
+				<!-- Primary -->
+				<Grid Classes="single-width" RowDefinitions="Auto Auto 4 Auto Auto">
+					<Border Background="{mcu:MdSysColor Primary}" Grid.Row="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimary}">Primary</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnPrimary}" Grid.Row="1">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Primary}">
+							On Primary
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor PrimaryContainer}" Grid.Row="3">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimaryContainer}">
+							Primary Container
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnPrimaryContainer}" Grid.Row="4">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor PrimaryContainer}">
+							On Primary Container
+						</TextBlock>
+					</Border>
+				</Grid>
+
+				<!-- Secondary -->
+				<Grid
+					Classes="single-width"
+					Column="1"
+					RowDefinitions="Auto Auto 4 Auto Auto">
+					<Border Background="{mcu:MdSysColor Secondary}" Grid.Row="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSecondary}">Secondary</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnSecondary}" Grid.Row="1">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Secondary}">
+							On Secondary
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor SecondaryContainer}" Grid.Row="3">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSecondaryContainer}">
+							Secondary Container
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnSecondaryContainer}" Grid.Row="4">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor SecondaryContainer}">
+							On Secondary Container
+						</TextBlock>
+					</Border>
+				</Grid>
+
+				<!-- Tertiary -->
+				<Grid
+					Classes="single-width"
+					Column="2"
+					RowDefinitions="Auto Auto 4 Auto Auto">
+					<Border Background="{mcu:MdSysColor Tertiary}" Grid.Row="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnTertiary}">Tertiary</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnTertiary}" Grid.Row="1">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Tertiary}">
+							On Tertiary
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor TertiaryContainer}" Grid.Row="3">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnTertiaryContainer}">
+							Tertiary Container
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnTertiaryContainer}" Grid.Row="4">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor TertiaryContainer}">
+							On Tertiary Container
+						</TextBlock>
+					</Border>
+				</Grid>
+			</Grid>
+
+			<!-- Error Color -->
+			<Grid
+				x:Name="ErrorColors"
+				Classes="single-width"
+				Column="1"
+				Row="0"
+				RowDefinitions="Auto Auto 4 Auto Auto">
+				<Border Background="{mcu:MdSysColor Error}" Grid.Row="0">
+					<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnError}">Error</TextBlock>
+				</Border>
+				<Border Background="{mcu:MdSysColor OnError}" Grid.Row="1">
+					<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Error}">
+						On Error
+					</TextBlock>
+				</Border>
+				<Border Background="{mcu:MdSysColor ErrorContainer}" Grid.Row="3">
+					<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnErrorContainer}">
+						Error Container
+					</TextBlock>
+				</Border>
+				<Border Background="{mcu:MdSysColor OnErrorContainer}" Grid.Row="4">
+					<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor ErrorContainer}">
+						On Error Container
+					</TextBlock>
+				</Border>
+			</Grid>
+
+			<!-- Base Fixed Colors -->
+			<Grid
+				x:Name="BaseFixedColors"
+				Column="0"
+				ColumnDefinitions="Auto Auto Auto"
+				ColumnSpacing="4"
+				Row="1">
+				<!-- Primary -->
+				<Grid
+					Classes="single-width"
+					Column="0"
+					ColumnDefinitions="* *"
+					RowDefinitions="Auto Auto Auto">
+					<Border Background="{mcu:MdSysColor PrimaryFixed}" Grid.Row="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimaryFixed}">
+							Primary Fixed
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor PrimaryFixedDim}" Grid.Column="1" Grid.Row="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimaryFixed}">
+							Primary Fixed Dim
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnPrimaryFixed}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor PrimaryFixed}">
+							On Primary Fixed
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnPrimaryFixedVariant}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor PrimaryFixed}">
+							On Primary Fixed Variant
+						</TextBlock>
+					</Border>
+				</Grid>
+
+				<!-- Secondary -->
+				<Grid
+					Classes="single-width"
+					Column="1"
+					ColumnDefinitions="* *"
+					RowDefinitions="Auto Auto Auto">
+					<Border Background="{mcu:MdSysColor SecondaryFixed}" Grid.Row="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSecondaryFixed}">
+							Secondary Fixed
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor SecondaryFixedDim}" Grid.Column="1" Grid.Row="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSecondaryFixed}">
+							Secondary Fixed Dim
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnSecondaryFixed}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor SecondaryFixed}">
+							On Secondary Fixed
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnSecondaryFixedVariant}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor SecondaryFixed}">
+							On Secondary Fixed Variant
+						</TextBlock>
+					</Border>
+				</Grid>
+
+				<!-- Tertiary -->
+				<Grid
+					Classes="single-width"
+					Column="2"
+					ColumnDefinitions="* *"
+					RowDefinitions="Auto Auto Auto">
+					<Border Background="{mcu:MdSysColor TertiaryFixed}" Grid.Row="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnTertiaryFixed}">
+							Tertiary Fixed
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor TertiaryFixedDim}" Grid.Column="1" Grid.Row="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnTertiaryFixed}">
+							Tertiary Fixed Dim
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnTertiaryFixed}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor TertiaryFixed}">
+							On Tertiary Fixed
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnTertiaryFixedVariant}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor TertiaryFixed}">
+							On Tertiary Fixed Variant
+						</TextBlock>
+					</Border>
+				</Grid>
+			</Grid>
+
+			<!-- Background Colors -->
+			<Grid
+				x:Name="BackgroundColors"
+				Classes="single-width"
+				Column="1"
+				Row="1"
+				RowDefinitions="Auto Auto">
+				<Border Background="{mcu:MdSysColor Background}" Grid.Row="0">
+					<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnBackground}">Background</TextBlock>
+				</Border>
+				<Border Background="{mcu:MdSysColor OnBackground}" Grid.Row="1">
+					<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Background}">
+						On
+						Background
+					</TextBlock>
+				</Border>
+			</Grid>
+
+			<!-- Surface Colors -->
+			<Grid
+				x:Name="SurfaceColors"
+				Classes="triple-width"
+				Column="0"
+				Row="2"
+				RowDefinitions="Auto Auto Auto"
+				RowSpacing="4">
+				<Grid ColumnDefinitions="* * *" Row="0">
+					<Border Background="{mcu:MdSysColor SurfaceDim}" Grid.Column="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
+							Surface
+							Dim
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor Surface}" Grid.Column="1">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">Surface</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor SurfaceBright}" Grid.Column="2">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
+							Surface
+							Bright
+						</TextBlock>
+					</Border>
+				</Grid>
+				<Grid ColumnDefinitions="* * * * *" Row="1">
+					<Border Background="{mcu:MdSysColor SurfaceContainerLowest}" Grid.Column="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
+							Surface
+							Container Lowest
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor SurfaceContainerLow}" Grid.Column="1">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
+							Surface
+							Container Low
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor SurfaceContainer}" Grid.Column="2">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
+							Surface
+							Container
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor SurfaceContainerHigh}" Grid.Column="3">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
+							Surface
+							Container High
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor SurfaceContainerHighest}" Grid.Column="4">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
+							Surface
+							Container Highest
+						</TextBlock>
+					</Border>
+				</Grid>
+				<Grid ColumnDefinitions="* * * *" Row="2">
+					<Border Background="{mcu:MdSysColor OnSurface}" Grid.Column="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Surface}">
+							On
+							Surface
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OnSurfaceVariant}" Grid.Column="1">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Surface}">
+							On
+							Surface Variant
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor Outline}" Grid.Column="2">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Surface}">Outline</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor OutlineVariant}" Grid.Column="3">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
+							Outline
+							Variant
+						</TextBlock>
+					</Border>
+				</Grid>
+			</Grid>
+
+			<!-- Other Colors -->
+			<Grid
+				x:Name="OtherColors"
+				Classes="single-width"
+				Grid.Column="1"
+				Grid.Row="2"
+				RowDefinitions="Auto Auto *"
+				RowSpacing="4">
+				<Grid Row="0" RowDefinitions="* *">
+					<Border Background="{mcu:MdSysColor InverseSurface}" Grid.Row="0">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor InverseOnSurface}">
+							Inverse
+							Surface
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor InverseOnSurface}" Grid.Row="1">
+						<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor InverseSurface}">
+							Inverse
+							On Surface
+						</TextBlock>
+					</Border>
+				</Grid>
+				<Border Background="{mcu:MdSysColor InversePrimary}" Grid.Row="1">
+					<TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
+						Inverse
+						Primary
+					</TextBlock>
+				</Border>
+				<Grid
+					ColumnDefinitions="* *"
+					ColumnSpacing="16"
+					Row="2"
+					VerticalAlignment="Bottom">
+					<Grid.Resources>
+						<ResourceDictionary>
+							<ResourceDictionary.ThemeDictionaries>
+								<ResourceDictionary x:Key="Light">
+									<SolidColorBrush x:Key="TextBlockColorBrush" Color="{mcu:MdSysColor InverseOnSurface}" />
+								</ResourceDictionary>
+								<ResourceDictionary x:Key="Dark">
+									<SolidColorBrush x:Key="TextBlockColorBrush" Color="{mcu:MdSysColor OnSurface}" />
+								</ResourceDictionary>
+							</ResourceDictionary.ThemeDictionaries>
+						</ResourceDictionary>
+					</Grid.Resources>
+					<Border Background="{mcu:MdSysColor Scrim}" Grid.Column="0">
+						<TextBlock Classes="label-medium" Foreground="{DynamicResource TextBlockColorBrush}">
+							Scrim
+						</TextBlock>
+					</Border>
+					<Border Background="{mcu:MdSysColor Shadow}" Grid.Column="1">
+						<TextBlock Classes="label-medium" Foreground="{DynamicResource TextBlockColorBrush}">Shadow</TextBlock>
+					</Border>
+				</Grid>
+			</Grid>
+		</Grid>
+	</Border>
+</UserControl>

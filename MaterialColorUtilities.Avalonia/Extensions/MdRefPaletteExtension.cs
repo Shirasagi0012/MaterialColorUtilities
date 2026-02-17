@@ -1,6 +1,6 @@
 using System;
 using Avalonia.Markup.Xaml;
-using static MaterialColorUtilities.Avalonia.Helpers.MaterialColorHelper;
+using static MaterialColorUtilities.Avalonia.Helpers.NewHelper;
 
 namespace MaterialColorUtilities.Avalonia;
 
