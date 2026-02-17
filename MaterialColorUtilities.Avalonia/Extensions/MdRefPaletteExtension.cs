@@ -16,6 +16,18 @@ public class MdRefPaletteExtension
         Tone = tone;
     }
 
+    public MdRefPaletteExtension(RefPaletteToken palette, byte tone, string customKey)
+    {
+        if (!TokenHelper.IsCustom(palette))
+            throw new ArgumentException($"The token '{palette}' does not support a custom key.", nameof(palette));
+
+        Palette = palette;
+        Tone = tone;
+        CustomKey = customKey;
+    }
+
+    [ConstructorArgument("customKey")] public string? CustomKey { get; set; }
+
     [ConstructorArgument("palette")] public RefPaletteToken Palette { get; set; }
 
     [ConstructorArgument("tone")]
@@ -32,7 +44,7 @@ public class MdRefPaletteExtension
         var (target, parentStack) = GetContextServices(serviceProvider);
 
         return ShouldProvideBrush(target)
-            ? ProvideRefBrushBinding(target, parentStack, Palette, Tone)
-            : ProvideRefColorBinding(target, parentStack, Palette, Tone);
+            ? ProvideRefBrushBinding(target, parentStack, Palette, Tone, CustomKey)
+            : ProvideRefColorBinding(target, parentStack, Palette, Tone, CustomKey);
     }
 }

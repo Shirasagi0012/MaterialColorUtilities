@@ -81,18 +81,23 @@ internal static class MaterialColorHelper
         IAvaloniaXamlIlParentStackProvider parentStack,
         RefPaletteToken token,
         byte tone,
+        string? customKey = null,
         Color? fallback = null
     )
     {
+        if (TokenHelper.IsCustom(token) && String.IsNullOrWhiteSpace(customKey))
+            throw new InvalidOperationException($"Token '{token}' requires a non-empty custom key.");
+
         var fallbackColor = fallback ?? Colors.Transparent;
         var (scheme, themeHost) = ResolveSchemeAndThemeHost(target, parentStack);
         if (scheme is null) return CreateConstantBinding(fallbackColor);
 
+        var normalizedKey = customKey?.Trim();
         return CreateThemeAwareBinding(
             themeHost,
             scheme,
             fallbackColor,
-            theme => ResolveRefColor(scheme, token, tone, theme, fallbackColor)
+            theme => ResolveRefColor(scheme, token, tone, normalizedKey, theme, fallbackColor)
         );
     }
 
@@ -114,11 +119,12 @@ internal static class MaterialColorHelper
         IAvaloniaXamlIlParentStackProvider parentStack,
         RefPaletteToken token,
         byte tone,
+        string? customKey = null,
         IBrush? fallback = null
     )
     {
         var fallbackBrush = fallback ?? TransparentBrush;
-        var colorBinding = ProvideRefColorBinding(target, parentStack, token, tone);
+        var colorBinding = ProvideRefColorBinding(target, parentStack, token, tone, customKey);
         return CreateBrushBinding(colorBinding, fallbackBrush);
     }
 
@@ -287,12 +293,16 @@ internal static class MaterialColorHelper
         MaterialColorScheme scheme,
         RefPaletteToken token,
         byte tone,
+        string? customKey,
         ThemeVariant themeVariant,
         Color fallbackColor
     )
     {
         try
         {
+            if (TokenHelper.IsCustom(token))
+                return scheme.Resolve(customKey!, token, tone, themeVariant) ?? fallbackColor;
+
             return scheme.Resolve(token, tone, themeVariant) ?? fallbackColor;
         }
         catch

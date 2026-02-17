@@ -9,22 +9,51 @@
 	Title="MaterialColorUtilities.Gallery"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
-	mcu:MaterialColor.Scheme="{mcu:MaterialColorScheme {mcu:TonalSpotScheme Color=Green}}"
 	x:DataType="vm:MainWindowViewModel"
 	Icon="/Assets/avalonia-logo.ico"
 	mc:Ignorable="d">
-	<ThemeVariantScope RequestedThemeVariant="{Binding #ThemeSwitcher.((ComboBoxItem)SelectedItem).Content, FallbackValue={x:Static ThemeVariant.Default}}">
+	<mcu:MaterialColor.Scheme>
+		<mcu:MaterialColorScheme Scheme="{mcu:TonalSpotScheme Color=Green}">
+			<mcu:MaterialCustomColor
+				Blend="False"
+				Color="Red"
+				Key="Favorite" />
+		</mcu:MaterialColorScheme>
+	</mcu:MaterialColor.Scheme>
+	<ThemeVariantScope RequestedThemeVariant="{Binding #ThemeSwitcher.((ComboBoxItem)SelectedItem).Content, FallbackValue={x:Static ThemeVariant.Dark}}">
 		<StackPanel Background="{mcu:MdSysColor Primary}">
 
 			<TextBlock
+				Margin="0,12,0,0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center"
 				FontSize="40"
 				Foreground="{mcu:MdSysColor OnPrimary}"
 				Text="Material Color Utilities" />
 
+			<Border
+				Margin="16,12,16,0"
+				Padding="16"
+				Background="{mcu:MdSysColor Custom, Favorite}">
+				<TextBlock
+					HorizontalAlignment="Center"
+					Foreground="{mcu:MdSysColor OnCustom, Favorite}"
+					Text="Sys custom role (Favorite)" />
+			</Border>
+
+			<Border
+				Margin="16,12,16,0"
+				Padding="16"
+				Background="{mcu:MdRefPalette Custom, 60, Favorite}">
+				<TextBlock
+					HorizontalAlignment="Center"
+					Foreground="{mcu:MdSysColor OnPrimary}"
+					Text="Ref custom palette tone 60 (Favorite)" />
+			</Border>
+
 			<ComboBox
 				x:Name="ThemeSwitcher"
+				Margin="0,12,0,0"
 				HorizontalAlignment="Center"
 				SelectedIndex="0">
 				<ComboBoxItem Content="{x:Static ThemeVariant.Default}" />

@@ -64,7 +64,8 @@ public enum RefPaletteToken
     Tertiary,
     Neutral,
     NeutralVariant,
-    Error
+    Error,
+    Custom
 }
 
 public static class TokenHelper
@@ -78,9 +79,8 @@ public static class TokenHelper
     }
 
 
-    // TODO: custom palette not implemented now, reserved for later.
     public static bool IsCustom(RefPaletteToken token)
     {
-        return false;
+        return token is RefPaletteToken.Custom;
     }
 }

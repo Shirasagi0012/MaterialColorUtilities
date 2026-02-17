@@ -42,9 +42,6 @@ public class MaterialColorScheme : AvaloniaObject
             scheme => scheme.Revision
         );
 
-    private DynamicScheme? _lightScheme;
-    private DynamicScheme? _darkScheme;
-    private int _revision;
     private Dictionary<string, TonalPalette> _customPalettes = new(StringComparer.OrdinalIgnoreCase);
 
     public MaterialColorScheme()
@@ -63,20 +60,20 @@ public class MaterialColorScheme : AvaloniaObject
 
     public DynamicScheme? LightScheme
     {
-        get => _lightScheme;
-        private set => SetAndRaise(LightSchemeProperty, ref _lightScheme, value);
+        get;
+        private set => SetAndRaise(LightSchemeProperty, ref field, value);
     }
 
     public DynamicScheme? DarkScheme
     {
-        get => _darkScheme;
-        private set => SetAndRaise(DarkSchemeProperty, ref _darkScheme, value);
+        get;
+        private set => SetAndRaise(DarkSchemeProperty, ref field, value);
     }
 
     public int Revision
     {
-        get => _revision;
-        private set => SetAndRaise(RevisionProperty, ref _revision, value);
+        get;
+        private set => SetAndRaise(RevisionProperty, ref field, value);
     }
 
     [ConstructorArgument("scheme")]
@@ -128,6 +125,21 @@ public class MaterialColorScheme : AvaloniaObject
 
         var tone = GetCustomRoleTone(role, IsDark(themeVariant));
         return palette.Get(tone).ToAvaloniaColor();
+    }
+
+    public Color? Resolve(string key, RefPaletteToken palette, byte tone, ThemeVariant themeVariant)
+    {
+        if (String.IsNullOrWhiteSpace(key))
+            return null;
+
+        if (!TokenHelper.IsCustom(palette))
+            throw new ArgumentOutOfRangeException(nameof(palette));
+
+        var normalized = key.Trim();
+        if (!_customPalettes.TryGetValue(normalized, out var customPalette))
+            return null;
+
+        return customPalette.Get(tone).ToAvaloniaColor();
     }
 
     private static ArgbColor? ResolveSysArgb(DynamicScheme scheme, SysColorToken token)
@@ -313,21 +325,5 @@ public class MaterialColorScheme : AvaloniaObject
         }
 
         return result;
-    }
-}
-
-public class MaterialColorSchemeExtension : MaterialColorScheme
-{
-    public MaterialColorSchemeExtension()
-    {
-    }
-
-    public MaterialColorSchemeExtension(ISchemeProvider scheme) : base(scheme)
-    {
-    }
-
-    public MaterialColorScheme ProvideTypedValue(IServiceProvider serviceProvider)
-    {
-        return this;
     }
 }
