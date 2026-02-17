@@ -131,25 +131,16 @@ internal static class MaterialColorHelper
             Converter = new FuncMultiValueConverter<object?, IBrush>(values =>
             {
                 var list = values as IList<object?> ?? values.ToList();
-                if (list.Count == 0)
-                    return fallbackBrush;
-
-                return ResolveBrushValue(list[0], fallbackBrush);
+                return list switch
+                {
+                    [BindingNotification { Value: Color color }, ..] => GetCachedBrush(color),
+                    [BindingNotification { Value: IBrush brush }, ..] => brush,
+                    [BindingNotification, ..] => fallbackBrush,
+                    [Color color, ..] => GetCachedBrush(color),
+                    [IBrush brush, ..] => brush,
+                    _ => fallbackBrush
+                };
             })
-        };
-    }
-
-    private static IBrush ResolveBrushValue(object? value, IBrush fallbackBrush)
-    {
-        if (value is BindingNotification notification)
-            value = notification.Value;
-
-        return value switch
-        {
-            Color color => GetCachedBrush(color),
-            ISolidColorBrush solidBrush => solidBrush,
-            IBrush brush => brush,
-            _ => fallbackBrush
         };
     }
 
