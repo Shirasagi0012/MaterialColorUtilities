@@ -12,23 +12,33 @@ using global::Avalonia.Media;
 /// </summary>
 public sealed class TonalSpotScheme : SchemeProviderBase
 {
+    public TonalSpotScheme() : base()
+    {
+    }
 
-    public TonalSpotScheme() : base() {}
+    public TonalSpotScheme(IBinding binding) : base(binding)
+    {
+    }
 
-    public TonalSpotScheme(IBinding binding) : base(binding) {}
+    public TonalSpotScheme(string color) : base(color)
+    {
+    }
 
-    public TonalSpotScheme(string color) : base(color) {}
+    public TonalSpotScheme(Color color) : base(color)
+    {
+    }
 
-    public TonalSpotScheme(Color color) : base(color) {}
-
-    override public DynamicScheme CreateScheme(ThemeVariant theme)
+    public override DynamicScheme CreateScheme(ThemeVariant theme)
     {
         var seedHct = ResolveSeedHct();
         var contrast = ResolveContrast();
         var isDark = theme == ThemeVariant.Dark;
 
-        return new SchemeTonalSpot(sourceColorHct: seedHct, isDark: isDark, contrastLevel: contrast);
+        return new SchemeTonalSpot(seedHct, isDark, contrast);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider) => this;
+    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    {
+        return this;
+    }
 }

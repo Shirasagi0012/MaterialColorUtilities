@@ -59,17 +59,12 @@ internal static class MaterialColorHelper
         Color? fallback = null
     )
     {
-        if (RequiresCustomKey(token) && string.IsNullOrWhiteSpace(customKey))
-        {
+        if (RequiresCustomKey(token) && String.IsNullOrWhiteSpace(customKey))
             throw new InvalidOperationException($"Token '{token}' requires a non-empty custom key.");
-        }
 
         var fallbackColor = fallback ?? Colors.Transparent;
         var (scheme, themeHost) = ResolveSchemeAndThemeHost(target, parentStack);
-        if (scheme is null)
-        {
-            return CreateConstantBinding(fallbackColor);
-        }
+        if (scheme is null) return CreateConstantBinding(fallbackColor);
 
         var normalizedKey = customKey?.Trim();
         return CreateThemeAwareBinding(
@@ -90,10 +85,7 @@ internal static class MaterialColorHelper
     {
         var fallbackColor = fallback ?? Colors.Transparent;
         var (scheme, themeHost) = ResolveSchemeAndThemeHost(target, parentStack);
-        if (scheme is null)
-        {
-            return CreateConstantBinding(fallbackColor);
-        }
+        if (scheme is null) return CreateConstantBinding(fallbackColor);
 
         return CreateThemeAwareBinding(
             themeHost,
@@ -189,7 +181,7 @@ internal static class MaterialColorHelper
     {
         var defaultTheme = themeHost?.ActualThemeVariant ?? ThemeVariant.Light;
 
-        var themeBinding = themeHost is not null
+        var themeBinding = themeHost is { }
             ? CreateCompiledBinding(themeHost, ThemeVariantPropertyInfo, defaultTheme)
             : CreateConstantBinding(defaultTheme);
 
@@ -226,7 +218,7 @@ internal static class MaterialColorHelper
             FallbackValue = fallbackValue,
             Path = new CompiledBindingPathBuilder()
                 .Property(propertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
-                .Build(),
+                .Build()
         };
     }
 
@@ -236,7 +228,7 @@ internal static class MaterialColorHelper
         {
             Mode = BindingMode.OneTime,
             Priority = BindingPriority.Style,
-            Source = value,
+            Source = value
         };
     }
 
@@ -249,11 +241,9 @@ internal static class MaterialColorHelper
             yield return targetObject;
 
         if (parentStack is { Parents: { } parents })
-        {
             foreach (var parent in parents)
 
                 yield return parent;
-        }
     }
 
     public static bool ShouldProvideBrush(IProvideValueTarget provideValueTarget)
@@ -286,27 +276,24 @@ internal static class MaterialColorHelper
         foreach (var context in EnumerateContextObjects(target, parentStack))
         {
             if (context is AvaloniaObject avaloniaObject && scheme is null)
-            {
                 scheme = MaterialColor.GetScheme(avaloniaObject);
-            }
 
-            if (context is IThemeVariantHost host && themeHost is null)
-            {
-                themeHost = host;
-            }
+            if (context is IThemeVariantHost host && themeHost is null) themeHost = host;
 
-            if (scheme is not null && themeHost is not null)
+            if (scheme is { } && themeHost is { })
                 break;
         }
 
         return (scheme, themeHost);
     }
 
-    internal static bool RequiresCustomKey(SysColorToken token) =>
-        token is SysColorToken.Custom
+    internal static bool RequiresCustomKey(SysColorToken token)
+    {
+        return token is SysColorToken.Custom
             or SysColorToken.OnCustom
             or SysColorToken.CustomContainer
             or SysColorToken.OnCustomContainer;
+    }
 
     private static Color ResolveSysColor(
         MaterialColorScheme scheme,

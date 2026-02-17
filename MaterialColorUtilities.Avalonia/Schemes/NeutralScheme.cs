@@ -8,23 +8,33 @@ using Scheme;
 
 public class NeutralScheme : SchemeProviderBase
 {
+    public NeutralScheme() : base()
+    {
+    }
 
-    public NeutralScheme() : base() {}
+    public NeutralScheme(IBinding binding) : base(binding)
+    {
+    }
 
-    public NeutralScheme(IBinding binding) : base(binding) {}
+    public NeutralScheme(Color color) : base(color)
+    {
+    }
 
-    public NeutralScheme(Color color) : base(color) {}
+    public NeutralScheme(string color) : base(color)
+    {
+    }
 
-    public NeutralScheme(string color) : base(color) {}
-
-    override public DynamicScheme CreateScheme(ThemeVariant theme)
+    public override DynamicScheme CreateScheme(ThemeVariant theme)
     {
         var seedHct = ResolveSeedHct();
         var contrast = ResolveContrast();
         var isDark = theme == ThemeVariant.Dark;
 
-        return new SchemeNeutral(sourceColorHct: seedHct, isDark: isDark, contrastLevel: contrast);
+        return new SchemeNeutral(seedHct, isDark, contrast);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider) => this;
+    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    {
+        return this;
+    }
 }

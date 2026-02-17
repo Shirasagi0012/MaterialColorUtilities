@@ -6,7 +6,7 @@ namespace MaterialColorUtilities.Avalonia;
 public sealed class MaterialCustomColor : AvaloniaObject
 {
     public static readonly StyledProperty<string> KeyProperty =
-        AvaloniaProperty.Register<MaterialCustomColor, string>(nameof(Key), string.Empty);
+        AvaloniaProperty.Register<MaterialCustomColor, string>(nameof(Key), String.Empty);
 
     public static readonly StyledProperty<Color?> ColorProperty =
         AvaloniaProperty.Register<MaterialCustomColor, Color?>(nameof(Color));

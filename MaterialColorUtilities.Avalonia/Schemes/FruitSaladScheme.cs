@@ -8,23 +8,33 @@ using Scheme;
 
 public class FruitSaladScheme : SchemeProviderBase
 {
+    public FruitSaladScheme() : base()
+    {
+    }
 
-    public FruitSaladScheme() : base() {}
+    public FruitSaladScheme(IBinding binding) : base(binding)
+    {
+    }
 
-    public FruitSaladScheme(IBinding binding) : base(binding) {}
+    public FruitSaladScheme(Color color) : base(color)
+    {
+    }
 
-    public FruitSaladScheme(Color color) : base(color) {}
+    public FruitSaladScheme(string color) : base(color)
+    {
+    }
 
-    public FruitSaladScheme(string color) : base(color) {}
-
-    override public DynamicScheme CreateScheme(ThemeVariant theme)
+    public override DynamicScheme CreateScheme(ThemeVariant theme)
     {
         var seedHct = ResolveSeedHct();
         var contrast = ResolveContrast();
         var isDark = theme == ThemeVariant.Dark;
 
-        return new SchemeFruitSalad(sourceColorHct: seedHct, isDark: isDark, contrastLevel: contrast);
+        return new SchemeFruitSalad(seedHct, isDark, contrast);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider) => this;
+    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    {
+        return this;
+    }
 }

@@ -85,20 +85,19 @@ public class MaterialColorScheme : AvaloniaObject
         get;
         set
         {
-            if (field is not null)
+            if (field is { })
                 field.SchemeChanged -= OnSchemeProviderChanged;
 
             SetAndRaise(SchemeProperty, ref field, value);
 
-            if (value is not null)
+            if (value is { })
                 value.SchemeChanged += OnSchemeProviderChanged;
 
             Refresh();
         }
     }
 
-    [Content]
-    public AvaloniaList<MaterialCustomColor> CustomColors { get; } = [];
+    [Content] public AvaloniaList<MaterialCustomColor> CustomColors { get; } = [];
 
     public Color? Resolve(SysColorToken token, ThemeVariant themeVariant)
     {
@@ -120,7 +119,7 @@ public class MaterialColorScheme : AvaloniaObject
 
     public Color? Resolve(string key, SysColorToken role, ThemeVariant themeVariant)
     {
-        if (string.IsNullOrWhiteSpace(key))
+        if (String.IsNullOrWhiteSpace(key))
             return null;
 
         var normalized = key.Trim();
@@ -131,8 +130,9 @@ public class MaterialColorScheme : AvaloniaObject
         return palette.Get(tone).ToAvaloniaColor();
     }
 
-    private static ArgbColor? ResolveSysArgb(DynamicScheme scheme, SysColorToken token) =>
-        token switch
+    private static ArgbColor? ResolveSysArgb(DynamicScheme scheme, SysColorToken token)
+    {
+        return token switch
         {
             SysColorToken.Background => scheme.Background,
             SysColorToken.OnBackground => scheme.OnBackground,
@@ -185,9 +185,11 @@ public class MaterialColorScheme : AvaloniaObject
             SysColorToken.OnTertiaryFixedVariant => scheme.OnTertiaryFixedVariant,
             _ => null
         };
+    }
 
-    private static ArgbColor ResolveRefArgb(DynamicScheme scheme, RefPaletteToken palette, byte tone) =>
-        palette switch
+    private static ArgbColor ResolveRefArgb(DynamicScheme scheme, RefPaletteToken palette, byte tone)
+    {
+        return palette switch
         {
             RefPaletteToken.Primary => scheme.PrimaryPalette.Get(tone),
             RefPaletteToken.Secondary => scheme.SecondaryPalette.Get(tone),
@@ -197,9 +199,11 @@ public class MaterialColorScheme : AvaloniaObject
             RefPaletteToken.Error => scheme.ErrorPalette.Get(tone),
             _ => throw new ArgumentOutOfRangeException(nameof(palette))
         };
+    }
 
-    private static int GetCustomRoleTone(SysColorToken role, bool isDark) =>
-        (role, isDark) switch
+    private static int GetCustomRoleTone(SysColorToken role, bool isDark)
+    {
+        return (role, isDark) switch
         {
             (SysColorToken.Custom, false) => 40,
             (SysColorToken.OnCustom, false) => 100,
@@ -211,9 +215,12 @@ public class MaterialColorScheme : AvaloniaObject
             (SysColorToken.OnCustomContainer, true) => 90,
             _ => throw new ArgumentOutOfRangeException(nameof(role))
         };
+    }
 
-    private DynamicScheme? ResolveDynamicScheme(ThemeVariant variant) =>
-        IsDark(variant) ? DarkScheme ?? LightScheme : LightScheme ?? DarkScheme;
+    private DynamicScheme? ResolveDynamicScheme(ThemeVariant variant)
+    {
+        return IsDark(variant) ? DarkScheme ?? LightScheme : LightScheme ?? DarkScheme;
+    }
 
     private static bool IsDark(ThemeVariant variant)
     {
@@ -224,7 +231,7 @@ public class MaterialColorScheme : AvaloniaObject
             return false;
 
         var inherited = variant.InheritVariant;
-        while (inherited is not null)
+        while (inherited is { })
         {
             if (inherited == ThemeVariant.Dark)
                 return true;
@@ -238,21 +245,20 @@ public class MaterialColorScheme : AvaloniaObject
         return false;
     }
 
-    private void OnSchemeProviderChanged(object? sender, EventArgs e) => Refresh();
+    private void OnSchemeProviderChanged(object? sender, EventArgs e)
+    {
+        Refresh();
+    }
 
     private void OnCustomColorsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.OldItems is not null)
-        {
+        if (e.OldItems is { })
             foreach (var entry in e.OldItems.OfType<MaterialCustomColor>())
                 entry.PropertyChanged -= OnCustomColorPropertyChanged;
-        }
 
-        if (e.NewItems is not null)
-        {
+        if (e.NewItems is { })
             foreach (var entry in e.NewItems.OfType<MaterialCustomColor>())
                 entry.PropertyChanged += OnCustomColorPropertyChanged;
-        }
 
         Refresh();
     }
@@ -262,9 +268,7 @@ public class MaterialColorScheme : AvaloniaObject
         if (e.Property == MaterialCustomColor.KeyProperty
             || e.Property == MaterialCustomColor.ColorProperty
             || e.Property == MaterialCustomColor.BlendProperty)
-        {
             Refresh();
-        }
     }
 
     private void Refresh()
@@ -294,14 +298,14 @@ public class MaterialColorScheme : AvaloniaObject
 
         foreach (var entry in CustomColors)
         {
-            if (entry.Color is not { } color || string.IsNullOrWhiteSpace(entry.Key))
+            if (entry.Color is not { } color || String.IsNullOrWhiteSpace(entry.Key))
                 continue;
 
             var key = entry.Key.Trim();
             var colorArgb = ArgbExtensions.FromAvaloniaColor(color);
             var resolvedArgb =
                 entry.Blend && sourceArgb is { } source
-                    ? MaterialColorUtilities.Blend.Blend.Harmonize(colorArgb, source)
+                    ? Blend.Blend.Harmonize(colorArgb, source)
                     : colorArgb;
 
             var hct = Hct.From(resolvedArgb);
@@ -322,5 +326,8 @@ public class MaterialColorSchemeExtension : MaterialColorScheme
     {
     }
 
-    public MaterialColorScheme ProvideTypedValue(IServiceProvider serviceProvider) => this;
+    public MaterialColorScheme ProvideTypedValue(IServiceProvider serviceProvider)
+    {
+        return this;
+    }
 }

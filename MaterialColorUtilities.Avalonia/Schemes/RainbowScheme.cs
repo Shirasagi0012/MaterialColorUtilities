@@ -8,23 +8,33 @@ using Scheme;
 
 public class RainbowScheme : SchemeProviderBase
 {
+    public RainbowScheme() : base()
+    {
+    }
 
-    public RainbowScheme() : base() {}
+    public RainbowScheme(IBinding binding) : base(binding)
+    {
+    }
 
-    public RainbowScheme(IBinding binding) : base(binding) {}
+    public RainbowScheme(Color color) : base(color)
+    {
+    }
 
-    public RainbowScheme(Color color) : base(color) {}
+    public RainbowScheme(string color) : base(color)
+    {
+    }
 
-    public RainbowScheme(string color) : base(color) {}
-
-    override public DynamicScheme CreateScheme(ThemeVariant theme)
+    public override DynamicScheme CreateScheme(ThemeVariant theme)
     {
         var seedHct = ResolveSeedHct();
         var contrast = ResolveContrast();
         var isDark = theme == ThemeVariant.Dark;
 
-        return new SchemeRainbow(sourceColorHct: seedHct, isDark: isDark, contrastLevel: contrast);
+        return new SchemeRainbow(seedHct, isDark, contrast);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider) => this;
+    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    {
+        return this;
+    }
 }
