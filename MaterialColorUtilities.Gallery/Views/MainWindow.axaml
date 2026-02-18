@@ -12,26 +12,26 @@
 	d:DesignWidth="1200"
 	x:DataType="vm:MainWindowViewModel"
 	Icon="/Assets/avalonia-logo.ico"
-	Background="{DynamicResource SurfaceBrush}"
 	mc:Ignorable="d">
 
 	<ThemeVariantScope RequestedThemeVariant="{Binding #ThemeSwitcher.((ComboBoxItem)SelectedItem).Content, FallbackValue={x:Static ThemeVariant.Dark}}">
-		<DockPanel LastChildFill="True">
+		<DockPanel LastChildFill="True" 
+		           Background="{DynamicResource SurfaceBrush}">
 			<Border
 				Background="{mcu:MdSysColor SurfaceContainerLow}"
 				DockPanel.Dock="Top"
 				Padding="16">
 				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" RowDefinitions="Auto Auto" RowSpacing="12">
-					<TextBlock
-						FontSize="28"
-						FontWeight="SemiBold"
-						Foreground="{mcu:MdSysColor OnSurface}"
-						Grid.ColumnSpan="2"
-						Text="Material Color Utilities Gallery" />
-					<TextBlock
-						Foreground="{mcu:MdSysColor OnSurfaceVariant}"
-						Grid.Row="1"
-						Text="Color Scheme" />
+					<!-- <TextBlock -->
+					<!-- 	FontSize="28" -->
+					<!-- 	FontWeight="SemiBold" -->
+					<!-- 	Foreground="{mcu:MdSysColor OnSurface}" -->
+					<!-- 	Grid.ColumnSpan="2" -->
+					<!-- 	Text="Material Color Utilities Gallery" /> -->
+					<!-- <TextBlock -->
+					<!-- 	Foreground="{mcu:MdSysColor OnSurfaceVariant}" -->
+					<!-- 	Grid.Row="1" -->
+					<!-- 	Text="Color Scheme" /> -->
 					<ComboBox
 						x:Name="ThemeSwitcher"
 						Grid.Column="1"
@@ -49,7 +49,7 @@
 				HorizontalScrollBarVisibility="Auto"
 				Margin="16"
 				VerticalScrollBarVisibility="Auto">
-				<views:ColorSchemeView />
+				<!--<views:ColorSchemeView />-->
 			</ScrollViewer>
 		</DockPanel>
 	</ThemeVariantScope>

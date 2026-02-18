@@ -79,7 +79,7 @@ internal static class NewHelper
 
         var normalizedKey = customKey?.Trim();
         return CreateBinding1(
-            target,
+            parentStack,
             themeHost,
             fallbackColor,
             (scheme, theme) => scheme?.ResolveSys(token, theme, normalizedKey) ?? fallbackColor
@@ -108,7 +108,7 @@ internal static class NewHelper
 
         var normalizedKey = customKey?.Trim();
         return CreateBinding1(
-            target,
+            parentStack,
             themeHost,
             fallbackColor,
             (scheme, theme) => scheme?.ResolveRef(token, tone, normalizedKey) ?? fallbackColor
@@ -154,7 +154,7 @@ internal static class NewHelper
     }
 
     private static IBinding CreateBinding1(
-        IProvideValueTarget target,
+        IAvaloniaXamlIlParentStackProvider parentStack,
         IThemeVariantHost? themeHost,
         Color fallbackColor,
         Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor
@@ -166,7 +166,7 @@ internal static class NewHelper
         {
             Mode = BindingMode.OneWay,
             Priority = BindingPriority.Style,
-            Source = target.TargetObject,
+            Source = (object?)GetFirstStyledElement(parentStack) ?? Application.Current,
             Path = new CompiledBindingPathBuilder()
                 .Property(MaterialColor.SchemeProperty, PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor)
                 .Property(SchemePropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
@@ -174,6 +174,8 @@ internal static class NewHelper
                 .Build(),
         };
 
+        // We must keep app binding because attached property set on application will not inherit down to elements in 
+        // logical tree (e.g. all controls in window).
         var appSchemeBinding = new CompiledBindingExtension
         {
             Mode = BindingMode.OneWay,
@@ -218,6 +220,28 @@ internal static class NewHelper
                     _ => fallbackColor
                 }),
         };
+
+        static StyledElement? GetFirstStyledElement(
+            IAvaloniaXamlIlParentStackProvider parentStack
+        )
+        {
+            if (parentStack is { Parents: { } parents })
+                foreach (var parent in parents)
+                    if (parent is StyledElement styled)
+                        return styled;
+            return null;
+        }
+
+        static IEnumerable<StyledElement> EnumerateScopeChain(StyledElement start)
+        {
+            var visited = new HashSet<StyledElement>();
+
+            for (var current = start; current is { } && visited.Add(current);)
+            {
+                yield return current;
+                current = current.Parent ?? current.TemplatedParent as StyledElement;
+            }
+        }
     }
 
     public static IBinding ProvideSysBrushBinding(
