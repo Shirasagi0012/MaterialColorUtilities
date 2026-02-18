@@ -4,7 +4,7 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="SurfaceBrush" Color="{avalonia:MdSysColor Surface, Theme=Dark}" />
-        </ResourceDictionary>        
+        </ResourceDictionary>
         <ResourceDictionary x:Key="Default">
             <SolidColorBrush x:Key="SurfaceBrush" Color="{avalonia:MdSysColor Surface, Theme=Default}" />
         </ResourceDictionary>
