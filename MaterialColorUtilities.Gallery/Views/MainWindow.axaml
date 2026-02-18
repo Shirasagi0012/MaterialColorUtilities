@@ -12,15 +12,9 @@
 	d:DesignWidth="1200"
 	x:DataType="vm:MainWindowViewModel"
 	Icon="/Assets/avalonia-logo.ico"
+	Background="{DynamicResource SurfaceBrush}"
 	mc:Ignorable="d">
-	<mcu:MaterialColor.Scheme>
-		<mcu:MaterialColorScheme Scheme="{mcu:TonalSpotScheme Color=Green}">
-			<mcu:MaterialCustomColor
-				Blend="False"
-				Color="Red"
-				Key="Favorite" />
-		</mcu:MaterialColorScheme>
-	</mcu:MaterialColor.Scheme>
+
 	<ThemeVariantScope RequestedThemeVariant="{Binding #ThemeSwitcher.((ComboBoxItem)SelectedItem).Content, FallbackValue={x:Static ThemeVariant.Dark}}">
 		<DockPanel LastChildFill="True">
 			<Border
@@ -33,11 +27,11 @@
 						FontWeight="SemiBold"
 						Foreground="{mcu:MdSysColor OnSurface}"
 						Grid.ColumnSpan="2"
-						Text="Material Color Utilities - Color Scheme" />
+						Text="Material Color Utilities Gallery" />
 					<TextBlock
 						Foreground="{mcu:MdSysColor OnSurfaceVariant}"
 						Grid.Row="1"
-						Text="Migrated from legacy DynamicResource keys to refactored MdSysColor tokens." />
+						Text="Color Scheme" />
 					<ComboBox
 						x:Name="ThemeSwitcher"
 						Grid.Column="1"

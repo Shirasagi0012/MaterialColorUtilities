@@ -13,6 +13,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AvaloniaXaml Remove="Assets\ResourceDictionary1.axaml" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Avalonia" />
 		<PackageReference Include="Avalonia.Desktop" />
 		<PackageReference Include="Avalonia.Themes.Fluent" />
@@ -30,5 +34,11 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\MaterialColorUtilities.Avalonia\MaterialColorUtilities.Avalonia.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AvaloniaResource Update="Assets\ResourceDictionary1.axaml">
+	    <SubType>Designer</SubType>
+	  </AvaloniaResource>
 	</ItemGroup>
 </Project>

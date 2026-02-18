@@ -72,17 +72,17 @@ internal static class NewHelper
         var fallbackColor = fallback ?? Colors.Transparent;
 
         //var scheme = ResolveAttachedProperty(target);
-        var themeHost = ResolveThemeHost(target, parentStack);
-
         //if (scheme is null)
         //    return CreateConstantBinding(fallbackColor);
+
+        var themeHost = ResolveThemeHost(target, parentStack);
 
         var normalizedKey = customKey?.Trim();
         return CreateBinding1(
             target,
             themeHost,
             fallbackColor,
-            (scheme, theme) => scheme.ResolveSys(token, theme, normalizedKey) ?? fallbackColor
+            (scheme, theme) => scheme?.ResolveSys(token, theme, normalizedKey) ?? fallbackColor
         );
     }
 
@@ -111,15 +111,8 @@ internal static class NewHelper
             target,
             themeHost,
             fallbackColor,
-            (scheme, theme) => scheme.ResolveRef(token, tone, normalizedKey) ?? fallbackColor
+            (scheme, theme) => scheme?.ResolveRef(token, tone, normalizedKey) ?? fallbackColor
         );
-    }
-
-    private static MaterialColorScheme? ResolveAttachedProperty(IProvideValueTarget target)
-    {
-        if (target.TargetObject is AvaloniaObject avaloniaObject)
-            return avaloniaObject.GetValue(MaterialColor.SchemeProperty);
-        return null;
     }
 
     private static IThemeVariantHost? ResolveThemeHost(
@@ -164,27 +157,43 @@ internal static class NewHelper
         IProvideValueTarget target,
         IThemeVariantHost? themeHost,
         Color fallbackColor,
-        Func<MaterialColorScheme.MaterialColorSchemeInternal, ThemeVariant, Color> resolveColor
+        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor
     )
     {
         var defaultTheme = themeHost?.ActualThemeVariant ?? ThemeVariant.Light;
 
         var schemeBinding = new CompiledBindingExtension
         {
+            Mode = BindingMode.OneWay,
+            Priority = BindingPriority.Style,
+            Source = target.TargetObject,
             Path = new CompiledBindingPathBuilder()
                 .Property(MaterialColor.SchemeProperty, PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor)
                 .Property(SchemePropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
                 .Property(SchemeInternalPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
                 .Build(),
-            Source = target.TargetObject,
         };
+
+        var appSchemeBinding = new CompiledBindingExtension
+        {
+            Mode = BindingMode.OneWay,
+            Priority = BindingPriority.Style,
+            Source = Application.Current,
+            Path = new CompiledBindingPathBuilder()
+                .Property(MaterialColor.SchemeProperty, PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor)
+                .Property(SchemePropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
+                .Property(SchemeInternalPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
+                .Build(),
+        };
+
+        //var debug = MaterialColor.GetScheme(target.TargetObject as AvaloniaObject);
 
         var themeBinding = new CompiledBindingExtension
         {
             Mode = BindingMode.OneWay,
             Priority = BindingPriority.Style,
-            Source = themeHost,
             FallbackValue = defaultTheme,
+            Source = themeHost,
             Path = new CompiledBindingPathBuilder()
                 .Property(ThemeVariantPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
                 .Build(),
@@ -193,13 +202,19 @@ internal static class NewHelper
 
         return new MultiBinding
         {
-            Bindings = [schemeBinding, themeBinding],
+            Mode = BindingMode.OneWay,
+            Priority = BindingPriority.Style,
             FallbackValue = fallbackColor, TargetNullValue = fallbackColor,
+            Bindings = [schemeBinding, appSchemeBinding, themeBinding],
             Converter = new FuncMultiValueConverter<object?, Color>(values =>
                 (values as IList<object?> ?? values.ToList()) switch
                 {
-                    [MaterialColorScheme.MaterialColorSchemeInternal scheme, ThemeVariant theme, ..] => resolveColor(
-                        scheme, theme),
+                    [
+                        var scheme, var appScheme, ThemeVariant theme, ..
+                    ] => resolveColor(
+                        scheme as MaterialColorScheme.MaterialColorSchemeInternal ??
+                        appScheme as MaterialColorScheme.MaterialColorSchemeInternal,
+                        theme),
                     _ => fallbackColor
                 }),
         };
