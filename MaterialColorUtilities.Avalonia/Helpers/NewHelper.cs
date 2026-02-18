@@ -63,7 +63,8 @@ internal static class NewHelper
         IAvaloniaXamlIlParentStackProvider parentStack,
         SysColorToken token,
         string? customKey = null,
-        Color? fallback = null
+        Color? fallback = null,
+        ThemeVariant? themeVariant = null
     )
     {
         if (TokenHelper.IsCustom(token) && String.IsNullOrWhiteSpace(customKey))
@@ -82,7 +83,8 @@ internal static class NewHelper
             parentStack,
             themeHost,
             fallbackColor,
-            (scheme, theme) => scheme?.ResolveSys(token, theme, normalizedKey) ?? fallbackColor
+            (scheme, theme) => scheme?.ResolveSys(token, theme, normalizedKey) ?? fallbackColor,
+            themeVariant
         );
     }
 
@@ -157,7 +159,8 @@ internal static class NewHelper
         IAvaloniaXamlIlParentStackProvider parentStack,
         IThemeVariantHost? themeHost,
         Color fallbackColor,
-        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor
+        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor,
+        ThemeVariant? themeVariant = null
     )
     {
         var defaultTheme = themeHost?.ActualThemeVariant ?? ThemeVariant.Light;
@@ -190,36 +193,57 @@ internal static class NewHelper
 
         //var debug = MaterialColor.GetScheme(target.TargetObject as AvaloniaObject);
 
-        var themeBinding = new CompiledBindingExtension
+        // need theme binding?
+        if (themeVariant is null)
         {
-            Mode = BindingMode.OneWay,
-            Priority = BindingPriority.Style,
-            FallbackValue = defaultTheme,
-            Source = themeHost,
-            Path = new CompiledBindingPathBuilder()
-                .Property(ThemeVariantPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
-                .Build(),
-        };
+            var themeBinding = new CompiledBindingExtension
+            {
+                Mode = BindingMode.OneWay,
+                Priority = BindingPriority.Style,
+                FallbackValue = defaultTheme,
+                Source = themeHost,
+                Path = new CompiledBindingPathBuilder()
+                    .Property(ThemeVariantPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
+                    .Build(),
+            };
 
 
-        return new MultiBinding
+            return new MultiBinding
+            {
+                Mode = BindingMode.OneWay,
+                Priority = BindingPriority.Style,
+                FallbackValue = fallbackColor, TargetNullValue = fallbackColor,
+                Bindings = [schemeBinding, appSchemeBinding, themeBinding],
+                Converter = new FuncMultiValueConverter<object?, Color>(values =>
+                    (values as IList<object?> ?? values.ToList()) switch
+                    {
+                        [var scheme, var appScheme, ThemeVariant theme, ..] => resolveColor(
+                            scheme as MaterialColorScheme.MaterialColorSchemeInternal ??
+                            appScheme as MaterialColorScheme.MaterialColorSchemeInternal,
+                            theme),
+                        _ => fallbackColor
+                    }),
+            };
+        }
+        else // if explicit theme is provided
         {
-            Mode = BindingMode.OneWay,
-            Priority = BindingPriority.Style,
-            FallbackValue = fallbackColor, TargetNullValue = fallbackColor,
-            Bindings = [schemeBinding, appSchemeBinding, themeBinding],
-            Converter = new FuncMultiValueConverter<object?, Color>(values =>
-                (values as IList<object?> ?? values.ToList()) switch
-                {
-                    [
-                        var scheme, var appScheme, ThemeVariant theme, ..
-                    ] => resolveColor(
-                        scheme as MaterialColorScheme.MaterialColorSchemeInternal ??
-                        appScheme as MaterialColorScheme.MaterialColorSchemeInternal,
-                        theme),
-                    _ => fallbackColor
-                }),
-        };
+            return new MultiBinding
+            {
+                Mode = BindingMode.OneWay,
+                Priority = BindingPriority.Style,
+                FallbackValue = fallbackColor, TargetNullValue = fallbackColor,
+                Bindings = [schemeBinding, appSchemeBinding],
+                Converter = new FuncMultiValueConverter<object?, Color>(values =>
+                    (values as IList<object?> ?? values.ToList()) switch
+                    {
+                        [var scheme, var appScheme, ..] => resolveColor(
+                            scheme as MaterialColorScheme.MaterialColorSchemeInternal ??
+                            appScheme as MaterialColorScheme.MaterialColorSchemeInternal,
+                            themeVariant),
+                        _ => fallbackColor
+                    }),
+            };
+        }
 
         static StyledElement? GetFirstStyledElement(
             IAvaloniaXamlIlParentStackProvider parentStack
@@ -249,11 +273,12 @@ internal static class NewHelper
         IAvaloniaXamlIlParentStackProvider parentStack,
         SysColorToken token,
         string? customKey = null,
-        IBrush? fallback = null
+        IBrush? fallback = null,
+        ThemeVariant? themeVariant = null
     )
     {
         var fallbackBrush = fallback ?? TransparentBrush;
-        var colorBinding = ProvideSysColorBinding(target, parentStack, token, customKey);
+        var colorBinding = ProvideSysColorBinding(target, parentStack, token, customKey, themeVariant: themeVariant);
         return CreateBrushBinding(colorBinding, fallbackBrush);
     }
 
