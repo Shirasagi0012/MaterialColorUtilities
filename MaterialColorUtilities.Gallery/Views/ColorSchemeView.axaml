@@ -19,6 +19,11 @@
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Duration="0:0:0.2" Property="Foreground" />
+                </Transitions>
+            </Setter>
         </Style>
 
         <Style Selector="Border#ColorTable Border">
@@ -106,11 +111,13 @@
         </Style>
     </UserControl.Styles>
 
-    <Border x:Name="ColorTable">
+    <Border x:Name="ColorTable"  ClipToBounds="True" 
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left">
         <Grid
             ColumnDefinitions="Auto Auto"
             ColumnSpacing="16"
-            RowDefinitions="Auto Auto Auto Auto"
+            RowDefinitions="Auto Auto Auto"
             RowSpacing="16">
             <!-- Base Colors -->
             <Grid

@@ -13,10 +13,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AvaloniaXaml Remove="Assets\ResourceDictionary1.axaml" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Avalonia" />
 		<PackageReference Include="Avalonia.Desktop" />
 		<PackageReference Include="Avalonia.Themes.Fluent" />
@@ -30,6 +26,7 @@
 		<PackageReference Include="Avalonia" />
 		<PackageReference Include="Avalonia.Fonts.Inter" />
 		<PackageReference Include="Avalonia.Diagnostics" />
+		<PackageReference Include="Avalonia.Controls.ColorPicker" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -37,8 +34,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AvaloniaResource Update="Assets\ResourceDictionary1.axaml">
-	    <SubType>Designer</SubType>
-	  </AvaloniaResource>
+	  <Compile Update="Views\SchemePlaygroundView.axaml.cs">
+	    <DependentUpon>SchemePlaygroundView.axaml</DependentUpon>
+	    <SubType>Code</SubType>
+	  </Compile>
 	</ItemGroup>
 </Project>

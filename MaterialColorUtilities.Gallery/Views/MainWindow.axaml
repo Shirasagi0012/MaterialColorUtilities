@@ -6,7 +6,6 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:mcu="clr-namespace:MaterialColorUtilities.Avalonia;assembly=MaterialColorUtilities.Avalonia"
 	xmlns:vm="using:MaterialColorUtilities.Gallery.ViewModels"
-	xmlns:views="using:MaterialColorUtilities.Gallery.Views"
 	Title="MaterialColorUtilities.Gallery"
 	d:DesignHeight="720"
 	d:DesignWidth="1200"
@@ -48,9 +47,8 @@
 
 			<ScrollViewer
 				HorizontalScrollBarVisibility="Auto"
-				Margin="16"
 				VerticalScrollBarVisibility="Auto">
-				<views:ColorSchemeView />
+				<vm:SchemePlaygroundViewModel />
 			</ScrollViewer>
 		</DockPanel>
 	</ThemeVariantScope>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Collections;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Metadata;
@@ -38,6 +39,12 @@ public class MaterialColorScheme : AvaloniaObject
     {
         CustomColors.CollectionChanged += OnCustomColorsChanged;
         Scheme = scheme;
+    }
+
+    public MaterialColorScheme(IBinding scheme)
+    {
+        CustomColors.CollectionChanged += OnCustomColorsChanged;
+        this[!SchemeProperty] = scheme;
     }
 
     [ConstructorArgument("scheme")]

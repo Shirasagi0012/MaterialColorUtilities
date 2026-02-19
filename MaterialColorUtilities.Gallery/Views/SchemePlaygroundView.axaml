@@ -1,0 +1,95 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:MaterialColorUtilities.Gallery.Views"
+             xmlns:mcu="clr-namespace:MaterialColorUtilities.Avalonia;assembly=MaterialColorUtilities.Avalonia"
+             xmlns:vm="clr-namespace:MaterialColorUtilities.Gallery.ViewModels"
+             xmlns:controls="clr-namespace:MaterialColorUtilities.Gallery.Controls"
+             xmlns:converters="clr-namespace:MaterialColorUtilities.Gallery.Converters"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="1200"
+             x:Class="MaterialColorUtilities.Gallery.Views.SchemePlaygroundView"
+             x:DataType="vm:SchemePlaygroundViewModel">
+
+    <Design.DataContext>
+        <vm:SchemePlaygroundViewModel />
+    </Design.DataContext>
+
+    <StackPanel HorizontalAlignment="Center" Spacing="24" Margin="24 40">
+        <TextBlock Margin="8 0 0 0" FontSize="40">Color Scheme</TextBlock>
+        <DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" VerticalSpacing="16">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="24" DockPanel.Dock="Bottom">
+                <Border Background="{mcu:MdSysColor SurfaceContainerLow}"
+                        Padding="24" CornerRadius="12">
+                    <StackPanel Spacing="12">
+                        <TextBlock FontSize="20" Margin="0 0 0 12">Customize scheme</TextBlock>
+                        <TextBlock FontSize="18" Margin="0 0 0 4">Scheme</TextBlock>
+                        <ComboBox HorizontalAlignment="Stretch"
+                                  ItemsSource="{x:Static vm:SchemePlaygroundViewModel.SchemeTypes}"
+                                  SelectedItem="{CompiledBinding SchemeType, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={converters:ComboBoxItemTagConverter}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock FontSize="18" Margin="0 0 0 4">Seed Color</TextBlock>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="* * * Auto" RowSpacing="12" ColumnSpacing="8">
+                            <controls:HctColorSlider
+                                HctComponent="Hue"
+                                Hct="{Binding SelectedHct, Mode=TwoWay}" />
+                            <TextBox Grid.Row="0" Grid.Column="1"
+                                     Text="{CompiledBinding SelectedHct, Mode=TwoWay, Converter={converters:HctComponentToStringConverter Hue}}"
+                                     Width="72" VerticalAlignment="Center" />
+                            <controls:HctColorSlider
+                                Grid.Row="1" Grid.Column="0" HctComponent="Chroma"
+                                Hct="{Binding SelectedHct, Mode=TwoWay}" />
+                            <TextBox Grid.Row="1" Grid.Column="1"
+                                     Text="{CompiledBinding SelectedHct, Mode=TwoWay,Converter={converters:HctComponentToStringConverter Chroma}}"
+                                     Width="72" VerticalAlignment="Center" />
+                            <controls:HctColorSlider
+                                Grid.Row="2" Grid.Column="0" HctComponent="Tone"
+                                Hct="{Binding SelectedHct, Mode=TwoWay}" />
+                            <TextBox Grid.Row="2" Grid.Column="1"
+                                     Text="{CompiledBinding SelectedHct, Mode=TwoWay,Converter={converters:HctComponentToStringConverter Tone}}"
+                                     Width="72" VerticalAlignment="Center" />
+
+                            <Grid Grid.Row="3" Grid.Column="0" ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
+                                <TextBlock Text="RGB Color" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding SelectedHct, Converter={converters:HctToStringConverter RgbString}}"></TextBlock>
+                                <TextBlock Grid.Column="1" Text="HCT Color" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedHct, Converter={converters:HctToStringConverter HctString}}"></TextBlock>
+                            </Grid>
+
+                            <Border Grid.Row="3" Grid.Column="1" CornerRadius="4"
+                                    BorderBrush="{mcu:MdSysColor Outline}" BorderThickness="1"
+                                    Background="{mcu:MdSysColor SurfaceContainerHighest}"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    Padding="2"
+                                    >
+                                <Border CornerRadius="3" Background="{Binding SelectedHct, Converter={converters:HctToBrushConverter}}"/>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Background="{mcu:MdSysColor SurfaceContainerLow}"
+                        Padding="24" CornerRadius="12">
+                    <StackPanel>
+                        <Grid ColumnDefinitions="* Auto">
+                            <TextBlock FontSize="20">Additional Color</TextBlock>
+                            <Button Grid.Column="1" Background="{mcu:MdSysColor SecondaryContainer}"
+                                    Foreground="{mcu:MdSysColor OnSecondaryContainer}">
+                                Add Color
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <Border VerticalAlignment="Top" Padding="12" CornerRadius="12"
+                    Background="{mcu:MdSysColor SurfaceContainerHigh}"
+                    mcu:MaterialColor.Scheme="{mcu:MaterialColorScheme {CompiledBinding Scheme}}">
+                <views:ColorSchemeView />
+            </Border>
+        </DockPanel>
+    </StackPanel>
+</UserControl>

@@ -12,6 +12,7 @@
 
 	<Application.Styles>
 		<FluentTheme />
+		<StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
 	</Application.Styles>
 
 	<Application.Resources>
@@ -23,7 +24,7 @@
 	</Application.Resources>
 
 	<mcu:MaterialColor.Scheme>
-		<mcu:MaterialColorSchemeExtension Scheme="{mcu:TonalSpotScheme Color=Green}">
+		<mcu:MaterialColorSchemeExtension Scheme="{mcu:TonalSpotScheme Color={DynamicResource SystemAccentColor}}">
 			<mcu:MaterialCustomColor
 			Blend="False"
 			Color="Red"
