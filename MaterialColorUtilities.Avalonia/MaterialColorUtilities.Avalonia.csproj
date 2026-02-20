@@ -24,11 +24,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia"/>
+        <PackageReference Include="Avalonia" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MaterialColorUtilities\MaterialColorUtilities.csproj"/>
+        <ProjectReference Include="..\MaterialColorUtilities\MaterialColorUtilities.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -6,8 +6,8 @@
     <File Path="MaterialColorUtilities.sln.DotSettings" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="AvaloniaApplication1/MaterialColorUtilities.Gallery.csproj" />
   <Project Path="MaterialColorUtilities.Avalonia/MaterialColorUtilities.Avalonia.csproj" Id="8c35c826-c850-4a39-a577-b188e85ace4b" />
+  <Project Path="MaterialColorUtilities.Gallery/MaterialColorUtilities.Gallery.csproj" Id="90c5887a-3640-4059-8c26-22311661c6d1" />
   <Project Path="MaterialColorUtilities.Tests/MaterialColorUtilities.Tests.csproj" />
   <Project Path="MaterialColorUtilities/MaterialColorUtilities.csproj" />
 </Solution>

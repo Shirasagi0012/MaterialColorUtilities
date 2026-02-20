@@ -7,8 +7,14 @@ public static class ArgbExtensions
 {
     extension(ArgbColor @this)
     {
-        public Color ToAvaloniaColor() => new(a: @this.Alpha, r: @this.Red, g: @this.Green, b: @this.Blue);
+        public Color ToAvaloniaColor()
+        {
+            return new Color(@this.Alpha, @this.Red, @this.Green, @this.Blue);
+        }
 
-        public static ArgbColor FromAvaloniaColor(Color color) => new(alpha: color.A, red: color.R, green: color.G, blue: color.B);
+        public static ArgbColor FromAvaloniaColor(Color color)
+        {
+            return new ArgbColor(color.A, color.R, color.G, color.B);
+        }
     }
 }

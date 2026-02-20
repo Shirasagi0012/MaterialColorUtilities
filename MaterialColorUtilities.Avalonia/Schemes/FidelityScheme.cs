@@ -8,23 +8,33 @@ using Scheme;
 
 public class FidelityScheme : SchemeProviderBase
 {
+    public FidelityScheme() : base()
+    {
+    }
 
-    public FidelityScheme() : base() {}
+    public FidelityScheme(IBinding binding) : base(binding)
+    {
+    }
 
-    public FidelityScheme(IBinding binding) : base(binding) {}
+    public FidelityScheme(Color color) : base(color)
+    {
+    }
 
-    public FidelityScheme(Color color) : base(color) {}
+    public FidelityScheme(string color) : base(color)
+    {
+    }
 
-    public FidelityScheme(string color) : base(color) {}
-
-    override public DynamicScheme CreateScheme(ThemeVariant theme)
+    public override DynamicScheme CreateScheme(ThemeVariant theme)
     {
         var seedHct = ResolveSeedHct();
         var contrast = ResolveContrast();
         var isDark = theme == ThemeVariant.Dark;
 
-        return new SchemeFidelity(sourceColorHct: seedHct, isDark: isDark, contrastLevel: contrast);
+        return new SchemeFidelity(seedHct, isDark, contrast);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider) => this;
+    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    {
+        return this;
+    }
 }

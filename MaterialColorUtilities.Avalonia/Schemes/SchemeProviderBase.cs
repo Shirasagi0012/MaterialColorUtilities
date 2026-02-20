@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
 using MaterialColorUtilities.HCT;
+using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.Avalonia;
 
@@ -11,10 +12,10 @@ using global::Avalonia.Data;
 
 public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
 {
-    public readonly static StyledProperty<Color?> ColorProperty =
+    public static readonly StyledProperty<Color?> ColorProperty =
         AvaloniaProperty.Register<SchemeProviderBase, Color?>(nameof(Color));
 
-    public readonly static StyledProperty<double?> ContrastLevelProperty =
+    public static readonly StyledProperty<double?> ContrastLevelProperty =
         AvaloniaProperty.Register<SchemeProviderBase, double?>(nameof(ContrastLevel));
 
     protected SchemeProviderBase()
@@ -29,13 +30,13 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
 
     protected SchemeProviderBase(Color color) : this()
     {
-        this[!ColorProperty] = new CustomColor(color).ColorBinding;
+        Color = color;
     }
 
     protected SchemeProviderBase(string colorString) : this()
     {
-        if (global::Avalonia.Media.Color.TryParse(s: colorString, color: out var color))
-            this[!ColorProperty] = new CustomColor(color).ColorBinding;
+        if (global::Avalonia.Media.Color.TryParse(colorString, out var color))
+            Color = color;
         else
             throw new FormatException($"'{colorString}' is not a valid color string.");
     }
@@ -47,13 +48,13 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
     public Color? Color
     {
         get => GetValue(ColorProperty);
-        set => SetValue(property: ColorProperty, value: value);
+        set => SetValue(ColorProperty, value);
     }
-    
+
     public double? ContrastLevel
     {
         get => GetValue(ContrastLevelProperty);
-        set => SetValue(property: ContrastLevelProperty, value: value);
+        set => SetValue(ContrastLevelProperty, value);
     }
 
     public abstract DynamicScheme CreateScheme(ThemeVariant theme);
@@ -62,10 +63,13 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
     {
         var color = Color ?? throw new InvalidOperationException("SchemeProvider requires Color to be set.");
 
-        return Hct.From(ArgbExtensions.FromAvaloniaColor(color));
+        return Hct.From(ArgbColor.FromAvaloniaColor(color));
     }
 
-    protected double ResolveContrast() => ContrastLevel ?? 0;
+    protected double ResolveContrast()
+    {
+        return ContrastLevel ?? 0;
+    }
 
     private void OnPropertyChangedInternal(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
@@ -73,10 +77,8 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
             OnSchemeChanged();
     }
 
-    private void OnColorProviderChanged(object? sender, EventArgs e) => OnSchemeChanged();
-
     private void OnSchemeChanged()
     {
-        SchemeChanged?.Invoke(sender: this, e: EventArgs.Empty);
+        SchemeChanged?.Invoke(this, EventArgs.Empty);
     }
 }

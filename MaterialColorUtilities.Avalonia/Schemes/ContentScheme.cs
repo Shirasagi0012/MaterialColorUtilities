@@ -8,23 +8,33 @@ using Scheme;
 
 public class ContentScheme : SchemeProviderBase
 {
+    public ContentScheme() : base()
+    {
+    }
 
-    public ContentScheme() : base() {}
+    public ContentScheme(IBinding binding) : base(binding)
+    {
+    }
 
-    public ContentScheme(IBinding binding) : base(binding) {}
+    public ContentScheme(Color color) : base(color)
+    {
+    }
 
-    public ContentScheme(Color color) : base(color) {}
+    public ContentScheme(string color) : base(color)
+    {
+    }
 
-    public ContentScheme(string color) : base(color) {}
-
-    override public DynamicScheme CreateScheme(ThemeVariant theme)
+    public override DynamicScheme CreateScheme(ThemeVariant theme)
     {
         var seedHct = ResolveSeedHct();
         var contrast = ResolveContrast();
         var isDark = theme == ThemeVariant.Dark;
 
-        return new SchemeContent(sourceColorHct: seedHct, isDark: isDark, contrastLevel: contrast);
+        return new SchemeContent(seedHct, isDark, contrast);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider) => this;
+    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    {
+        return this;
+    }
 }
