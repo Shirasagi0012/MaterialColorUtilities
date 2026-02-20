@@ -1,7 +1,7 @@
 using System;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using static MaterialColorUtilities.Avalonia.Helpers.NewHelper;
+using static MaterialColorUtilities.Avalonia.Helpers.MaterialColorHelper;
 
 namespace MaterialColorUtilities.Avalonia;
 
@@ -36,7 +36,7 @@ public class MdSysColorExtension
         var (target, parentStack) = GetContextServices(serviceProvider);
 
         return ShouldProvideBrush(target)
-            ? ProvideSysBrushBinding(target, parentStack, Token, CustomKey,themeVariant: Theme)
-            : ProvideSysColorBinding(target, parentStack, Token, CustomKey,themeVariant: Theme);
+            ? ProvideSysBrushBinding(parentStack, Token, CustomKey,themeVariant: Theme)
+            : ProvideSysColorBinding(parentStack, Token, CustomKey,themeVariant: Theme);
     }
 }

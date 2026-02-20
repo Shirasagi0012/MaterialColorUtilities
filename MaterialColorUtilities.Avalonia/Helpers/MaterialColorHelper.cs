@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using System.Text;
 using Avalonia;
-using Avalonia.Controls.Primitives;
+using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Data.Core;
@@ -14,21 +14,35 @@ using Avalonia.Markup.Xaml.XamlIl.Runtime;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Styling;
-using MaterialColorUtilities.DynamicColors;
 
 namespace MaterialColorUtilities.Avalonia.Helpers;
 
 internal static class MaterialColorHelper
 {
     private static readonly IBrush TransparentBrush = new ImmutableSolidColorBrush(Colors.Transparent);
-    private static readonly Dictionary<uint, IBrush> BrushCache = [];
 
     private static readonly ClrPropertyInfo ThemeVariantPropertyInfo =
         new(
             nameof(IThemeVariantHost.ActualThemeVariant),
-            target => target is IThemeVariantHost host ? host.ActualThemeVariant : ThemeVariant.Light,
-            (_, _) => { },
+            target => target is IThemeVariantHost host ? host.ActualThemeVariant : null,
+            null,
             typeof(ThemeVariant)
+        );
+
+    private static readonly ClrPropertyInfo SchemePropertyInfo =
+        new(
+            "Internal",
+            target => (target as MaterialColorScheme)?.Internal,
+            null,
+            typeof(MaterialColorScheme)
+        );
+
+    private static readonly ClrPropertyInfo SchemeInternalPropertyInfo =
+        new(
+            "",
+            target => target,
+            null,
+            typeof(MaterialColorScheme.MaterialColorSchemeInternal)
         );
 
     public static (IProvideValueTarget, IAvaloniaXamlIlParentStackProvider) GetContextServices(
@@ -46,33 +60,31 @@ internal static class MaterialColorHelper
     }
 
     public static IBinding ProvideSysColorBinding(
-        IProvideValueTarget target,
         IAvaloniaXamlIlParentStackProvider parentStack,
         SysColorToken token,
         string? customKey = null,
-        Color? fallback = null
+        Color? fallback = null,
+        ThemeVariant? themeVariant = null
     )
     {
         if (TokenHelper.IsCustom(token) && String.IsNullOrWhiteSpace(customKey))
             throw new InvalidOperationException($"Token '{token}' requires a non-empty custom key.");
 
         var fallbackColor = fallback ?? Colors.Transparent;
-        var (scheme, themeHost) = ResolveSchemeAndThemeHost(target, parentStack);
-        if (scheme is null)
-            return CreateConstantBinding(fallbackColor);
+
+        var themeHost = ResolveThemeHost(parentStack);
 
         var normalizedKey = customKey?.Trim();
-        return CreateThemeAwareBinding(
+        return CreateBinding(
+            parentStack,
             themeHost,
-            target.TargetObject,
-            scheme,
             fallbackColor,
-            theme => ResolveSysColor(scheme, token, normalizedKey, theme, fallbackColor)
+            (scheme, theme) => scheme?.ResolveSys(token, theme, normalizedKey) ?? fallbackColor,
+            themeVariant
         );
     }
 
     public static IBinding ProvideRefColorBinding(
-        IProvideValueTarget target,
         IAvaloniaXamlIlParentStackProvider parentStack,
         RefPaletteToken token,
         byte tone,
@@ -84,35 +96,138 @@ internal static class MaterialColorHelper
             throw new InvalidOperationException($"Token '{token}' requires a non-empty custom key.");
 
         var fallbackColor = fallback ?? Colors.Transparent;
-        var (scheme, themeHost) = ResolveSchemeAndThemeHost(target, parentStack);
-        if (scheme is null)
-            return CreateConstantBinding(fallbackColor);
+
+        var themeHost = ResolveThemeHost(parentStack);
 
         var normalizedKey = customKey?.Trim();
-        return CreateThemeAwareBinding(
+        return CreateBinding(
+            parentStack,
             themeHost,
-            target.TargetObject,
-            scheme,
             fallbackColor,
-            theme => ResolveRefColor(scheme, token, tone, normalizedKey, theme, fallbackColor)
+            (scheme, theme) => scheme?.ResolveRef(token, tone, normalizedKey) ?? fallbackColor
         );
     }
 
+    private static IThemeVariantHost? ResolveThemeHost(IAvaloniaXamlIlParentStackProvider parentStack)
+    {
+        if (parentStack is not { Parents: { } parents }) return null;
+        foreach (var context in parents)
+        {
+            if (context is IThemeVariantHost host)
+                return host;
+        }
+
+        return null;
+    }
+
+    private static IBinding CreateBinding(
+        IAvaloniaXamlIlParentStackProvider parentStack,
+        IThemeVariantHost? themeHost,
+        Color fallbackColor,
+        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor,
+        ThemeVariant? themeVariant = null
+    )
+    {
+        var defaultTheme = themeHost?.ActualThemeVariant ?? ThemeVariant.Light;
+
+        object? source = null;
+        if (parentStack is { Parents: { } parents })
+            foreach (var parent in parents)
+                if (parent is StyledElement styled)
+                {
+                    source = styled;
+                    break;
+                }
+
+        var schemeBinding = new CompiledBindingExtension
+        {
+            Mode = BindingMode.OneWay,
+            Priority = BindingPriority.Style,
+            Source = source ?? Application.Current,
+            Path = new CompiledBindingPathBuilder()
+                .Property(MaterialColor.SchemeProperty, PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor)
+                .Property(SchemePropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
+                .Property(SchemeInternalPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
+                .Build(),
+        };
+
+        // We must keep app binding because attached property set on application will not inherit down to elements in 
+        // logical tree (e.g. all controls in window).
+        var appSchemeBinding = new CompiledBindingExtension
+        {
+            Mode = BindingMode.OneWay,
+            Priority = BindingPriority.Style,
+            Source = Application.Current,
+            Path = new CompiledBindingPathBuilder()
+                .Property(MaterialColor.SchemeProperty, PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor)
+                .Property(SchemePropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
+                .Property(SchemeInternalPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
+                .Build(),
+        };
+
+        var binding = new MultiBinding
+        {
+            Mode = BindingMode.OneWay,
+            Priority = BindingPriority.Style,
+            FallbackValue = fallbackColor, TargetNullValue = fallbackColor
+        };
+
+        // need theme binding?
+        if (themeVariant is null)
+        {
+            var themeBinding = new CompiledBindingExtension
+            {
+                Mode = BindingMode.OneWay,
+                Priority = BindingPriority.Style,
+                FallbackValue = defaultTheme,
+                Source = themeHost,
+                Path = new CompiledBindingPathBuilder()
+                    .Property(ThemeVariantPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
+                    .Build(),
+            };
+
+            binding.Bindings = [schemeBinding, appSchemeBinding, themeBinding];
+            binding.Converter = new FuncMultiValueConverter<object?, Color>(values =>
+                (values as IList<object?> ?? values.ToList()) switch
+                {
+                    [var scheme, var appScheme, ThemeVariant theme, ..] => resolveColor(
+                        scheme as MaterialColorScheme.MaterialColorSchemeInternal ??
+                        appScheme as MaterialColorScheme.MaterialColorSchemeInternal,
+                        theme),
+                    _ => fallbackColor
+                });
+        }
+        else // if explicit theme is provided
+        {
+            binding.Bindings = [schemeBinding, appSchemeBinding];
+            binding.Converter = new FuncMultiValueConverter<object?, Color>(values =>
+                (values as IList<object?> ?? values.ToList()) switch
+                {
+                    [var scheme, var appScheme, ..] => resolveColor(
+                        scheme as MaterialColorScheme.MaterialColorSchemeInternal ??
+                        appScheme as MaterialColorScheme.MaterialColorSchemeInternal,
+                        themeVariant),
+                    _ => fallbackColor
+                });
+        }
+
+        return binding;
+    }
+
     public static IBinding ProvideSysBrushBinding(
-        IProvideValueTarget target,
         IAvaloniaXamlIlParentStackProvider parentStack,
         SysColorToken token,
         string? customKey = null,
-        IBrush? fallback = null
+        IBrush? fallback = null,
+        ThemeVariant? themeVariant = null
     )
     {
         var fallbackBrush = fallback ?? TransparentBrush;
-        var colorBinding = ProvideSysColorBinding(target, parentStack, token, customKey);
+        var colorBinding = ProvideSysColorBinding(parentStack, token, customKey, themeVariant: themeVariant);
         return CreateBrushBinding(colorBinding, fallbackBrush);
     }
 
     public static IBinding ProvideRefBrushBinding(
-        IProvideValueTarget target,
         IAvaloniaXamlIlParentStackProvider parentStack,
         RefPaletteToken token,
         byte tone,
@@ -121,7 +236,7 @@ internal static class MaterialColorHelper
     )
     {
         var fallbackBrush = fallback ?? TransparentBrush;
-        var colorBinding = ProvideRefColorBinding(target, parentStack, token, tone, customKey);
+        var colorBinding = ProvideRefColorBinding(parentStack, token, tone, customKey);
         return CreateBrushBinding(colorBinding, fallbackBrush);
     }
 
@@ -135,92 +250,12 @@ internal static class MaterialColorHelper
             Converter = new FuncMultiValueConverter<object?, IBrush>(values =>
                 (values as IList<object?> ?? values.ToList()) switch
                 {
-                    [Color color, ..] => GetCachedBrush(color),
+                    // TODO: Brush cache
+                    [Color color, ..] => new SolidColorBrush(color),
                     [IBrush brush, ..] => brush,
                     _ => fallbackBrush
                 })
         };
-    }
-
-    private static IBrush GetCachedBrush(Color color)
-    {
-        var key =
-            ((uint)color.A << 24)
-            | ((uint)color.R << 16)
-            | ((uint)color.G << 8)
-            | color.B;
-
-        if (BrushCache.TryGetValue(key, out var brush))
-            return brush;
-
-        if (BrushCache.Count > 512)
-            BrushCache.Clear();
-
-        brush = new ImmutableSolidColorBrush(color);
-        BrushCache[key] = brush;
-        return brush;
-    }
-
-    private static IBinding CreateThemeAwareBinding(
-        IThemeVariantHost? themeHost,
-        object target,
-        MaterialColorScheme scheme,
-        Color fallbackColor,
-        Func<ThemeVariant, Color> resolveColor
-    )
-    {
-        var defaultTheme = themeHost?.ActualThemeVariant ?? ThemeVariant.Light;
-
-        var converter =
-            new FuncValueConverter<ThemeVariant, Color>(variant =>
-                variant switch
-                {
-                    { } => resolveColor(variant),
-                    _ => resolveColor(defaultTheme)
-                });
-
-        var compiledBinding = (IBinding)new CompiledBindingExtension
-        {
-            Mode = BindingMode.OneWay,
-            Priority = BindingPriority.Style,
-            Source = themeHost,
-            FallbackValue = fallbackColor,
-            Path = new CompiledBindingPathBuilder()
-                .Property(ThemeVariantPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
-                .Build(),
-            Converter = converter
-        };
-
-        var constantBinding = CreateConstantBinding(defaultTheme);
-
-        var themeBinding = themeHost is { }
-            ? compiledBinding
-            : constantBinding;
-
-        return themeBinding;
-    }
-
-    private static IBinding CreateConstantBinding(object value)
-    {
-        return new Binding
-        {
-            Mode = BindingMode.OneTime,
-            Priority = BindingPriority.Style,
-            Source = value
-        };
-    }
-
-    private static IEnumerable<object> EnumerateContextObjects(
-        IProvideValueTarget target,
-        IAvaloniaXamlIlParentStackProvider parentStack
-    )
-    {
-        if (target is { TargetObject: { } targetObject })
-            yield return targetObject;
-
-        if (parentStack is { Parents: { } parents })
-            foreach (var parent in parents)
-                yield return parent;
     }
 
     public static bool ShouldProvideBrush(IProvideValueTarget provideValueTarget)
@@ -234,73 +269,5 @@ internal static class MaterialColorHelper
             return true;
 
         return type != typeof(Color) && type != typeof(Color?);
-    }
-
-    private static (MaterialColorScheme?, IThemeVariantHost?) ResolveSchemeAndThemeHost(
-        IProvideValueTarget target,
-        IAvaloniaXamlIlParentStackProvider parentStack
-    )
-    {
-        MaterialColorScheme? scheme = null;
-        IThemeVariantHost? themeHost = null;
-        // TODO: debug | foreach (var context in EnumerateContextObjects(target, parentStack))
-        var list = EnumerateContextObjects(target, parentStack).ToList();
-        foreach (var context in list)
-        {
-            if (context is AvaloniaObject avaloniaObject && scheme is null)
-                scheme = MaterialColor.GetScheme(avaloniaObject);
-
-            if (context is IThemeVariantHost host && themeHost is null)
-                themeHost = host;
-
-            if (scheme is { } && themeHost is { })
-                break;
-        }
-
-        return (scheme, themeHost);
-    }
-
-
-    private static Color ResolveSysColor(
-        MaterialColorScheme scheme,
-        SysColorToken token,
-        string? customKey,
-        ThemeVariant themeVariant,
-        Color fallbackColor
-    )
-    {
-        try
-        {
-            if (TokenHelper.IsCustom(token))
-                return scheme.Internal.ResolveSys(token, themeVariant, customKey) ?? fallbackColor;
-
-            return scheme.Internal.ResolveSys(token, themeVariant) ?? fallbackColor;
-        }
-        catch
-        {
-            return fallbackColor;
-        }
-    }
-
-    private static Color ResolveRefColor(
-        MaterialColorScheme scheme,
-        RefPaletteToken token,
-        byte tone,
-        string? customKey,
-        ThemeVariant themeVariant,
-        Color fallbackColor
-    )
-    {
-        try
-        {
-            if (TokenHelper.IsCustom(token))
-                return scheme.Internal.ResolveRef(token, tone, customKey) ?? fallbackColor;
-
-            return scheme.Internal.ResolveRef(token, tone) ?? fallbackColor;
-        }
-        catch
-        {
-            return fallbackColor;
-        }
     }
 }

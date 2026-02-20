@@ -45,7 +45,7 @@ public class DynamicColor
     public readonly ContrastCurve? ContrastCurve;
     public readonly Func<DynamicScheme, ToneDeltaPair>? ToneDeltaPair;
 
-    readonly private Dictionary<DynamicScheme, Hct> _hctCache = new(); //  TODO: shall use LRU cache here, because DynamicScheme can be too dynamic :(
+    readonly private Dictionary<DynamicScheme, Hct> _hctCache = new();
 
     /// <summary>
     /// The base constructor for DynamicColor.

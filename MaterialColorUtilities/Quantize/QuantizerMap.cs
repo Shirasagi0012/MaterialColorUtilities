@@ -24,7 +24,7 @@ namespace MaterialColorUtilities.Quantize;
 public sealed class QuantizerMap : IQuantizer
 {
     public async Task<QuantizerResult>
-        QuantizeAsync(List<ArgbColor> pixels, int maxColors) // TODO: Validate run in separate thread
+        QuantizeAsync(List<ArgbColor> pixels, int maxColors)
         =>
             await Task.Run(() =>
             {

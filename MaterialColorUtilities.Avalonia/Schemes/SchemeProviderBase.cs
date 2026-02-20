@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
 using MaterialColorUtilities.HCT;
+using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.Avalonia;
 
@@ -62,7 +63,7 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
     {
         var color = Color ?? throw new InvalidOperationException("SchemeProvider requires Color to be set.");
 
-        return Hct.From(ArgbExtensions.FromAvaloniaColor(color));
+        return Hct.From(ArgbColor.FromAvaloniaColor(color));
     }
 
     protected double ResolveContrast()
