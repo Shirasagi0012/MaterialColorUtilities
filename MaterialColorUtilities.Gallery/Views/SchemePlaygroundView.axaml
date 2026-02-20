@@ -22,8 +22,8 @@
                 <Border Background="{mcu:MdSysColor SurfaceContainerLow}"
                         Padding="24" CornerRadius="12">
                     <StackPanel Spacing="12">
-                        <TextBlock FontSize="20" Margin="0 0 0 12">Customize scheme</TextBlock>
-                        <TextBlock FontSize="18" Margin="0 0 0 4">Scheme</TextBlock>
+                        <TextBlock FontSize="20" Margin="0 0 0 8">Customize scheme</TextBlock>
+                        <TextBlock FontSize="18" Margin="0 4">Scheme</TextBlock>
                         <ComboBox HorizontalAlignment="Stretch"
                                   ItemsSource="{x:Static vm:SchemePlaygroundViewModel.SchemeTypes}"
                                   SelectedItem="{CompiledBinding SchemeType, Mode=TwoWay}">
@@ -33,7 +33,7 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <TextBlock FontSize="18" Margin="0 0 0 4">Seed Color</TextBlock>
+                        <TextBlock FontSize="18" Margin="0 4">Seed Color</TextBlock>
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="* * * Auto" RowSpacing="12" ColumnSpacing="8">
                             <controls:HctColorSlider
                                 HctComponent="Hue"
@@ -55,18 +55,17 @@
                                      Width="72" VerticalAlignment="Center" />
 
                             <Grid Grid.Row="3" Grid.Column="0" ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
-                                <TextBlock Text="RGB Color" />
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding SelectedHct, Converter={converters:HctToStringConverter RgbString}}"></TextBlock>
-                                <TextBlock Grid.Column="1" Text="HCT Color" />
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedHct, Converter={converters:HctToStringConverter HctString}}"></TextBlock>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="RGB Color" />
+                                <SelectableTextBlock Grid.Row="1" Grid.Column="0" Text="{Binding SelectedHct, Converter={converters:HctToStringConverter RgbString}}"></SelectableTextBlock>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="HCT Color" />
+                                <SelectableTextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedHct, Converter={converters:HctToStringConverter HctString}}"></SelectableTextBlock>
                             </Grid>
 
                             <Border Grid.Row="3" Grid.Column="1" CornerRadius="4"
                                     BorderBrush="{mcu:MdSysColor Outline}" BorderThickness="1"
                                     Background="{mcu:MdSysColor SurfaceContainerHighest}"
                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    Padding="2"
-                                    >
+                                    Padding="2">
                                 <Border CornerRadius="3" Background="{Binding SelectedHct, Converter={converters:HctToBrushConverter}}"/>
                             </Border>
                         </Grid>
@@ -77,7 +76,8 @@
                     <StackPanel>
                         <Grid ColumnDefinitions="* Auto">
                             <TextBlock FontSize="20">Additional Color</TextBlock>
-                            <Button Grid.Column="1" Background="{mcu:MdSysColor SecondaryContainer}"
+                            <Button Grid.Column="1" IsEnabled="False"
+                                    Background="{mcu:MdSysColor SecondaryContainer}"
                                     Foreground="{mcu:MdSysColor OnSecondaryContainer}">
                                 Add Color
                             </Button>

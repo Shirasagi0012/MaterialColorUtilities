@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MaterialColorUtilities.Avalonia;
+using MaterialColorUtilities.Gallery.Controls;
 using MaterialColorUtilities.HCT;
 
 namespace MaterialColorUtilities.Gallery.ViewModels;
@@ -39,7 +40,7 @@ public partial class SchemePlaygroundViewModel :ViewModelBase
     };
 
     [ObservableProperty] public partial ISchemeProvider? Scheme { get; set; } = new TonalSpotScheme(DefaultSeedColor);
-    [ObservableProperty] public partial Hct SelectedHct { get; set; } = Hct.FromAvaloniaColor(DefaultSeedColor);
+    [ObservableProperty] public partial HctSelection SelectedHct { get; set; } = HctSelection.FromHct(Hct.FromAvaloniaColor(DefaultSeedColor));
     [ObservableProperty] public partial Type SchemeType { get; set; } = typeof(TonalSpotScheme);
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -54,9 +55,9 @@ public partial class SchemePlaygroundViewModel :ViewModelBase
         }
     }
 
-    private static ISchemeProvider CreateScheme(Type type, Hct hct)
+    private static ISchemeProvider CreateScheme(Type type, HctSelection hctSelection)
     {
-        var seedColor = hct.ToAvaloniaColor();
+        var seedColor = hctSelection.ToHct().ToAvaloniaColor();
 
         if (type == typeof(TonalSpotScheme))
             return new TonalSpotScheme(seedColor);

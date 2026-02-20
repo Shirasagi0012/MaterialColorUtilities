@@ -3,7 +3,6 @@ using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
 using MaterialColorUtilities.Gallery.Controls;
-using MaterialColorUtilities.HCT;
 using static MaterialColorUtilities.Gallery.Controls.HctColorSlider;
 
 namespace MaterialColorUtilities.Gallery.Converters;
@@ -14,12 +13,12 @@ public class HctComponentToStringConverterExtension : MarkupExtension
     private const double MaxTone = 100.0;
 
     private readonly HctComponent? _component;
-    private Hct _lastHct = Hct.From(0.0, 0.0, 0.0);
+    private HctSelection _lastHct = new(0.0, 0.0, 0.0);
 
-    private readonly FuncValueConverter<Hct, string> _hueConverter;
-    private readonly FuncValueConverter<Hct, string> _chromaConverter;
-    private readonly FuncValueConverter<Hct, string> _toneConverter;
-    private readonly FuncValueConverter<Hct, string> _hctConverter;
+    private readonly FuncValueConverter<HctSelection, string> _hueConverter;
+    private readonly FuncValueConverter<HctSelection, string> _chromaConverter;
+    private readonly FuncValueConverter<HctSelection, string> _toneConverter;
+    private readonly FuncValueConverter<HctSelection, string> _hctConverter;
 
     public HctComponentToStringConverterExtension()
     {
@@ -85,7 +84,7 @@ public class HctComponentToStringConverterExtension : MarkupExtension
             _ => _hctConverter
         };
 
-    private static Hct UpdateComponent(Hct source, HctComponent component, double value)
+    private static HctSelection UpdateComponent(HctSelection source, HctComponent component, double value)
     {
         var hue = Math.Clamp(source.Hue, 0.0, MaxHue);
         var tone = Math.Clamp(source.Tone, 0.0, MaxTone);
@@ -106,16 +105,16 @@ public class HctComponentToStringConverterExtension : MarkupExtension
                 break;
         }
 
-        return Hct.From(hue, chroma, tone);
+        return new HctSelection(hue, chroma, tone).Normalize();
     }
 
-    private static Hct CreateSafeHct(double hue, double chroma, double tone)
+    private static HctSelection CreateSafeHct(double hue, double chroma, double tone)
     {
         var safeHue = Math.Clamp(hue, 0.0, MaxHue);
         var safeTone = Math.Clamp(tone, 0.0, MaxTone);
         var safeChroma = Math.Clamp(chroma, 0.0, GetDynamicMaxChroma(safeHue, safeTone));
 
-        return Hct.From(safeHue, safeChroma, safeTone);
+        return new HctSelection(safeHue, safeChroma, safeTone).Normalize();
     }
 
     private static bool TryParseNumber(string? value, out double result)

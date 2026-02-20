@@ -9,9 +9,8 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Avalonia.Utilities;
 using MaterialColorUtilities.Avalonia;
-using MaterialColorUtilities.HCT;
+using HctColor = MaterialColorUtilities.HCT.Hct;
 
 namespace MaterialColorUtilities.Gallery.Controls;
 
@@ -24,14 +23,17 @@ public class HctColorSlider : Slider
     private const double MaxHue = 359.0;
     private const double MaxTone = 100.0;
     private const double MaxChromaProbe = 200.0;
+    private const double HueTolerance = 1.0;
+    private const double ToneTolerance = 0.2;
+    private const int ChromaSearchIterations = 16;
 
-    private static readonly Hct DefaultHct = Hct.FromAvaloniaColor(Colors.White);
+    private static readonly HctSelection DefaultHct = HctSelection.FromHct(HctColor.FromAvaloniaColor(Colors.White));
 
     private Bitmap? _backgroundBitmap;
     private bool _ignorePropertyChanged;
 
-    public static readonly StyledProperty<Hct> HctProperty =
-        AvaloniaProperty.Register<HctColorSlider, Hct>(
+    public static readonly StyledProperty<HctSelection> HctProperty =
+        AvaloniaProperty.Register<HctColorSlider, HctSelection>(
             nameof(Hct),
             DefaultHct,
             defaultBindingMode: BindingMode.TwoWay);
@@ -43,7 +45,7 @@ public class HctColorSlider : Slider
 
     protected override Type StyleKeyOverride => typeof(ColorSlider);
 
-    public Hct Hct
+    public HctSelection Hct
     {
         get => GetValue(HctProperty);
         set => SetValue(HctProperty, value);
@@ -59,12 +61,13 @@ public class HctColorSlider : Slider
     {
         var safeHue = Math.Clamp(hue, 0.0, MaxHue);
         var safeTone = Math.Clamp(tone, 0.0, MaxTone);
-        return Math.Max(0.0, Hct.From(safeHue, MaxChromaProbe, safeTone).Chroma);
+
+        return Math.Max(0.0, HctColor.From(safeHue, MaxChromaProbe, safeTone).Chroma);
     }
 
     private void UpdatePseudoClasses()
     {
-        if (ColorHelper.GetRelativeLuminance(Hct.ToAvaloniaColor()) <= 0.5)
+        if (ColorHelper.GetRelativeLuminance(Hct.ToHct().ToAvaloniaColor()) <= 0.5)
         {
             PseudoClasses.Set(pcDarkSelector, false);
             PseudoClasses.Set(pcLightSelector, true);
@@ -78,7 +81,7 @@ public class HctColorSlider : Slider
 
     private void SetHctToSliderValues()
     {
-        var hct = Hct;
+        var hct = Hct.Normalize();
 
         switch (HctComponent)
         {
@@ -113,12 +116,12 @@ public class HctColorSlider : Slider
         return Math.Clamp(Value, Minimum, Maximum);
     }
 
-    private Hct GetHctFromSliderValues()
+    private HctSelection GetHctFromSliderValues()
     {
-        var baseHct = Hct;
-        var hue = Math.Clamp(baseHct.Hue, 0.0, MaxHue);
-        var tone = Math.Clamp(baseHct.Tone, 0.0, MaxTone);
-        var chroma = Math.Max(0.0, baseHct.Chroma);
+        var baseHct = Hct.Normalize();
+        var hue = baseHct.Hue;
+        var tone = baseHct.Tone;
+        var chroma = baseHct.Chroma;
         var sliderValue = GetSafeSliderValue();
 
         switch (HctComponent)
@@ -136,7 +139,7 @@ public class HctColorSlider : Slider
                 break;
         }
 
-        return Hct.From(hue, chroma, tone);
+        return new HctSelection(hue, chroma, tone).Normalize();
     }
 
     private void UpdateBackground()
@@ -166,7 +169,7 @@ public class HctColorSlider : Slider
             pixelHeight,
             Orientation,
             HctComponent,
-            Hct);
+            Hct.Normalize());
 
         _backgroundBitmap?.Dispose();
         _backgroundBitmap = CreateBitmapFromPixelData(pixelData, pixelWidth, pixelHeight);
@@ -178,7 +181,7 @@ public class HctColorSlider : Slider
         int height,
         Orientation orientation,
         HctComponent component,
-        Hct baseHct)
+        HctSelection baseHct)
     {
         var bgraPixelData = new byte[width * height * 4];
         var pixelDataIndex = 0;
@@ -206,16 +209,18 @@ public class HctColorSlider : Slider
             {
                 case HctComponent.Hue:
                     hue = Math.Clamp(value, 0.0, MaxHue);
+                    chroma = Math.Min(chroma, GetDynamicMaxChroma(hue, tone));
                     break;
                 case HctComponent.Chroma:
                     chroma = Math.Clamp(value, 0.0, componentMax);
                     break;
                 case HctComponent.Tone:
                     tone = Math.Clamp(value, 0.0, MaxTone);
+                    chroma = Math.Min(chroma, GetDynamicMaxChroma(hue, tone));
                     break;
             }
 
-            return Hct.From(hue, chroma, tone).Argb.ToAvaloniaColor();
+            return HctColor.From(hue, chroma, tone).Argb.ToAvaloniaColor();
         }
 
         if (orientation == Orientation.Horizontal)
@@ -298,6 +303,12 @@ public class HctColorSlider : Slider
         if (change.Property == HctProperty)
         {
             _ignorePropertyChanged = true;
+
+            var normalized = Hct.Normalize();
+            if (!normalized.Equals(Hct))
+            {
+                SetCurrentValue(HctProperty, normalized);
+            }
 
             SetHctToSliderValues();
             UpdateBackground();
