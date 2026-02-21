@@ -65,8 +65,8 @@ Currently color extract XAML markup extension is not implemented, but it will be
 
 Then, color tokens are available through strong-typed markup extensions:
 
-- MdSysColor <SysColorToken token>, <string customColorKey>
-- MdRefPalette <RefPaletteToken palette>, <byte tone>, <string customColorKey>
+- `MdSysColor <SysColorToken token>, <string customColorKey>`
+- `MdRefPalette <RefPaletteToken palette>, <byte tone>, <string customColorKey>`
 
 ```xml
 <Border Background="{mcu:MdSysColor Primary}" Grid.Row="0">
