@@ -43,47 +43,42 @@ Most API are identical to original implementation. There are some differences:
 - For convenience, this library uses ArgbColor struct to represent a color, instead of an int as the original implementation does.
 - Some `.From***(...)` method are replaced by constructor.
 
-There are a separate project for Avalonia app to use, which give you ability to directly define a dynamic scheme in XAML with no C# code needed, and easy access to material color tokens as resources. Seed color can be bind to a property, or a dynamic resource, and the color scheme will auto update. Extended Colors and color harmonization are also supported.
+There are a separate project for Avalonia app to use, which give you ability to directly define a dynamic scheme in XAML with no C# code needed, and easy access to material color tokens with markup extensions. Seed color can be bind to a property, or a dynamic resource. Extended Colors and color harmonization will soon be supported.
 
-You only need to put this in ResourceDictionary.MergedDictionaries
+To setup a dynamic scheme, just set an attached property `MaterialColor.Scheme` with your preferred scheme. Set to Application will apply to the whole app. The scheme will inherit to all element down the logical tree.
 
 ```xml
-<mcu:DynamicMaterialColorScheme>
-    <mcu:DynamicMaterialColorScheme.Scheme>
-        <mcu:TonalSpotScheme Color="{DynamicResource SystemAccentColor}"/>
-    </mcu:DynamicMaterialColorScheme.Scheme>
-    <mcu:ExtendedPalette x:Key="Chartreuse" Color="Chartreuse" Harmonized="True" />
-    <mcu:ExtendedPalette x:Key="Azure" Color="#007cf7" Harmonized="False" />
-</mcu:DynamicMaterialColorScheme>
+<Application>
+    <mcu:MaterialColor.Scheme>
+        <mcu:TonalSpotScheme Color="{DynamicResource SystemAccentColor}" />
+    </mcu:MaterialColor.Scheme>
+</Application>
 ```
 
 Thanks to Avalonia's ability to use any type for markup extensions, the XAML can be much simplified:
 
 ```xml
-<mcu:DynamicMaterialColorScheme Scheme="{mcu:ExpressiveScheme {Binding SourceColor}}" />
+<Border mcu:MaterialColor.Scheme="{mcu:TonalSpotScheme {Binding ThemeColor}}" />
 ```
 
 Currently color extract XAML markup extension is not implemented, but it will be here after some time.
 
-Then, color tokens are available as dynamic resource:
+Then, color tokens are available through strong-typed markup extensions:
+
+- MdSysColor <SysColorToken token>, <string customColorKey>
+- MdRefPalette <RefPaletteToken palette>, <byte tone>, <string customColorKey>
 
 ```xml
-<Border Background="{DynamicResource md.sys.color.on-primary}" Grid.Row="1" >
-    <TextBlock Foreground="{DynamicResource md.sys.color.primary}" Classes="label-medium" >
-        On Primary
-    </TextBlock>
+<Border Background="{mcu:MdSysColor Primary}" Grid.Row="0">
+    <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimary}">Primary</TextBlock>
 </Border>
 ```
 
-Note that StaticResource won't work, as the scheme is dynamic generated. If you want IntelliSense to work, you'll need to add a statically defined resource dictionary that contains all the tokens:
+The markup extension will provide a binding of SolidColorBrush or Color, depends on the callsite. For example, using the markup extension with SolidColorBrush.Color will provide a Color instead of a brush as the example above. When scheme, system theme or seed color change, the binding will automatically update. 
 
-```xml
-<ResourceInclude Source="avares://MaterialColorUtilities.Avalonia/DefaultColorScheme.axaml" />
+For extended/custom colors, the token should be the ones for custom, and provide the color key you defined:
+
 ```
-
-For extended colors, tokens is named like `md.sys.color.ex.[Color Name].on-extended`.
-
-### Limitations
-
-- Currently only color system token are supported, and you can't get ref tokens as resources. Will be implemented later. 
-- Extended colors list doesn't support data binding. 
+{mcu:MdSysColor OnCustomContainer, Brand}
+{mcu:MdRefPalette Custom, 95, Brand}
+```
