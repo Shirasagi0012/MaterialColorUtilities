@@ -145,7 +145,7 @@ internal static class MaterialColorHelper
             Priority = BindingPriority.Style,
             Source = source ?? Application.Current,
             Path = new CompiledBindingPathBuilder()
-                .Property(MaterialColor.SchemeProperty, PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor)
+                .Property(MaterialColor.SchemeHostProperty, PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor)
                 .Property(SchemePropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
                 .Property(SchemeInternalPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
                 .Build(),
@@ -159,7 +159,7 @@ internal static class MaterialColorHelper
             Priority = BindingPriority.Style,
             Source = Application.Current,
             Path = new CompiledBindingPathBuilder()
-                .Property(MaterialColor.SchemeProperty, PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor)
+                .Property(MaterialColor.SchemeHostProperty, PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor)
                 .Property(SchemePropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
                 .Property(SchemeInternalPropertyInfo, PropertyInfoAccessorFactory.CreateInpcPropertyAccessor)
                 .Build(),

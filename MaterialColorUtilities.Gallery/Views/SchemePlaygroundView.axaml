@@ -87,7 +87,7 @@
             </Grid>
             <Border VerticalAlignment="Top" Padding="12" CornerRadius="12"
                     Background="{mcu:MdSysColor SurfaceContainerHigh}"
-                    mcu:MaterialColor.Scheme="{mcu:MaterialColorScheme {CompiledBinding Scheme}}">
+                    mcu:MaterialColor.Scheme="{CompiledBinding Scheme}">
                 <views:ColorSchemeView />
             </Border>
         </DockPanel>

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia;
@@ -27,23 +28,19 @@ public class MaterialColorScheme : AvaloniaObject
             (scheme, provider) => scheme.Scheme = provider
         );
 
-    internal MaterialColorSchemeInternal Internal { get; } = new MaterialColorSchemeInternal();
+    internal MaterialColorSchemeInternal Internal { get; } = new();
 
     public MaterialColorScheme()
     {
-        CustomColors.CollectionChanged += OnCustomColorsChanged;
-        Internal.Refresh(Scheme, CustomColors);
     }
 
     public MaterialColorScheme(ISchemeProvider scheme)
     {
-        CustomColors.CollectionChanged += OnCustomColorsChanged;
         Scheme = scheme;
     }
 
     public MaterialColorScheme(IBinding scheme)
     {
-        CustomColors.CollectionChanged += OnCustomColorsChanged;
         this[!SchemeProperty] = scheme;
     }
 
@@ -53,6 +50,8 @@ public class MaterialColorScheme : AvaloniaObject
         get;
         set
         {
+            if (value == field) return;
+            
             if (field is { })
                 field.SchemeChanged -= OnSchemeProviderChanged;
 
@@ -61,65 +60,39 @@ public class MaterialColorScheme : AvaloniaObject
             if (value is { })
                 value.SchemeChanged += OnSchemeProviderChanged;
 
-            Internal.Refresh(Scheme, CustomColors);
+            Internal.UpdateScheme(Scheme);
         }
     }
 
     private void OnSchemeProviderChanged(object? sender, EventArgs e)
     {
-        Internal.Refresh(Scheme, CustomColors);
+        Internal.UpdateScheme(Scheme);
     }
-
-    [Content] public AvaloniaList<MaterialCustomColor> CustomColors { get; } = [];
-
-    private void OnCustomColorsChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        if (e.OldItems is { })
-            foreach (var entry in e.OldItems.OfType<MaterialCustomColor>())
-                entry.PropertyChanged -= OnCustomColorPropertyChanged;
-
-        if (e.NewItems is { })
-            foreach (var entry in e.NewItems.OfType<MaterialCustomColor>())
-                entry.PropertyChanged += OnCustomColorPropertyChanged;
-
-        Internal.Refresh(Scheme, CustomColors);
-    }
-
-    private void OnCustomColorPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
-    {
-        if (e.Property == MaterialCustomColor.KeyProperty
-            || e.Property == MaterialCustomColor.ColorProperty
-            || e.Property == MaterialCustomColor.BlendProperty)
-            Internal.Refresh(Scheme, CustomColors);
-    }
-
 
     internal class MaterialColorSchemeInternal : INotifyPropertyChanged
     {
+        public MaterialColorSchemeInternal()
+        {
+            CustomColors.ResetBehavior = ResetBehavior.Remove;
+            CustomColors.CollectionChanged += OnCustomColorsChanged;
+        }
+        
         private Dictionary<string, TonalPalette> _customPalettes = new(StringComparer.OrdinalIgnoreCase);
+        
+        [Content] public AvaloniaList<MaterialCustomColor> CustomColors { get; } = [];
+        
         public event PropertyChangedEventHandler? PropertyChanged;
-
-
+        
         public DynamicScheme? LightScheme { get; private set; }
 
         public DynamicScheme? DarkScheme { get; private set; }
-
-        public void Refresh(ISchemeProvider? provider, IEnumerable<MaterialCustomColor> customColors)
+        
+        public void UpdateScheme(ISchemeProvider? provider)
         {
-            try
-            {
-                LightScheme = provider?.CreateScheme(ThemeVariant.Light);
-                DarkScheme = provider?.CreateScheme(ThemeVariant.Dark);
-            }
-            catch
-            {
-                LightScheme = null;
-                DarkScheme = null;
-            }
+            LightScheme = provider?.CreateScheme(ThemeVariant.Light);
+            DarkScheme = provider?.CreateScheme(ThemeVariant.Dark);
 
-            _customPalettes = BuildCustomPalettes(customColors);
-
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+            BuildCustomPalettes(CustomColors);
         }
 
         private static bool IsDark(ThemeVariant variant)
@@ -145,7 +118,7 @@ public class MaterialColorScheme : AvaloniaObject
             return false;
         }
 
-        private Dictionary<string, TonalPalette> BuildCustomPalettes(IEnumerable<MaterialCustomColor> customColors)
+        private void BuildCustomPalettes(IEnumerable<MaterialCustomColor> customColors)
         {
             var result = new Dictionary<string, TonalPalette>(StringComparer.OrdinalIgnoreCase);
             var sourceArgb = LightScheme?.SourceColorArgb ?? DarkScheme?.SourceColorArgb;
@@ -166,7 +139,9 @@ public class MaterialColorScheme : AvaloniaObject
                 result[key] = new TonalPalette(hct);
             }
 
-            return result;
+            _customPalettes =  result;
+            
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         }
 
         private DynamicScheme? ResolveDynamicScheme(ThemeVariant variant)
@@ -179,11 +154,7 @@ public class MaterialColorScheme : AvaloniaObject
         {
             if (TokenHelper.IsCustom(token))
             {
-                if (customKey is null)
-                    return null;
-
-                var normalized = customKey.Trim();
-                if (!_customPalettes.TryGetValue(normalized, out var palette))
+                if (!TryGetCustomPalette(customKey, out var palette))
                     return null;
 
                 var tone = GetCustomRoleTone(token, IsDark(themeVariant));
@@ -201,11 +172,7 @@ public class MaterialColorScheme : AvaloniaObject
         {
             if (TokenHelper.IsCustom(palette))
             {
-                if (customKey is null)
-                    return null;
-
-                var normalized = customKey.Trim();
-                if (!_customPalettes.TryGetValue(normalized, out var customPalette))
+                if (!TryGetCustomPalette(customKey, out var customPalette))
                     return null;
 
                 return customPalette.Get(tone).ToAvaloniaColor();
@@ -216,6 +183,16 @@ public class MaterialColorScheme : AvaloniaObject
                 return null;
 
             return ResolveRefArgb(scheme, palette, tone).ToAvaloniaColor();
+        }
+
+        private bool TryGetCustomPalette(string? customKey, [NotNullWhen(true)] out TonalPalette? palette)
+        {
+            palette = null;
+            if (String.IsNullOrWhiteSpace(customKey))
+                return false;
+
+            var normalized = customKey.Trim();
+            return _customPalettes.TryGetValue(normalized, out palette);
         }
 
         private static ArgbColor? ResolveSysArgb(DynamicScheme scheme, SysColorToken token)
@@ -303,6 +280,28 @@ public class MaterialColorScheme : AvaloniaObject
                 (SysColorToken.OnCustomContainer, true) => 90,
                 _ => throw new ArgumentOutOfRangeException(nameof(role))
             };
+        }
+        
+        
+        private void OnCustomColorsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems is { })
+                foreach (var entry in e.OldItems.OfType<MaterialCustomColor>())
+                    entry.PropertyChanged -= OnCustomColorPropertyChanged;
+
+            if (e.NewItems is { })
+                foreach (var entry in e.NewItems.OfType<MaterialCustomColor>())
+                    entry.PropertyChanged += OnCustomColorPropertyChanged;
+
+            BuildCustomPalettes(CustomColors);
+        }
+
+        private void OnCustomColorPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            if (e.Property == MaterialCustomColor.KeyProperty
+                || e.Property == MaterialCustomColor.ColorProperty
+                || e.Property == MaterialCustomColor.BlendProperty)
+                BuildCustomPalettes(CustomColors);
         }
     }
 }

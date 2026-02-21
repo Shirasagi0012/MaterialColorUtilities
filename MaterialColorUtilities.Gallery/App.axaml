@@ -24,11 +24,7 @@
 	</Application.Resources>
 
 	<mcu:MaterialColor.Scheme>
-		<mcu:MaterialColorSchemeExtension Scheme="{mcu:TonalSpotScheme Color={DynamicResource SystemAccentColor}}">
-			<mcu:MaterialCustomColor
-			Blend="False"
-			Color="Red"
-			Key="Favorite" />
-		</mcu:MaterialColorSchemeExtension>
+		<mcu:TonalSpotScheme Color="{DynamicResource SystemAccentColor}">
+		</mcu:TonalSpotScheme>
 	</mcu:MaterialColor.Scheme>
 </Application>
