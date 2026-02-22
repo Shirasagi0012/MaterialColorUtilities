@@ -79,7 +79,7 @@ Access Material 3 design tokens using strongly-typed markup extensions. These ex
 - `MdRefPalette (RefPaletteToken palette, byte tone[, string customColorKey])`
 
 ```xml
-<Border Background="{mcu:MdRefColor Primary, 60}" Grid.Row="0">
+<Border Background="{mcu:MdRefPalette Primary, 60}" Grid.Row="0">
     <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimary}">Primary</TextBlock>
 </Border>
 ```
