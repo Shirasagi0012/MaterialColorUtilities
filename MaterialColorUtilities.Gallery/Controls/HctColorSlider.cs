@@ -10,12 +10,13 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using MaterialColorUtilities.Avalonia;
+using PropertyGenerator.Avalonia;
 using HctColor = MaterialColorUtilities.HCT.Hct;
 
 namespace MaterialColorUtilities.Gallery.Controls;
 
 [PseudoClasses(pcDarkSelector, pcLightSelector)]
-public class HctColorSlider : Slider
+public partial class HctColorSlider : Slider
 {
     private const string pcDarkSelector = ":dark-selector";
     private const string pcLightSelector = ":light-selector";
@@ -23,39 +24,21 @@ public class HctColorSlider : Slider
     private const double MaxHue = 359.0;
     private const double MaxTone = 100.0;
     private const double MaxChromaProbe = 200.0;
-    private const double HueTolerance = 1.0;
-    private const double ToneTolerance = 0.2;
-    private const int ChromaSearchIterations = 16;
 
     private static readonly HctSelection DefaultHct = HctSelection.FromHct(HctColor.FromAvaloniaColor(Colors.White));
 
     private Bitmap? _backgroundBitmap;
     private bool _ignorePropertyChanged;
 
-    public static readonly StyledProperty<HctSelection> HctProperty =
-        AvaloniaProperty.Register<HctColorSlider, HctSelection>(
-            nameof(Hct),
-            DefaultHct,
-            defaultBindingMode: BindingMode.TwoWay);
-
-    public static readonly StyledProperty<HctComponent> HctComponentProperty =
-        AvaloniaProperty.Register<HctColorSlider, HctComponent>(
-            nameof(HctComponent),
-            HctComponent.Hue);
-
     protected override Type StyleKeyOverride => typeof(ColorSlider);
 
-    public HctSelection Hct
-    {
-        get => GetValue(HctProperty);
-        set => SetValue(HctProperty, value);
-    }
+    [GeneratedStyledProperty(DefaultValueCallback = nameof(ProvideHctDefault), DefaultBindingMode = BindingMode.TwoWay)]
+    public partial HctSelection Hct { get; set; }
 
-    public HctComponent HctComponent
-    {
-        get => GetValue(HctComponentProperty);
-        set => SetValue(HctComponentProperty, value);
-    }
+    public static HctSelection ProvideHctDefault() => DefaultHct;
+
+    [GeneratedStyledProperty(DefaultValue = HctComponent.Hue)]
+    public partial HctComponent HctComponent { get; set; }
 
     public static double GetDynamicMaxChroma(double hue, double tone)
     {
@@ -292,7 +275,7 @@ public class HctColorSlider : Slider
         return bitmap;
     }
 
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    partial void OnPropertyChangedOverride(AvaloniaPropertyChangedEventArgs change)
     {
         if (_ignorePropertyChanged)
         {
