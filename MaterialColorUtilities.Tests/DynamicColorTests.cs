@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Collections.Concurrent;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Scheme;
 using MaterialColorUtilities.Utils;
@@ -200,6 +201,53 @@ public class DynamicColorTests
                 Assert.True(contrast >= minimumRequirement, message);
             }
         }
+    }
+
+    [Fact]
+    public void DynamicColorCacheHandlesConcurrentEviction()
+    {
+        var schemes = Enumerable
+            .Range(0, 256)
+            .Select(index =>
+            {
+                var seedArgb = unchecked(
+                    (uint)(0xFF000000u | ((uint)index * 2654435761u & 0x00FFFFFFu))
+                );
+                var seed = Hct.From(new ArgbColor(seedArgb));
+                var contrast = ContrastLevels[index % ContrastLevels.Length];
+                var isDark = (index & 1) == 0;
+
+                return (index % 4) switch
+                {
+                    0 => (DynamicSchemeType)new SchemeContent(seed, isDark, contrast),
+                    1 => new SchemeMonochrome(seed, isDark, contrast),
+                    2 => new SchemeTonalSpot(seed, isDark, contrast),
+                    _ => new SchemeFidelity(seed, isDark, contrast)
+                };
+            })
+            .ToArray();
+
+        var exceptions = new ConcurrentQueue<Exception>();
+
+        for (var round = 0; round < 24; round++)
+        {
+            Parallel.ForEach(schemes, scheme =>
+            {
+                try
+                {
+                    _ = MaterialDynamicColors.Primary.GetHct(scheme);
+                }
+                catch (Exception ex)
+                {
+                    exceptions.Enqueue(ex);
+                }
+            });
+        }
+
+        Assert.True(
+            exceptions.IsEmpty,
+            $"Concurrent cache access failed with {exceptions.Count} exception(s)."
+        );
     }
 
     [Fact]

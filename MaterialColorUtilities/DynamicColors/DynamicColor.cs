@@ -45,7 +45,13 @@ public class DynamicColor
     public readonly ContrastCurve? ContrastCurve;
     public readonly Func<DynamicScheme, ToneDeltaPair>? ToneDeltaPair;
 
-    readonly private Dictionary<DynamicScheme, Hct> _hctCache = new();
+    private const int HctCacheCapacity = 32;
+
+    private readonly Lock _hctCacheLock = new();
+    private readonly Dictionary<DynamicScheme, LinkedListNode<HctCacheEntry>> _hctCacheMap = new();
+    private readonly LinkedList<HctCacheEntry> _hctCacheLruList = new();
+
+    private readonly record struct HctCacheEntry(DynamicScheme Scheme, Hct Value);
 
     /// <summary>
     /// The base constructor for DynamicColor.
@@ -125,17 +131,34 @@ public class DynamicColor
     /// contrast level is.</param>
     public Hct GetHct(DynamicScheme scheme)
     {
-        if (_hctCache.TryGetValue(scheme, out var cachedAnswer))
-            return cachedAnswer;
+        lock (_hctCacheLock)
+        {
+            if (_hctCacheMap.TryGetValue(scheme, out var cachedNode))
+            {
+                _hctCacheLruList.Remove(cachedNode);
+                _hctCacheLruList.AddFirst(cachedNode);
+                return cachedNode.Value.Value;
+            }
 
-        var tone = GetTone(scheme);
-        var answer = Palette(scheme).GetHct(tone);
+            var tone = GetTone(scheme);
+            var answer = Palette(scheme).GetHct(tone);
 
-        if (_hctCache.Count > 4)
-            _hctCache.Clear();
+            var entryNode = new LinkedListNode<HctCacheEntry>(new HctCacheEntry(scheme, answer));
+            _hctCacheLruList.AddFirst(entryNode);
+            _hctCacheMap[scheme] = entryNode;
 
-        _hctCache[scheme] = answer;
-        return answer;
+            if (_hctCacheMap.Count > HctCacheCapacity)
+            {
+                var lruNode = _hctCacheLruList.Last;
+                if (lruNode != null)
+                {
+                    _hctCacheLruList.RemoveLast();
+                    _hctCacheMap.Remove(lruNode.Value.Scheme);
+                }
+            }
+
+            return answer;
+        }
     }
 
     /// <summary>
