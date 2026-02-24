@@ -12,7 +12,7 @@
 
     <PropertyGroup>
         <PackageId>Shirasagi0012.MaterialColorUtilities.Avalonia</PackageId>
-        <Version>0.0.1</Version>
+        <Version>0.0.2</Version>
         <Authors>Shirasagi0012</Authors>
         <Description>Avalonia integration for Material Color Utilities with Material 3 dynamic color resources.</Description>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -21,6 +21,10 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PackageOutputPath>$(MSBuildThisFileDirectory)..\artifacts</PackageOutputPath>
+		<PackageProjectUrl>https://github.com/Shirasagi0012/MaterialColorUtilities</PackageProjectUrl>                                        
+		<RepositoryUrl>https://github.com/Shirasagi0012/MaterialColorUtilities</RepositoryUrl>                                                
+		<RepositoryType>git</RepositoryType>                                                                                                  
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>      
     </PropertyGroup>
 
     <ItemGroup>
@@ -31,8 +35,9 @@
         <ProjectReference Include="..\MaterialColorUtilities\MaterialColorUtilities.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <None Include="..\README.md" Pack="true" PackagePath="README.md" />
-    </ItemGroup>
+	<ItemGroup>
+		<None Include="../README.md" Pack="true" PackagePath="README.md" />
+		<None Include="../LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
+	</ItemGroup>
 
 </Project>
