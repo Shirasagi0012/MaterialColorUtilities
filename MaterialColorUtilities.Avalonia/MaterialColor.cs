@@ -17,7 +17,7 @@ public class MaterialColor : AvaloniaObject
         });
     }
     
-    internal static readonly StyledProperty<MaterialColorScheme> SchemeHostProperty =
+    internal static readonly AttachedProperty<MaterialColorScheme> SchemeHostProperty =
         AvaloniaProperty.RegisterAttached<MaterialColor, AvaloniaObject, MaterialColorScheme>(
             "SchemeHost", inherits: true);
 
