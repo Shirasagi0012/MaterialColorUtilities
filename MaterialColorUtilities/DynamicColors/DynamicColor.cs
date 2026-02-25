@@ -47,7 +47,11 @@ public class DynamicColor
 
     private const int HctCacheCapacity = 32;
 
+#if NET9_0_OR_GREATER
     private readonly Lock _hctCacheLock = new();
+#else
+    private readonly object _hctCacheLock = new();
+#endif
     private readonly Dictionary<DynamicScheme, LinkedListNode<HctCacheEntry>> _hctCacheMap = new();
     private readonly LinkedList<HctCacheEntry> _hctCacheLruList = new();
 
