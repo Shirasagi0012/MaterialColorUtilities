@@ -51,7 +51,7 @@ public class MaterialColorScheme : AvaloniaObject
         set
         {
             if (value == field) return;
-            
+
             if (field is { })
                 field.SchemeChanged -= OnSchemeProviderChanged;
 
@@ -76,21 +76,29 @@ public class MaterialColorScheme : AvaloniaObject
             CustomColors.ResetBehavior = ResetBehavior.Remove;
             CustomColors.CollectionChanged += OnCustomColorsChanged;
         }
-        
+
         private Dictionary<string, TonalPalette> _customPalettes = new(StringComparer.OrdinalIgnoreCase);
-        
+
         [Content] public AvaloniaList<MaterialCustomColor> CustomColors { get; } = [];
-        
+
         public event PropertyChangedEventHandler? PropertyChanged;
-        
+
         public DynamicScheme? LightScheme { get; private set; }
 
         public DynamicScheme? DarkScheme { get; private set; }
-        
+
         public void UpdateScheme(ISchemeProvider? provider)
         {
-            LightScheme = provider?.CreateScheme(ThemeVariant.Light);
-            DarkScheme = provider?.CreateScheme(ThemeVariant.Dark);
+            if (provider is not SchemeProviderBase { Color: { } } p)
+            {
+                LightScheme = null;
+                DarkScheme = null;
+                BuildCustomPalettes(CustomColors);
+                return;
+            }
+
+            LightScheme = p.CreateScheme(ThemeVariant.Light);
+            DarkScheme = p.CreateScheme(ThemeVariant.Dark);
 
             BuildCustomPalettes(CustomColors);
         }
@@ -139,8 +147,8 @@ public class MaterialColorScheme : AvaloniaObject
                 result[key] = new TonalPalette(hct);
             }
 
-            _customPalettes =  result;
-            
+            _customPalettes = result;
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         }
 
@@ -281,8 +289,8 @@ public class MaterialColorScheme : AvaloniaObject
                 _ => throw new ArgumentOutOfRangeException(nameof(role))
             };
         }
-        
-        
+
+
         private void OnCustomColorsChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems is { })
