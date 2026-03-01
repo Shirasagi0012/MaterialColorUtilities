@@ -484,7 +484,15 @@ public static class MaterialDynamicColors
     public readonly static DynamicColor OnErrorContainer = DynamicColor.FromPalette(
         "on_error_container",
         s => s.ErrorPalette,
-        s => s.IsDark ? 90 : 30,
+        s =>
+        {
+            if (IsMonochrome(s))
+            {
+                return s.IsDark ? 90 : 10;
+            }
+
+            return s.IsDark ? 90 : 30;
+        },
         background: s => ErrorContainer,
         contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
     );

@@ -35,7 +35,7 @@ namespace MaterialColorUtilities.HCT;
 /// point is accurately measured as a slightly chromatic blue by CAM16.
 /// (roughly, hue 203, chroma 3, lightness 100)
 /// </summary>
-internal readonly record struct Cam16(
+public readonly record struct Cam16(
     // Like red, orange, yellow, green, etc.
     double Hue,
     // Informally, colorfulness / color intensity. Like saturation in HSL, except perceptually accurate.

@@ -44,7 +44,7 @@ public class TemperatureCache(Hct input)
     /// <summary>
     /// The input HCT color for which temperature operations are performed.
     /// </summary>
-    public Hct Input { get; set; } = input;
+    public Hct Input { get; } = input;
 
     /// <summary>
     /// Gets HCT colors sorted by their temperature from coldest to warmest.

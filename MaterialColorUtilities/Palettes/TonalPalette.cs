@@ -36,7 +36,7 @@ namespace MaterialColorUtilities.Palettes;
 /// </summary>
 public class TonalPalette
 {
-    public readonly static List<int> CommonTones =
+    public static IReadOnlyList<int> CommonTones { get; } =
     [
         0,
         10,
@@ -53,7 +53,7 @@ public class TonalPalette
         100
     ];
 
-    public static int CommonSize = CommonTones.Count;
+    public static int CommonSize => CommonTones.Count;
 
     public readonly double Hue;
     public readonly double Chroma;
@@ -153,16 +153,20 @@ public class TonalPalette
 
     public Hct GetHct(double tone)
     {
-        if (_cache.TryGetValue((int)tone, out var color))
+        if (tone == Math.Truncate(tone) && tone is >= int.MinValue and <= int.MaxValue)
         {
-            return Hct.From(color);
+            var toneKey = (int)tone;
+            if (_cache.TryGetValue(toneKey, out var color))
+            {
+                return Hct.From(color);
+            }
+
+            var cachedArgb = Hct.From(Hue, Chroma, tone).Argb;
+            _cache[toneKey] = cachedArgb;
+            return Hct.From(cachedArgb);
         }
-        else
-        {
-            var argb = Hct.From(Hue, Chroma, tone);
-            _cache[(int)tone] = argb.Argb;
-            return argb;
-        }
+
+        return Hct.From(Hue, Chroma, tone);
     }
 
     override public string ToString()
