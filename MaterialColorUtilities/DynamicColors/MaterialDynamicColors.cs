@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC
+// Copyright 2023 Google LLC
 //
 //  This file is part of the material-color-utilities C# port by @Shirasagi0012
 //
@@ -16,667 +16,72 @@
 
 namespace MaterialColorUtilities.DynamicColors;
 
-using MaterialColorUtilities.Dislike;
-using MaterialColorUtilities.HCT;
-
 /// <summary>
-/// Tokens, or named colors, in the Material Design system.
+/// Named colors (roles) in the Material Design system.
 /// </summary>
-public static class MaterialDynamicColors
+public sealed class MaterialDynamicColors
 {
-    public const double ContentAccentToneDelta = 15.0;
+    private readonly ColorSpec _colorSpec = ColorSpecs.Get(ColorSpec.SpecVersion.Spec2026);
 
-    public static bool IsFidelity(DynamicScheme scheme)
-    {
-        return scheme.Variant == Variant.Fidelity || scheme.Variant == Variant.Content;
-    }
+    public DynamicColor HighestSurface(DynamicScheme scheme) => _colorSpec.HighestSurface(scheme);
 
-    public static bool IsMonochrome(DynamicScheme scheme)
-    {
-        return scheme.Variant == Variant.Monochrome;
-    }
-
-    public static DynamicColor HighestSurface(DynamicScheme s)
-    {
-        return s.IsDark ? SurfaceBright : SurfaceDim;
-    }
-
-    public readonly static DynamicColor PrimaryPaletteKeyColor = DynamicColor.FromPalette(
-        "primary_palette_key_color",
-        s => s.PrimaryPalette,
-        s => s.PrimaryPalette.KeyColor.Tone
-    );
-
-    public readonly static DynamicColor SecondaryPaletteKeyColor = DynamicColor.FromPalette(
-        "secondary_palette_key_color",
-        s => s.SecondaryPalette,
-        s => s.SecondaryPalette.KeyColor.Tone
-    );
-
-    public readonly static DynamicColor TertiaryPaletteKeyColor = DynamicColor.FromPalette(
-        "tertiary_palette_key_color",
-        s => s.TertiaryPalette,
-        s => s.TertiaryPalette.KeyColor.Tone
-    );
-
-    public readonly static DynamicColor NeutralPaletteKeyColor = DynamicColor.FromPalette(
-        "neutral_palette_key_color",
-        s => s.NeutralPalette,
-        s => s.NeutralPalette.KeyColor.Tone
-    );
-
-    public readonly static DynamicColor NeutralVariantPaletteKeyColor = DynamicColor.FromPalette(
-        "neutral_variant_palette_key_color",
-        s => s.NeutralVariantPalette,
-        s => s.NeutralVariantPalette.KeyColor.Tone
-    );
-
-    public readonly static DynamicColor Background = DynamicColor.FromPalette(
-        "background",
-        s => s.NeutralPalette,
-        s => s.IsDark ? 6 : 98,
-        true
-    );
-
-    public readonly static DynamicColor OnBackground = DynamicColor.FromPalette(
-        "on_background",
-        s => s.NeutralPalette,
-        s => s.IsDark ? 90 : 10,
-        background: s => Background,
-        contrastCurve: new ContrastCurve(3, 3, 4.5, 7)
-    );
-
-    public readonly static DynamicColor Surface = DynamicColor.FromPalette(
-        "surface",
-        s => s.NeutralPalette,
-        s => s.IsDark ? 6 : 98,
-        true
-    );
-
-    public readonly static DynamicColor SurfaceDim = DynamicColor.FromPalette(
-        "surface_dim",
-        s => s.NeutralPalette,
-        s => s.IsDark ? 6 : new ContrastCurve(87, 87, 80, 75).Get(s.ContrastLevel),
-        true
-    );
-
-    public readonly static DynamicColor SurfaceBright = DynamicColor.FromPalette(
-        "surface_bright",
-        s => s.NeutralPalette,
-        s => s.IsDark ? new ContrastCurve(24, 24, 29, 34).Get(s.ContrastLevel) : 98,
-        true
-    );
-
-    public readonly static DynamicColor SurfaceContainerLowest = DynamicColor.FromPalette(
-        "surface_container_lowest",
-        s => s.NeutralPalette,
-        s => s.IsDark ? new ContrastCurve(4, 4, 2, 0).Get(s.ContrastLevel) : 100,
-        true
-    );
-
-    public readonly static DynamicColor SurfaceContainerLow = DynamicColor.FromPalette(
-        "surface_container_low",
-        s => s.NeutralPalette,
-        s =>
-            s.IsDark
-                ? new ContrastCurve(10, 10, 11, 12).Get(s.ContrastLevel)
-                : new ContrastCurve(96, 96, 96, 95).Get(s.ContrastLevel),
-        true
-    );
-
-    public readonly static DynamicColor SurfaceContainer = DynamicColor.FromPalette(
-        "surface_container",
-        s => s.NeutralPalette,
-        s =>
-            s.IsDark
-                ? new ContrastCurve(12, 12, 16, 20).Get(s.ContrastLevel)
-                : new ContrastCurve(94, 94, 92, 90).Get(s.ContrastLevel),
-        true
-    );
-
-    public readonly static DynamicColor SurfaceContainerHigh = DynamicColor.FromPalette(
-        "surface_container_high",
-        s => s.NeutralPalette,
-        s =>
-            s.IsDark
-                ? new ContrastCurve(17, 17, 21, 25).Get(s.ContrastLevel)
-                : new ContrastCurve(92, 92, 88, 85).Get(s.ContrastLevel),
-        true
-    );
-
-    public readonly static DynamicColor SurfaceContainerHighest = DynamicColor.FromPalette(
-        "surface_container_highest",
-        s => s.NeutralPalette,
-        s =>
-            s.IsDark
-                ? new ContrastCurve(22, 22, 26, 30).Get(s.ContrastLevel)
-                : new ContrastCurve(90, 90, 84, 80).Get(s.ContrastLevel),
-        true
-    );
-
-    public readonly static DynamicColor OnSurface = DynamicColor.FromPalette(
-        "on_surface",
-        s => s.NeutralPalette,
-        s => s.IsDark ? 90 : 10,
-        background: HighestSurface,
-        contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
-    );
-
-    public readonly static DynamicColor SurfaceVariant = DynamicColor.FromPalette(
-        "surface_variant",
-        s => s.NeutralVariantPalette,
-        s => s.IsDark ? 30 : 90,
-        true
-    );
-
-    public readonly static DynamicColor OnSurfaceVariant = DynamicColor.FromPalette(
-        "on_surface_variant",
-        s => s.NeutralVariantPalette,
-        s => s.IsDark ? 80 : 30,
-        background: HighestSurface,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
-    );
-
-    public readonly static DynamicColor InverseSurface = DynamicColor.FromPalette(
-        "inverse_surface",
-        s => s.NeutralPalette,
-        s => s.IsDark ? 90 : 20
-    );
-
-    public readonly static DynamicColor InverseOnSurface = DynamicColor.FromPalette(
-        "inverse_on_surface",
-        s => s.NeutralPalette,
-        s => s.IsDark ? 20 : 95,
-        background: s => InverseSurface,
-        contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
-    );
-
-    public readonly static DynamicColor Outline = DynamicColor.FromPalette(
-        "outline",
-        s => s.NeutralVariantPalette,
-        s => s.IsDark ? 60 : 50,
-        background: HighestSurface,
-        contrastCurve: new ContrastCurve(1.5, 3, 4.5, 7)
-    );
-
-    public readonly static DynamicColor OutlineVariant = DynamicColor.FromPalette(
-        "outline_variant",
-        s => s.NeutralVariantPalette,
-        s => s.IsDark ? 30 : 80,
-        background: HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5)
-    );
-
-    public readonly static DynamicColor Shadow = DynamicColor.FromPalette(
-        "shadow",
-        s => s.NeutralPalette,
-        s => 0
-    );
-
-    public readonly static DynamicColor Scrim = DynamicColor.FromPalette(
-        "scrim",
-        s => s.NeutralPalette,
-        s => 0
-    );
-
-    public readonly static DynamicColor SurfaceTint = DynamicColor.FromPalette(
-        "surface_tint",
-        s => s.PrimaryPalette,
-        s => s.IsDark ? 80 : 40,
-        true
-    );
-
-    public readonly static DynamicColor Primary = DynamicColor.FromPalette(
-        "primary",
-        s => s.PrimaryPalette,
-        s =>
-        {
-            if (IsMonochrome(s))
-                return s.IsDark ? 100 : 0;
-            return s.IsDark ? 80 : 40;
-        },
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
-        toneDeltaPair: s => new ToneDeltaPair(
-            PrimaryContainer,
-            Primary,
-            10,
-            TonePolarity.Nearer,
-            false
-        )
-    );
-
-    public readonly static DynamicColor OnPrimary = DynamicColor.FromPalette(
-        "on_primary",
-        s => s.PrimaryPalette,
-        s =>
-        {
-            if (IsMonochrome(s))
-                return s.IsDark ? 10 : 90;
-            return s.IsDark ? 20 : 100;
-        },
-        background: s => Primary,
-        contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
-    );
-
-    public readonly static DynamicColor PrimaryContainer = DynamicColor.FromPalette(
-        "primary_container",
-        s => s.PrimaryPalette,
-        s =>
-        {
-            if (IsFidelity(s))
-                return s.SourceColorHct.Tone;
-            if (IsMonochrome(s))
-                return s.IsDark ? 85 : 25;
-            return s.IsDark ? 30 : 90;
-        },
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(
-            PrimaryContainer,
-            Primary,
-            10,
-            TonePolarity.Nearer,
-            false
-        )
-    );
-
-    public readonly static DynamicColor OnPrimaryContainer = DynamicColor.FromPalette(
-        "on_primary_container",
-        s => s.PrimaryPalette,
-        s =>
-        {
-            if (IsFidelity(s))
-                return DynamicColor.ForegroundTone(PrimaryContainer.Tone(s), 4.5);
-            if (IsMonochrome(s))
-                return s.IsDark ? 0 : 100;
-            return s.IsDark ? 90 : 30;
-        },
-        background: s => PrimaryContainer,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
-    );
-
-    public readonly static DynamicColor InversePrimary = DynamicColor.FromPalette(
-        "inverse_primary",
-        s => s.PrimaryPalette,
-        s => s.IsDark ? 40 : 80,
-        background: s => InverseSurface,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 7)
-    );
-
-    public readonly static DynamicColor Secondary = DynamicColor.FromPalette(
-        "secondary",
-        s => s.SecondaryPalette,
-        s => s.IsDark ? 80 : 40,
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
-        toneDeltaPair: s => new ToneDeltaPair(
-            SecondaryContainer,
-            Secondary,
-            10,
-            TonePolarity.Nearer,
-            false
-        )
-    );
-
-    public readonly static DynamicColor OnSecondary = DynamicColor.FromPalette(
-        "on_secondary",
-        s => s.SecondaryPalette,
-        s =>
-        {
-            if (IsMonochrome(s))
-                return s.IsDark ? 10 : 100;
-            else
-                return s.IsDark ? 20 : 100;
-        },
-        background: s => Secondary,
-        contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
-    );
-
-    public readonly static DynamicColor SecondaryContainer = DynamicColor.FromPalette(
-        "secondary_container",
-        s => s.SecondaryPalette,
-        s =>
-        {
-            var initialTone = s.IsDark ? 30.0 : 90.0;
-            if (IsMonochrome(s))
-                return s.IsDark ? 30 : 85;
-            if (!IsFidelity(s))
-                return initialTone;
-            return FindDesiredChromaByTone(
-                s.SecondaryPalette.Hue,
-                s.SecondaryPalette.Chroma,
-                initialTone,
-                !s.IsDark
-            );
-        },
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(
-            SecondaryContainer,
-            Secondary,
-            10,
-            TonePolarity.Nearer,
-            false
-        )
-    );
-
-    public readonly static DynamicColor OnSecondaryContainer = DynamicColor.FromPalette(
-        "on_secondary_container",
-        s => s.SecondaryPalette,
-        s =>
-        {
-            if (IsMonochrome(s))
-                return s.IsDark ? 90 : 10;
-            if (!IsFidelity(s))
-                return s.IsDark ? 90 : 30;
-            return DynamicColor.ForegroundTone(SecondaryContainer.Tone(s), 4.5);
-        },
-        background: s => SecondaryContainer,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
-    );
-
-    public readonly static DynamicColor Tertiary = DynamicColor.FromPalette(
-        "tertiary",
-        s => s.TertiaryPalette,
-        s =>
-        {
-            if (IsMonochrome(s))
-                return s.IsDark ? 90 : 25;
-            return s.IsDark ? 80 : 40;
-        },
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
-        toneDeltaPair: s => new ToneDeltaPair(
-            TertiaryContainer,
-            Tertiary,
-            10,
-            TonePolarity.Nearer,
-            false
-        )
-    );
-
-    public readonly static DynamicColor OnTertiary = DynamicColor.FromPalette(
-        "on_tertiary",
-        s => s.TertiaryPalette,
-        s =>
-        {
-            if (IsMonochrome(s))
-                return s.IsDark ? 10 : 90;
-            return s.IsDark ? 20 : 100;
-        },
-        background: s => Tertiary,
-        contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
-    );
-
-    public readonly static DynamicColor TertiaryContainer = DynamicColor.FromPalette(
-        "tertiary_container",
-        s => s.TertiaryPalette,
-        s =>
-        {
-            if (IsMonochrome(s))
-                return s.IsDark ? 60 : 49;
-            if (!IsFidelity(s))
-                return s.IsDark ? 30 : 90;
-            var proposedHct = s.TertiaryPalette.GetHct(s.SourceColorHct.Tone);
-            return DislikeAnalyzer.FixIfDisliked(proposedHct).Tone;
-        },
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(
-            TertiaryContainer,
-            Tertiary,
-            10,
-            TonePolarity.Nearer,
-            false
-        )
-    );
-
-    public readonly static DynamicColor OnTertiaryContainer = DynamicColor.FromPalette(
-        "on_tertiary_container",
-        s => s.TertiaryPalette,
-        s =>
-        {
-            if (IsMonochrome(s))
-                return s.IsDark ? 0 : 100;
-            if (!IsFidelity(s))
-                return s.IsDark ? 90 : 30;
-            return DynamicColor.ForegroundTone(TertiaryContainer.Tone(s), 4.5);
-        },
-        background: s => TertiaryContainer,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
-    );
-
-    public readonly static DynamicColor Error = DynamicColor.FromPalette(
-        "error",
-        s => s.ErrorPalette,
-        s => s.IsDark ? 80 : 40,
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
-        toneDeltaPair: s => new ToneDeltaPair(ErrorContainer, Error, 10, TonePolarity.Nearer, false)
-    );
-
-    public readonly static DynamicColor OnError = DynamicColor.FromPalette(
-        "on_error",
-        s => s.ErrorPalette,
-        s => s.IsDark ? 20 : 100,
-        background: s => Error,
-        contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
-    );
-
-    public readonly static DynamicColor ErrorContainer = DynamicColor.FromPalette(
-        "error_container",
-        s => s.ErrorPalette,
-        s => s.IsDark ? 30 : 90,
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(ErrorContainer, Error, 10, TonePolarity.Nearer, false)
-    );
-
-    public readonly static DynamicColor OnErrorContainer = DynamicColor.FromPalette(
-        "on_error_container",
-        s => s.ErrorPalette,
-        s =>
-        {
-            if (IsMonochrome(s))
-            {
-                return s.IsDark ? 90 : 10;
-            }
-
-            return s.IsDark ? 90 : 30;
-        },
-        background: s => ErrorContainer,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
-    );
-
-    public readonly static DynamicColor PrimaryFixed = DynamicColor.FromPalette(
-        "primary_fixed",
-        s => s.PrimaryPalette,
-        s => IsMonochrome(s) ? 40.0 : 90.0,
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(
-            PrimaryFixed,
-            PrimaryFixedDim,
-            10,
-            TonePolarity.Lighter,
-            true
-        )
-    );
-
-    public readonly static DynamicColor PrimaryFixedDim = DynamicColor.FromPalette(
-        "primary_fixed_dim",
-        s => s.PrimaryPalette,
-        s => IsMonochrome(s) ? 30.0 : 80.0,
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(
-            PrimaryFixed,
-            PrimaryFixedDim,
-            10,
-            TonePolarity.Lighter,
-            true
-        )
-    );
-
-    public readonly static DynamicColor OnPrimaryFixed = DynamicColor.FromPalette(
-        "on_primary_fixed",
-        s => s.PrimaryPalette,
-        s => IsMonochrome(s) ? 100.0 : 10.0,
-        background: s => PrimaryFixedDim,
-        secondBackground: s => PrimaryFixed,
-        contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
-    );
-
-    public readonly static DynamicColor OnPrimaryFixedVariant = DynamicColor.FromPalette(
-        "on_primary_fixed_variant",
-        s => s.PrimaryPalette,
-        s => IsMonochrome(s) ? 90.0 : 30.0,
-        background: s => PrimaryFixedDim,
-        secondBackground: s => PrimaryFixed,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
-    );
-
-    public readonly static DynamicColor SecondaryFixed = DynamicColor.FromPalette(
-        "secondary_fixed",
-        s => s.SecondaryPalette,
-        s => IsMonochrome(s) ? 80.0 : 90.0,
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(
-            SecondaryFixed,
-            SecondaryFixedDim,
-            10,
-            TonePolarity.Lighter,
-            true
-        )
-    );
-
-    public readonly static DynamicColor SecondaryFixedDim = DynamicColor.FromPalette(
-        "secondary_fixed_dim",
-        s => s.SecondaryPalette,
-        s => IsMonochrome(s) ? 70.0 : 80.0,
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(
-            SecondaryFixed,
-            SecondaryFixedDim,
-            10,
-            TonePolarity.Lighter,
-            true
-        )
-    );
-
-    public readonly static DynamicColor OnSecondaryFixed = DynamicColor.FromPalette(
-        "on_secondary_fixed",
-        s => s.SecondaryPalette,
-        s => 10.0,
-        background: s => SecondaryFixedDim,
-        secondBackground: s => SecondaryFixed,
-        contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
-    );
-
-    public readonly static DynamicColor OnSecondaryFixedVariant = DynamicColor.FromPalette(
-        "on_secondary_fixed_variant",
-        s => s.SecondaryPalette,
-        s => IsMonochrome(s) ? 25.0 : 30.0,
-        background: s => SecondaryFixedDim,
-        secondBackground: s => SecondaryFixed,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
-    );
-
-    public readonly static DynamicColor TertiaryFixed = DynamicColor.FromPalette(
-        "tertiary_fixed",
-        s => s.TertiaryPalette,
-        s => IsMonochrome(s) ? 40.0 : 90.0,
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(
-            TertiaryFixed,
-            TertiaryFixedDim,
-            10,
-            TonePolarity.Lighter,
-            true
-        )
-    );
-
-    public readonly static DynamicColor TertiaryFixedDim = DynamicColor.FromPalette(
-        "tertiary_fixed_dim",
-        s => s.TertiaryPalette,
-        s => IsMonochrome(s) ? 30.0 : 80.0,
-        true,
-        HighestSurface,
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(
-            TertiaryFixed,
-            TertiaryFixedDim,
-            10,
-            TonePolarity.Lighter,
-            true
-        )
-    );
-
-    public readonly static DynamicColor OnTertiaryFixed = DynamicColor.FromPalette(
-        "on_tertiary_fixed",
-        s => s.TertiaryPalette,
-        s => IsMonochrome(s) ? 100.0 : 10.0,
-        background: s => TertiaryFixedDim,
-        secondBackground: s => TertiaryFixed,
-        contrastCurve: new ContrastCurve(4.5, 7, 11, 21)
-    );
-
-    public readonly static DynamicColor OnTertiaryFixedVariant = DynamicColor.FromPalette(
-        "on_tertiary_fixed_variant",
-        s => s.TertiaryPalette,
-        s => IsMonochrome(s) ? 90.0 : 30.0,
-        background: s => TertiaryFixedDim,
-        secondBackground: s => TertiaryFixed,
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 11)
-    );
-
-    private static double FindDesiredChromaByTone(
-        double hue,
-        double chroma,
-        double tone,
-        bool byDecreasingTone
-    )
-    {
-        var answer = tone;
-
-        var closestToChroma = Hct.From(hue, chroma, tone);
-        if (closestToChroma.Chroma < chroma)
-        {
-            var chromaPeak = closestToChroma.Chroma;
-            while (closestToChroma.Chroma < chroma)
-            {
-                answer += byDecreasingTone ? -1.0 : 1.0;
-                var potentialSolution = Hct.From(hue, chroma, answer);
-                if (chromaPeak > potentialSolution.Chroma)
-                    break;
-                if (Math.Abs(potentialSolution.Chroma - chroma) < 0.4)
-                    break;
-
-                var potentialDelta = Math.Abs(potentialSolution.Chroma - chroma);
-                var currentDelta = Math.Abs(closestToChroma.Chroma - chroma);
-                if (potentialDelta < currentDelta)
-                    closestToChroma = potentialSolution;
-                chromaPeak = Math.Max(chromaPeak, potentialSolution.Chroma);
-            }
-        }
-
-        return answer;
-    }
+    public DynamicColor PrimaryPaletteKeyColor => _colorSpec.PrimaryPaletteKeyColor;
+    public DynamicColor SecondaryPaletteKeyColor => _colorSpec.SecondaryPaletteKeyColor;
+    public DynamicColor TertiaryPaletteKeyColor => _colorSpec.TertiaryPaletteKeyColor;
+    public DynamicColor NeutralPaletteKeyColor => _colorSpec.NeutralPaletteKeyColor;
+    public DynamicColor NeutralVariantPaletteKeyColor => _colorSpec.NeutralVariantPaletteKeyColor;
+    public DynamicColor ErrorPaletteKeyColor => _colorSpec.ErrorPaletteKeyColor;
+    public DynamicColor Background => _colorSpec.Background;
+    public DynamicColor OnBackground => _colorSpec.OnBackground;
+    public DynamicColor Surface => _colorSpec.Surface;
+    public DynamicColor SurfaceDim => _colorSpec.SurfaceDim;
+    public DynamicColor SurfaceBright => _colorSpec.SurfaceBright;
+    public DynamicColor SurfaceContainerLowest => _colorSpec.SurfaceContainerLowest;
+    public DynamicColor SurfaceContainerLow => _colorSpec.SurfaceContainerLow;
+    public DynamicColor SurfaceContainer => _colorSpec.SurfaceContainer;
+    public DynamicColor SurfaceContainerHigh => _colorSpec.SurfaceContainerHigh;
+    public DynamicColor SurfaceContainerHighest => _colorSpec.SurfaceContainerHighest;
+    public DynamicColor OnSurface => _colorSpec.OnSurface;
+    public DynamicColor SurfaceVariant => _colorSpec.SurfaceVariant;
+    public DynamicColor OnSurfaceVariant => _colorSpec.OnSurfaceVariant;
+    public DynamicColor InverseSurface => _colorSpec.InverseSurface;
+    public DynamicColor InverseOnSurface => _colorSpec.InverseOnSurface;
+    public DynamicColor Outline => _colorSpec.Outline;
+    public DynamicColor OutlineVariant => _colorSpec.OutlineVariant;
+    public DynamicColor Shadow => _colorSpec.Shadow;
+    public DynamicColor Scrim => _colorSpec.Scrim;
+    public DynamicColor SurfaceTint => _colorSpec.SurfaceTint;
+    public DynamicColor Primary => _colorSpec.Primary;
+    public DynamicColor? PrimaryDim => _colorSpec.PrimaryDim;
+    public DynamicColor OnPrimary => _colorSpec.OnPrimary;
+    public DynamicColor PrimaryContainer => _colorSpec.PrimaryContainer;
+    public DynamicColor OnPrimaryContainer => _colorSpec.OnPrimaryContainer;
+    public DynamicColor InversePrimary => _colorSpec.InversePrimary;
+    public DynamicColor Secondary => _colorSpec.Secondary;
+    public DynamicColor? SecondaryDim => _colorSpec.SecondaryDim;
+    public DynamicColor OnSecondary => _colorSpec.OnSecondary;
+    public DynamicColor SecondaryContainer => _colorSpec.SecondaryContainer;
+    public DynamicColor OnSecondaryContainer => _colorSpec.OnSecondaryContainer;
+    public DynamicColor Tertiary => _colorSpec.Tertiary;
+    public DynamicColor? TertiaryDim => _colorSpec.TertiaryDim;
+    public DynamicColor OnTertiary => _colorSpec.OnTertiary;
+    public DynamicColor TertiaryContainer => _colorSpec.TertiaryContainer;
+    public DynamicColor OnTertiaryContainer => _colorSpec.OnTertiaryContainer;
+    public DynamicColor Error => _colorSpec.Error;
+    public DynamicColor? ErrorDim => _colorSpec.ErrorDim;
+    public DynamicColor OnError => _colorSpec.OnError;
+    public DynamicColor ErrorContainer => _colorSpec.ErrorContainer;
+    public DynamicColor OnErrorContainer => _colorSpec.OnErrorContainer;
+    public DynamicColor PrimaryFixed => _colorSpec.PrimaryFixed;
+    public DynamicColor PrimaryFixedDim => _colorSpec.PrimaryFixedDim;
+    public DynamicColor OnPrimaryFixed => _colorSpec.OnPrimaryFixed;
+    public DynamicColor OnPrimaryFixedVariant => _colorSpec.OnPrimaryFixedVariant;
+    public DynamicColor SecondaryFixed => _colorSpec.SecondaryFixed;
+    public DynamicColor SecondaryFixedDim => _colorSpec.SecondaryFixedDim;
+    public DynamicColor OnSecondaryFixed => _colorSpec.OnSecondaryFixed;
+    public DynamicColor OnSecondaryFixedVariant => _colorSpec.OnSecondaryFixedVariant;
+    public DynamicColor TertiaryFixed => _colorSpec.TertiaryFixed;
+    public DynamicColor TertiaryFixedDim => _colorSpec.TertiaryFixedDim;
+    public DynamicColor OnTertiaryFixed => _colorSpec.OnTertiaryFixed;
+    public DynamicColor OnTertiaryFixedVariant => _colorSpec.OnTertiaryFixedVariant;
 }

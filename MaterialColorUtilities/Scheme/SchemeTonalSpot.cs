@@ -14,28 +14,73 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using MaterialColorUtilities.DynamicColors;
 using MaterialColorUtilities.HCT;
-using MaterialColorUtilities.Palettes;
-using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.Scheme;
 
-using DynamicColors;
+public class SchemeTonalSpot : DynamicScheme
+{
+    public SchemeTonalSpot(Hct sourceColorHct, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHct,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
 
-/// <summary>
-/// A Dynamic Color theme with low to medium colorfulness and a Tertiary
-/// TonalPalette with a hue related to the source color. The default
-/// Material You theme on Android 12 and 13.
-/// </summary>
-public class SchemeTonalSpot(Hct sourceColorHct, bool isDark, double contrastLevel)
-    : DynamicScheme(
-        sourceColorHct,
-        Variant.TonalSpot,
-        isDark,
-        contrastLevel,
-        new TonalPalette(sourceColorHct.Hue, 36.0),
-        new TonalPalette(sourceColorHct.Hue, 16.0),
-        new TonalPalette(MathUtils.SanitizeDegrees(sourceColorHct.Hue + 60.0), 24.0),
-        new TonalPalette(sourceColorHct.Hue, 6.0),
-        new TonalPalette(sourceColorHct.Hue, 8.0)
-    );
+    public SchemeTonalSpot(
+        Hct sourceColorHct,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : this([sourceColorHct], isDark, contrastLevel, specVersion, platform)
+    {
+    }
+
+    public SchemeTonalSpot(IReadOnlyList<Hct> sourceColorHctList, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHctList,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
+
+    public SchemeTonalSpot(
+        IReadOnlyList<Hct> sourceColorHctList,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : base(
+            sourceColorHctList,
+            Variant.TonalSpot,
+            isDark,
+            contrastLevel,
+            platform,
+            specVersion,
+            ColorSpecs.Get(specVersion)
+                .GetPrimaryPalette(Variant.TonalSpot, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetSecondaryPalette(Variant.TonalSpot, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetTertiaryPalette(Variant.TonalSpot, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralPalette(Variant.TonalSpot, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralVariantPalette(Variant.TonalSpot, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetErrorPalette(Variant.TonalSpot, sourceColorHctList[0], isDark, platform, contrastLevel)
+        )
+    {
+    }
+}

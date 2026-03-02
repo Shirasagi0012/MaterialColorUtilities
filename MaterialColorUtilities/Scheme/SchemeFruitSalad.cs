@@ -14,26 +14,73 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using MaterialColorUtilities.DynamicColors;
 using MaterialColorUtilities.HCT;
-using MaterialColorUtilities.Palettes;
-using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.Scheme;
 
-using DynamicColors;
+public class SchemeFruitSalad : DynamicScheme
+{
+    public SchemeFruitSalad(Hct sourceColorHct, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHct,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
 
-/// <summary>
-/// A playful theme - the source color's hue does not appear in the theme.
-/// </summary>
-public class SchemeFruitSalad(Hct sourceColorHct, bool isDark, double contrastLevel)
-    : DynamicScheme(
-        sourceColorHct,
-        Variant.FruitSalad,
-        isDark,
-        contrastLevel,
-        new TonalPalette(MathUtils.SanitizeDegrees(sourceColorHct.Hue - 50.0), 48.0),
-        new TonalPalette(MathUtils.SanitizeDegrees(sourceColorHct.Hue - 50.0), 36.0),
-        new TonalPalette(sourceColorHct.Hue, 36.0),
-        new TonalPalette(sourceColorHct.Hue, 10.0),
-        new TonalPalette(sourceColorHct.Hue, 16.0)
-    );
+    public SchemeFruitSalad(
+        Hct sourceColorHct,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : this([sourceColorHct], isDark, contrastLevel, specVersion, platform)
+    {
+    }
+
+    public SchemeFruitSalad(IReadOnlyList<Hct> sourceColorHctList, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHctList,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
+
+    public SchemeFruitSalad(
+        IReadOnlyList<Hct> sourceColorHctList,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : base(
+            sourceColorHctList,
+            Variant.FruitSalad,
+            isDark,
+            contrastLevel,
+            platform,
+            specVersion,
+            ColorSpecs.Get(specVersion)
+                .GetPrimaryPalette(Variant.FruitSalad, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetSecondaryPalette(Variant.FruitSalad, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetTertiaryPalette(Variant.FruitSalad, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralPalette(Variant.FruitSalad, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralVariantPalette(Variant.FruitSalad, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetErrorPalette(Variant.FruitSalad, sourceColorHctList[0], isDark, platform, contrastLevel)
+        )
+    {
+    }
+}

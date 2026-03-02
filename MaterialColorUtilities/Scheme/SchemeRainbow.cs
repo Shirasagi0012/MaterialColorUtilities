@@ -14,26 +14,73 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using MaterialColorUtilities.DynamicColors;
 using MaterialColorUtilities.HCT;
-using MaterialColorUtilities.Palettes;
-using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.Scheme;
 
-using DynamicColors;
+public class SchemeRainbow : DynamicScheme
+{
+    public SchemeRainbow(Hct sourceColorHct, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHct,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
 
-/// <summary>
-/// A playful theme - the source color's hue does not appear in the theme.
-/// </summary>
-public class SchemeRainbow(Hct sourceColorHct, bool isDark, double contrastLevel)
-    : DynamicScheme(
-        sourceColorHct,
-        Variant.Rainbow,
-        isDark,
-        contrastLevel,
-        new TonalPalette(sourceColorHct.Hue, 48.0),
-        new TonalPalette(sourceColorHct.Hue, 16.0),
-        new TonalPalette(MathUtils.SanitizeDegrees(sourceColorHct.Hue + 60.0), 24.0),
-        new TonalPalette(sourceColorHct.Hue, 0.0),
-        new TonalPalette(sourceColorHct.Hue, 0.0)
-    );
+    public SchemeRainbow(
+        Hct sourceColorHct,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : this([sourceColorHct], isDark, contrastLevel, specVersion, platform)
+    {
+    }
+
+    public SchemeRainbow(IReadOnlyList<Hct> sourceColorHctList, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHctList,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
+
+    public SchemeRainbow(
+        IReadOnlyList<Hct> sourceColorHctList,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : base(
+            sourceColorHctList,
+            Variant.Rainbow,
+            isDark,
+            contrastLevel,
+            platform,
+            specVersion,
+            ColorSpecs.Get(specVersion)
+                .GetPrimaryPalette(Variant.Rainbow, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetSecondaryPalette(Variant.Rainbow, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetTertiaryPalette(Variant.Rainbow, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralPalette(Variant.Rainbow, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralVariantPalette(Variant.Rainbow, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetErrorPalette(Variant.Rainbow, sourceColorHctList[0], isDark, platform, contrastLevel)
+        )
+    {
+    }
+}

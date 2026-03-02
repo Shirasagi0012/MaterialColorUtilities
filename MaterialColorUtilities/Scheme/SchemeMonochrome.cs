@@ -14,25 +14,73 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using MaterialColorUtilities.DynamicColors;
 using MaterialColorUtilities.HCT;
-using MaterialColorUtilities.Palettes;
 
 namespace MaterialColorUtilities.Scheme;
 
-using DynamicColors;
+public class SchemeMonochrome : DynamicScheme
+{
+    public SchemeMonochrome(Hct sourceColorHct, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHct,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
 
-/// <summary>
-/// A Dynamic Color theme that is grayscale.
-/// </summary>
-public class SchemeMonochrome(Hct sourceColorHct, bool isDark, double contrastLevel)
-    : DynamicScheme(
-        sourceColorHct,
-        Variant.Monochrome,
-        isDark,
-        contrastLevel,
-        new TonalPalette(sourceColorHct.Hue, 0.0),
-        new TonalPalette(sourceColorHct.Hue, 0.0),
-        new TonalPalette(sourceColorHct.Hue, 0.0),
-        new TonalPalette(sourceColorHct.Hue, 0.0),
-        new TonalPalette(sourceColorHct.Hue, 0.0)
-    );
+    public SchemeMonochrome(
+        Hct sourceColorHct,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : this([sourceColorHct], isDark, contrastLevel, specVersion, platform)
+    {
+    }
+
+    public SchemeMonochrome(IReadOnlyList<Hct> sourceColorHctList, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHctList,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
+
+    public SchemeMonochrome(
+        IReadOnlyList<Hct> sourceColorHctList,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : base(
+            sourceColorHctList,
+            Variant.Monochrome,
+            isDark,
+            contrastLevel,
+            platform,
+            specVersion,
+            ColorSpecs.Get(specVersion)
+                .GetPrimaryPalette(Variant.Monochrome, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetSecondaryPalette(Variant.Monochrome, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetTertiaryPalette(Variant.Monochrome, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralPalette(Variant.Monochrome, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralVariantPalette(Variant.Monochrome, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetErrorPalette(Variant.Monochrome, sourceColorHctList[0], isDark, platform, contrastLevel)
+        )
+    {
+    }
+}

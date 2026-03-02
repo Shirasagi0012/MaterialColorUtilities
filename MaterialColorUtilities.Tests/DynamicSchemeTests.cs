@@ -29,15 +29,15 @@ public class DynamicSchemeTests
     }
 
     [Fact]
-    public void InputLengthMismatchThrows()
+    public void InputLengthMismatchDoesNotThrow()
     {
-        Assert.Throws<ArgumentException>(() =>
-        {
-            DynamicScheme.GetRotatedHue(
-                Hct.From(43, 16, 16),
-                [0, 1],
-                [0]);
-        });
+        var source = Hct.From(43, 16, 16);
+        var hue = DynamicScheme.GetRotatedHue(
+            source,
+            [0, 1],
+            [0]
+        );
+        hue.AssertCloseTo((source.Hue * 2) % 360.0, 1.0);
     }
 
     [Fact]

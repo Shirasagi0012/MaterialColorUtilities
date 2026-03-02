@@ -14,45 +14,73 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using MaterialColorUtilities.DynamicColors;
 using MaterialColorUtilities.HCT;
-using MaterialColorUtilities.Palettes;
 
 namespace MaterialColorUtilities.Scheme;
 
-using DynamicColors;
-
-/// <summary>
-/// A Dynamic Color theme that maxes out colorfulness at each position in the
-/// Primary TonalPalette.
-/// </summary>
-public class SchemeVibrant(Hct sourceColorHct, bool isDark, double contrastLevel)
-    : DynamicScheme(
-        sourceColorHct,
-        Variant.Vibrant,
-        isDark,
-        contrastLevel,
-        new TonalPalette(sourceColorHct.Hue, 200.0),
-        new TonalPalette(GetRotatedHue(sourceColorHct, Hues, SecondaryRotations), 24.0),
-        new TonalPalette(GetRotatedHue(sourceColorHct, Hues, TertiaryRotations), 32.0),
-        new TonalPalette(sourceColorHct.Hue, 10.0),
-        new TonalPalette(sourceColorHct.Hue, 12.0)
-    )
+public class SchemeVibrant : DynamicScheme
 {
-    /// <summary>
-    /// Hues used at breakpoints such that designers can specify a hue rotation
-    /// that occurs at a given break point.
-    /// </summary>
-    readonly private static double[] Hues = [0, 41, 61, 101, 131, 181, 251, 301, 360];
+    public SchemeVibrant(Hct sourceColorHct, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHct,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
 
-    /// <summary>
-    /// Hue rotations of the Secondary TonalPalette, corresponding to the
-    /// breakpoints in Hues.
-    /// </summary>
-    readonly private static double[] SecondaryRotations = [18, 15, 10, 12, 15, 18, 15, 12, 12];
+    public SchemeVibrant(
+        Hct sourceColorHct,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : this([sourceColorHct], isDark, contrastLevel, specVersion, platform)
+    {
+    }
 
-    /// <summary>
-    /// Hue rotations of the Tertiary TonalPalette, corresponding to the
-    /// breakpoints in Hues.
-    /// </summary>
-    readonly private static double[] TertiaryRotations = [35, 30, 20, 25, 30, 35, 30, 25, 25];
+    public SchemeVibrant(IReadOnlyList<Hct> sourceColorHctList, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHctList,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
+
+    public SchemeVibrant(
+        IReadOnlyList<Hct> sourceColorHctList,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : base(
+            sourceColorHctList,
+            Variant.Vibrant,
+            isDark,
+            contrastLevel,
+            platform,
+            specVersion,
+            ColorSpecs.Get(specVersion)
+                .GetPrimaryPalette(Variant.Vibrant, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetSecondaryPalette(Variant.Vibrant, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetTertiaryPalette(Variant.Vibrant, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralPalette(Variant.Vibrant, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralVariantPalette(Variant.Vibrant, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetErrorPalette(Variant.Vibrant, sourceColorHctList[0], isDark, platform, contrastLevel)
+        )
+    {
+    }
 }

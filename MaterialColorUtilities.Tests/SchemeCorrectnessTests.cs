@@ -16,6 +16,7 @@ using DynamicColors;
 /// </summary>
 public class SchemeCorrectnessTests
 {
+    private static readonly MaterialDynamicColors Roles = new();
     private const double ContrastTolerance = 0.05;
     private const double DeltaTolerance = 0.5;
 
@@ -36,6 +37,7 @@ public class SchemeCorrectnessTests
             Variant.Rainbow => new SchemeRainbow(sourceColorHct, isDark, contrastLevel),
             Variant.TonalSpot => new SchemeTonalSpot(sourceColorHct, isDark, contrastLevel),
             Variant.Vibrant => new SchemeVibrant(sourceColorHct, isDark, contrastLevel),
+            Variant.Cmf => new SchemeCmf(sourceColorHct, isDark, contrastLevel),
             _ => throw new ArgumentException($"Unknown variant: {variant}")
         };
     }
@@ -96,8 +98,8 @@ public class SchemeCorrectnessTests
 
         // Test basic contrast requirement for text on primary
         AssertContrast(
-            MaterialDynamicColors.OnPrimary,
-            MaterialDynamicColors.Primary,
+            Roles.OnPrimary,
+            Roles.Primary,
             new ContrastCurve(4.5, 7, 11, 21),
             scheme);
     }
@@ -116,8 +118,8 @@ public class SchemeCorrectnessTests
             var scheme = SchemeFromVariant(variant, sourceColor, isDark, contrastLevel);
 
             AssertContrast(
-                MaterialDynamicColors.OnBackground,
-                MaterialDynamicColors.Background,
+                Roles.OnBackground,
+                Roles.Background,
                 new ContrastCurve(3, 3, 4.5, 7),
                 scheme);
         }
@@ -137,8 +139,8 @@ public class SchemeCorrectnessTests
         {
             var scheme = SchemeFromVariant(variant, sourceColor, isDark, 0.0);
 
-            var primaryFixed = MaterialDynamicColors.PrimaryFixed.GetHct(scheme).Tone;
-            var primaryFixedDim = MaterialDynamicColors.PrimaryFixedDim.GetHct(scheme).Tone;
+            var primaryFixed = Roles.PrimaryFixed.GetHct(scheme).Tone;
+            var primaryFixedDim = Roles.PrimaryFixedDim.GetHct(scheme).Tone;
 
             // PrimaryFixedDim should be at least 10 tones darker
             var actualDelta = primaryFixed - primaryFixedDim;
@@ -180,7 +182,7 @@ public class SchemeCorrectnessTests
                         Assert.Equal(contrastLevel, scheme.ContrastLevel);
 
                         // Ensure key colors can be retrieved
-                        var primary = MaterialDynamicColors.Primary.GetHct(scheme);
+                        var primary = Roles.Primary.GetHct(scheme);
                         Assert.NotNull(primary);
                         Assert.True(primary.Tone >= 0 && primary.Tone <= 100);
                     }
@@ -203,9 +205,9 @@ public class SchemeCorrectnessTests
         var scheme = SchemeFromVariant(variant, sourceColor, isDark, contrastLevel);
 
         // Get surface tones
-        var surfaceDim = MaterialDynamicColors.SurfaceDim.GetHct(scheme).Tone;
-        var surface = MaterialDynamicColors.Surface.GetHct(scheme).Tone;
-        var surfaceBright = MaterialDynamicColors.SurfaceBright.GetHct(scheme).Tone;
+        var surfaceDim = Roles.SurfaceDim.GetHct(scheme).Tone;
+        var surface = Roles.Surface.GetHct(scheme).Tone;
+        var surfaceBright = Roles.SurfaceBright.GetHct(scheme).Tone;
 
         if (isDark)
         {
@@ -225,3 +227,4 @@ public class SchemeCorrectnessTests
         }
     }
 }
+

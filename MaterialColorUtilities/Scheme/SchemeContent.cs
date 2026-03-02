@@ -14,42 +14,73 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using MaterialColorUtilities.Dislike;
+using MaterialColorUtilities.DynamicColors;
 using MaterialColorUtilities.HCT;
-using MaterialColorUtilities.Palettes;
-using MaterialColorUtilities.Temperature;
 
 namespace MaterialColorUtilities.Scheme;
 
-using DynamicColors;
+public class SchemeContent : DynamicScheme
+{
+    public SchemeContent(Hct sourceColorHct, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHct,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
 
-/// <summary>
-/// A scheme that places the source color in Scheme.primaryContainer.
-///
-/// Primary Container is the source color, adjusted for color relativity.
-/// It maintains constant appearance in light mode and dark mode.
-/// This adds ~5 tone in light mode, and subtracts ~5 tone in dark mode.
-///
-/// Tertiary Container is an analogous color, specifically, the analog of a
-/// color wheel divided into 6, and the precise analog is the one found by
-/// increasing hue. It also maintains constant appearance.
-/// </summary>
-public class SchemeContent(Hct sourceColorHct, bool isDark, double contrastLevel)
-    : DynamicScheme(
-        sourceColorHct,
-        Variant.Content,
-        isDark,
-        contrastLevel,
-        new TonalPalette(sourceColorHct.Hue, sourceColorHct.Chroma),
-        new TonalPalette(
-            sourceColorHct.Hue,
-            Math.Max(sourceColorHct.Chroma - 32.0, sourceColorHct.Chroma * 0.5)
-        ),
-        new TonalPalette(
-            DislikeAnalyzer.FixIfDisliked(
-                new TemperatureCache(sourceColorHct).Analogous(3, 6).Last()
-            )
-        ),
-        new TonalPalette(sourceColorHct.Hue, sourceColorHct.Chroma / 8.0),
-        new TonalPalette(sourceColorHct.Hue, sourceColorHct.Chroma / 8.0 + 4.0)
-    );
+    public SchemeContent(
+        Hct sourceColorHct,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : this([sourceColorHct], isDark, contrastLevel, specVersion, platform)
+    {
+    }
+
+    public SchemeContent(IReadOnlyList<Hct> sourceColorHctList, bool isDark, double contrastLevel)
+        : this(
+            sourceColorHctList,
+            isDark,
+            contrastLevel,
+            DefaultSpecVersion,
+            DefaultPlatform
+        )
+    {
+    }
+
+    public SchemeContent(
+        IReadOnlyList<Hct> sourceColorHctList,
+        bool isDark,
+        double contrastLevel,
+        ColorSpec.SpecVersion specVersion,
+        Platform platform
+    )
+        : base(
+            sourceColorHctList,
+            Variant.Content,
+            isDark,
+            contrastLevel,
+            platform,
+            specVersion,
+            ColorSpecs.Get(specVersion)
+                .GetPrimaryPalette(Variant.Content, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetSecondaryPalette(Variant.Content, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetTertiaryPalette(Variant.Content, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralPalette(Variant.Content, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetNeutralVariantPalette(Variant.Content, sourceColorHctList[0], isDark, platform, contrastLevel),
+            ColorSpecs.Get(specVersion)
+                .GetErrorPalette(Variant.Content, sourceColorHctList[0], isDark, platform, contrastLevel)
+        )
+    {
+    }
+}

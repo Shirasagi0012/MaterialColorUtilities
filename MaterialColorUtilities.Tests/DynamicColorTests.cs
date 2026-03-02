@@ -13,6 +13,7 @@ using DynamicColors;
 
 public class DynamicColorTests
 {
+    private static readonly MaterialDynamicColors Roles = new();
     private static readonly Hct[] SeedColors =
     {
         Hct.From(new ArgbColor(0xFFFF0000)),
@@ -28,43 +29,43 @@ public class DynamicColorTests
     private static readonly IReadOnlyDictionary<string, DynamicColorType> Colors
         = new Dictionary<string, DynamicColorType>
         {
-            ["background"] = MaterialDynamicColors.Background,
-            ["on_background"] = MaterialDynamicColors.OnBackground,
-            ["surface"] = MaterialDynamicColors.Surface,
-            ["surface_dim"] = MaterialDynamicColors.SurfaceDim,
-            ["surface_bright"] = MaterialDynamicColors.SurfaceBright,
-            ["surface_container_lowest"] = MaterialDynamicColors.SurfaceContainerLowest,
-            ["surface_container_low"] = MaterialDynamicColors.SurfaceContainerLow,
-            ["surface_container"] = MaterialDynamicColors.SurfaceContainer,
-            ["surface_container_high"] = MaterialDynamicColors.SurfaceContainerHigh,
-            ["surface_container_highest"] = MaterialDynamicColors.SurfaceContainerHighest,
-            ["on_surface"] = MaterialDynamicColors.OnSurface,
-            ["surface_variant"] = MaterialDynamicColors.SurfaceVariant,
-            ["on_surface_variant"] = MaterialDynamicColors.OnSurfaceVariant,
-            ["inverse_surface"] = MaterialDynamicColors.InverseSurface,
-            ["inverse_on_surface"] = MaterialDynamicColors.InverseOnSurface,
-            ["outline"] = MaterialDynamicColors.Outline,
-            ["outline_variant"] = MaterialDynamicColors.OutlineVariant,
-            ["shadow"] = MaterialDynamicColors.Shadow,
-            ["scrim"] = MaterialDynamicColors.Scrim,
-            ["surface_tint"] = MaterialDynamicColors.SurfaceTint,
-            ["primary"] = MaterialDynamicColors.Primary,
-            ["on_primary"] = MaterialDynamicColors.OnPrimary,
-            ["primary_container"] = MaterialDynamicColors.PrimaryContainer,
-            ["on_primary_container"] = MaterialDynamicColors.OnPrimaryContainer,
-            ["inverse_primary"] = MaterialDynamicColors.InversePrimary,
-            ["secondary"] = MaterialDynamicColors.Secondary,
-            ["on_secondary"] = MaterialDynamicColors.OnSecondary,
-            ["secondary_container"] = MaterialDynamicColors.SecondaryContainer,
-            ["on_secondary_container"] = MaterialDynamicColors.OnSecondaryContainer,
-            ["tertiary"] = MaterialDynamicColors.Tertiary,
-            ["on_tertiary"] = MaterialDynamicColors.OnTertiary,
-            ["tertiary_container"] = MaterialDynamicColors.TertiaryContainer,
-            ["on_tertiary_container"] = MaterialDynamicColors.OnTertiaryContainer,
-            ["error"] = MaterialDynamicColors.Error,
-            ["on_error"] = MaterialDynamicColors.OnError,
-            ["error_container"] = MaterialDynamicColors.ErrorContainer,
-            ["on_error_container"] = MaterialDynamicColors.OnErrorContainer
+            ["background"] = Roles.Background,
+            ["on_background"] = Roles.OnBackground,
+            ["surface"] = Roles.Surface,
+            ["surface_dim"] = Roles.SurfaceDim,
+            ["surface_bright"] = Roles.SurfaceBright,
+            ["surface_container_lowest"] = Roles.SurfaceContainerLowest,
+            ["surface_container_low"] = Roles.SurfaceContainerLow,
+            ["surface_container"] = Roles.SurfaceContainer,
+            ["surface_container_high"] = Roles.SurfaceContainerHigh,
+            ["surface_container_highest"] = Roles.SurfaceContainerHighest,
+            ["on_surface"] = Roles.OnSurface,
+            ["surface_variant"] = Roles.SurfaceVariant,
+            ["on_surface_variant"] = Roles.OnSurfaceVariant,
+            ["inverse_surface"] = Roles.InverseSurface,
+            ["inverse_on_surface"] = Roles.InverseOnSurface,
+            ["outline"] = Roles.Outline,
+            ["outline_variant"] = Roles.OutlineVariant,
+            ["shadow"] = Roles.Shadow,
+            ["scrim"] = Roles.Scrim,
+            ["surface_tint"] = Roles.SurfaceTint,
+            ["primary"] = Roles.Primary,
+            ["on_primary"] = Roles.OnPrimary,
+            ["primary_container"] = Roles.PrimaryContainer,
+            ["on_primary_container"] = Roles.OnPrimaryContainer,
+            ["inverse_primary"] = Roles.InversePrimary,
+            ["secondary"] = Roles.Secondary,
+            ["on_secondary"] = Roles.OnSecondary,
+            ["secondary_container"] = Roles.SecondaryContainer,
+            ["on_secondary_container"] = Roles.OnSecondaryContainer,
+            ["tertiary"] = Roles.Tertiary,
+            ["on_tertiary"] = Roles.OnTertiary,
+            ["tertiary_container"] = Roles.TertiaryContainer,
+            ["on_tertiary_container"] = Roles.OnTertiaryContainer,
+            ["error"] = Roles.Error,
+            ["on_error"] = Roles.OnError,
+            ["error_container"] = Roles.ErrorContainer,
+            ["on_error_container"] = Roles.OnErrorContainer
         };
 
     private static readonly IReadOnlyList<ColorPair> TextSurfacePairs = new List<ColorPair>
@@ -104,7 +105,7 @@ public class DynamicColorTests
     {
         Assert.Equal(
             unchecked((int)0xFFFFFFFF),
-            MaterialDynamicColors
+            Roles
                 .OnPrimaryContainer.GetArgb(
                     new SchemeFidelity(Hct.From(new ArgbColor(0xFFFF0000)), false, 0.5)
                 )
@@ -113,7 +114,7 @@ public class DynamicColorTests
 
         Assert.Equal(
             unchecked((int)0xFFFFFFFF),
-            MaterialDynamicColors
+            Roles
                 .OnSecondaryContainer.GetArgb(
                     new SchemeContent(Hct.From(new ArgbColor(0xFF0000FF)), false, 0.5)
                 )
@@ -122,7 +123,7 @@ public class DynamicColorTests
 
         Assert.Equal(
             unchecked((int)0xff959b1a),
-            MaterialDynamicColors
+            Roles
                 .OnTertiaryContainer.GetArgb(
                     new SchemeContent(Hct.From(new ArgbColor(0xFFFFFF00)), true, -0.5)
                 )
@@ -131,7 +132,7 @@ public class DynamicColorTests
 
         Assert.Equal(
             unchecked((int)0xFF2F2F3B),
-            MaterialDynamicColors
+            Roles
                 .InverseSurface.GetArgb(
                     new SchemeContent(Hct.From(new ArgbColor(0xFF0000FF)), false, 0.0)
                 )
@@ -140,7 +141,7 @@ public class DynamicColorTests
 
         Assert.Equal(
             unchecked((int)0xffff422f),
-            MaterialDynamicColors
+            Roles
                 .InversePrimary.GetArgb(
                     new SchemeContent(Hct.From(new ArgbColor(0xFFFF0000)), false, -0.5)
                 )
@@ -149,7 +150,7 @@ public class DynamicColorTests
 
         Assert.Equal(
             unchecked((int)0xFF484831),
-            MaterialDynamicColors
+            Roles
                 .OutlineVariant.GetArgb(
                     new SchemeContent(Hct.From(new ArgbColor(0xFFFFFF00)), true, 0.0)
                 )
@@ -235,7 +236,7 @@ public class DynamicColorTests
             {
                 try
                 {
-                    _ = MaterialDynamicColors.Primary.GetHct(scheme);
+                    _ = Roles.Primary.GetHct(scheme);
                 }
                 catch (Exception ex)
                 {
@@ -257,65 +258,65 @@ public class DynamicColorTests
 
         AssertToneClose(
             90.0,
-            MaterialDynamicColors.PrimaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.PrimaryFixed)
+            Roles.PrimaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.PrimaryFixed)
         );
         AssertToneClose(
             80.0,
-            MaterialDynamicColors.PrimaryFixedDim.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.PrimaryFixedDim)
+            Roles.PrimaryFixedDim.GetHct(scheme).Tone,
+            nameof(Roles.PrimaryFixedDim)
         );
         AssertToneClose(
             10.0,
-            MaterialDynamicColors.OnPrimaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnPrimaryFixed)
+            Roles.OnPrimaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.OnPrimaryFixed)
         );
         AssertToneClose(
             30.0,
-            MaterialDynamicColors.OnPrimaryFixedVariant.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnPrimaryFixedVariant)
+            Roles.OnPrimaryFixedVariant.GetHct(scheme).Tone,
+            nameof(Roles.OnPrimaryFixedVariant)
         );
 
         AssertToneClose(
             90.0,
-            MaterialDynamicColors.SecondaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.SecondaryFixed)
+            Roles.SecondaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.SecondaryFixed)
         );
         AssertToneClose(
             80.0,
-            MaterialDynamicColors.SecondaryFixedDim.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.SecondaryFixedDim)
+            Roles.SecondaryFixedDim.GetHct(scheme).Tone,
+            nameof(Roles.SecondaryFixedDim)
         );
         AssertToneClose(
             10.0,
-            MaterialDynamicColors.OnSecondaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnSecondaryFixed)
+            Roles.OnSecondaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.OnSecondaryFixed)
         );
         AssertToneClose(
             30.0,
-            MaterialDynamicColors.OnSecondaryFixedVariant.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnSecondaryFixedVariant)
+            Roles.OnSecondaryFixedVariant.GetHct(scheme).Tone,
+            nameof(Roles.OnSecondaryFixedVariant)
         );
 
         AssertToneClose(
             90.0,
-            MaterialDynamicColors.TertiaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.TertiaryFixed)
+            Roles.TertiaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.TertiaryFixed)
         );
         AssertToneClose(
             80.0,
-            MaterialDynamicColors.TertiaryFixedDim.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.TertiaryFixedDim)
+            Roles.TertiaryFixedDim.GetHct(scheme).Tone,
+            nameof(Roles.TertiaryFixedDim)
         );
         AssertToneClose(
             10.0,
-            MaterialDynamicColors.OnTertiaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnTertiaryFixed)
+            Roles.OnTertiaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.OnTertiaryFixed)
         );
         AssertToneClose(
             30.0,
-            MaterialDynamicColors.OnTertiaryFixedVariant.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnTertiaryFixedVariant)
+            Roles.OnTertiaryFixedVariant.GetHct(scheme).Tone,
+            nameof(Roles.OnTertiaryFixedVariant)
         );
     }
 
@@ -326,65 +327,65 @@ public class DynamicColorTests
 
         AssertToneClose(
             40.0,
-            MaterialDynamicColors.PrimaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.PrimaryFixed)
+            Roles.PrimaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.PrimaryFixed)
         );
         AssertToneClose(
             30.0,
-            MaterialDynamicColors.PrimaryFixedDim.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.PrimaryFixedDim)
+            Roles.PrimaryFixedDim.GetHct(scheme).Tone,
+            nameof(Roles.PrimaryFixedDim)
         );
         AssertToneClose(
             100.0,
-            MaterialDynamicColors.OnPrimaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnPrimaryFixed)
+            Roles.OnPrimaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.OnPrimaryFixed)
         );
         AssertToneClose(
             90.0,
-            MaterialDynamicColors.OnPrimaryFixedVariant.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnPrimaryFixedVariant)
+            Roles.OnPrimaryFixedVariant.GetHct(scheme).Tone,
+            nameof(Roles.OnPrimaryFixedVariant)
         );
 
         AssertToneClose(
             80.0,
-            MaterialDynamicColors.SecondaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.SecondaryFixed)
+            Roles.SecondaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.SecondaryFixed)
         );
         AssertToneClose(
             70.0,
-            MaterialDynamicColors.SecondaryFixedDim.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.SecondaryFixedDim)
+            Roles.SecondaryFixedDim.GetHct(scheme).Tone,
+            nameof(Roles.SecondaryFixedDim)
         );
         AssertToneClose(
             10.0,
-            MaterialDynamicColors.OnSecondaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnSecondaryFixed)
+            Roles.OnSecondaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.OnSecondaryFixed)
         );
         AssertToneClose(
             25.0,
-            MaterialDynamicColors.OnSecondaryFixedVariant.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnSecondaryFixedVariant)
+            Roles.OnSecondaryFixedVariant.GetHct(scheme).Tone,
+            nameof(Roles.OnSecondaryFixedVariant)
         );
 
         AssertToneClose(
             40.0,
-            MaterialDynamicColors.TertiaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.TertiaryFixed)
+            Roles.TertiaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.TertiaryFixed)
         );
         AssertToneClose(
             30.0,
-            MaterialDynamicColors.TertiaryFixedDim.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.TertiaryFixedDim)
+            Roles.TertiaryFixedDim.GetHct(scheme).Tone,
+            nameof(Roles.TertiaryFixedDim)
         );
         AssertToneClose(
             100.0,
-            MaterialDynamicColors.OnTertiaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnTertiaryFixed)
+            Roles.OnTertiaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.OnTertiaryFixed)
         );
         AssertToneClose(
             90.0,
-            MaterialDynamicColors.OnTertiaryFixedVariant.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnTertiaryFixedVariant)
+            Roles.OnTertiaryFixedVariant.GetHct(scheme).Tone,
+            nameof(Roles.OnTertiaryFixedVariant)
         );
     }
 
@@ -395,65 +396,66 @@ public class DynamicColorTests
 
         AssertToneClose(
             40.0,
-            MaterialDynamicColors.PrimaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.PrimaryFixed)
+            Roles.PrimaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.PrimaryFixed)
         );
         AssertToneClose(
             30.0,
-            MaterialDynamicColors.PrimaryFixedDim.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.PrimaryFixedDim)
+            Roles.PrimaryFixedDim.GetHct(scheme).Tone,
+            nameof(Roles.PrimaryFixedDim)
         );
         AssertToneClose(
             100.0,
-            MaterialDynamicColors.OnPrimaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnPrimaryFixed)
+            Roles.OnPrimaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.OnPrimaryFixed)
         );
         AssertToneClose(
             90.0,
-            MaterialDynamicColors.OnPrimaryFixedVariant.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnPrimaryFixedVariant)
+            Roles.OnPrimaryFixedVariant.GetHct(scheme).Tone,
+            nameof(Roles.OnPrimaryFixedVariant)
         );
 
         AssertToneClose(
             80.0,
-            MaterialDynamicColors.SecondaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.SecondaryFixed)
+            Roles.SecondaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.SecondaryFixed)
         );
         AssertToneClose(
             70.0,
-            MaterialDynamicColors.SecondaryFixedDim.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.SecondaryFixedDim)
+            Roles.SecondaryFixedDim.GetHct(scheme).Tone,
+            nameof(Roles.SecondaryFixedDim)
         );
         AssertToneClose(
             10.0,
-            MaterialDynamicColors.OnSecondaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnSecondaryFixed)
+            Roles.OnSecondaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.OnSecondaryFixed)
         );
         AssertToneClose(
             25.0,
-            MaterialDynamicColors.OnSecondaryFixedVariant.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnSecondaryFixedVariant)
+            Roles.OnSecondaryFixedVariant.GetHct(scheme).Tone,
+            nameof(Roles.OnSecondaryFixedVariant)
         );
 
         AssertToneClose(
             40.0,
-            MaterialDynamicColors.TertiaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.TertiaryFixed)
+            Roles.TertiaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.TertiaryFixed)
         );
         AssertToneClose(
             30.0,
-            MaterialDynamicColors.TertiaryFixedDim.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.TertiaryFixedDim)
+            Roles.TertiaryFixedDim.GetHct(scheme).Tone,
+            nameof(Roles.TertiaryFixedDim)
         );
         AssertToneClose(
             100.0,
-            MaterialDynamicColors.OnTertiaryFixed.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnTertiaryFixed)
+            Roles.OnTertiaryFixed.GetHct(scheme).Tone,
+            nameof(Roles.OnTertiaryFixed)
         );
         AssertToneClose(
             90.0,
-            MaterialDynamicColors.OnTertiaryFixedVariant.GetHct(scheme).Tone,
-            nameof(MaterialDynamicColors.OnTertiaryFixedVariant)
+            Roles.OnTertiaryFixedVariant.GetHct(scheme).Tone,
+            nameof(Roles.OnTertiaryFixedVariant)
         );
     }
 }
+

@@ -17,54 +17,45 @@
 namespace MaterialColorUtilities.DynamicColors;
 
 /// <summary>
-/// Describes the difference in tone between colors.
+/// Describes the relationship in tone between two colors.
 /// </summary>
 public enum TonePolarity
 {
     Darker,
     Lighter,
+    RelativeDarker,
+    RelativeLighter,
+
+    [Obsolete("Use ToneDeltaPair.DeltaConstraint with RelativeDarker/RelativeLighter instead.")]
     Nearer,
-    Farther
+
+    [Obsolete("Use ToneDeltaPair.DeltaConstraint with RelativeDarker/RelativeLighter instead.")]
+    Farther,
 }
 
 /// <summary>
 /// Documents a constraint between two DynamicColors, in which their tones must
 /// have a certain distance from each other.
-///
-/// Prefer a DynamicColor with a background, this is for special cases when
-/// designers want tonal distance, literally contrast, between two colors that
-/// don't have a background / foreground relationship or a contrast guarantee.
 /// </summary>
-public class ToneDeltaPair
+public sealed class ToneDeltaPair
 {
-    public readonly DynamicColor RoleA;
-    public readonly DynamicColor RoleB;
-    public readonly double Delta;
-    public readonly TonePolarity Polarity;
-    public readonly bool StayTogether;
+    public enum DeltaConstraint
+    {
+        Exact,
+        Nearer,
+        Farther,
+    }
+
+    public DynamicColor RoleA { get; }
+    public DynamicColor RoleB { get; }
+    public double Delta { get; }
+    public TonePolarity Polarity { get; }
+    public bool StayTogether { get; }
+    public DeltaConstraint Constraint { get; }
 
     /// <summary>
-    /// Documents a constraint in tone distance between two DynamicColors.
-    ///
-    /// The polarity is an adjective that describes "A", compared to "B".
-    ///
-    /// For instance, ToneDeltaPair(A, B, 15, TonePolarity.Darker, stayTogether) states that
-    /// A's tone should be at least 15 darker than B's.
-    ///
-    /// 'Nearer' and 'Farther' describes closeness to the surface roles. For
-    /// instance, ToneDeltaPair(A, B, 10, TonePolarity.Nearer, stayTogether) states that A
-    /// should be 10 lighter than B in light mode, and 10 darker than B in dark
-    /// mode.
+    /// Legacy constructor shape kept for compatibility with existing token definitions.
     /// </summary>
-    /// <param name="roleA">The first role in a pair.</param>
-    /// <param name="roleB">The second role in a pair.</param>
-    /// <param name="delta">Required difference between tones. Absolute value, negative
-    /// values have undefined behavior.</param>
-    /// <param name="polarity">The relative relation between tones of roleA and roleB,
-    /// as described above.</param>
-    /// <param name="stayTogether">Whether these two roles should stay on the same side of
-    /// the "awkward zone" (T50-59). This is necessary for certain cases where
-    /// one role has two backgrounds.</param>
     public ToneDeltaPair(
         DynamicColor roleA,
         DynamicColor roleB,
@@ -78,5 +69,25 @@ public class ToneDeltaPair
         Delta = delta;
         Polarity = polarity;
         StayTogether = stayTogether;
+        Constraint = DeltaConstraint.Exact;
+    }
+
+    /// <summary>
+    /// Constructor using explicit delta-constraint behavior.
+    /// </summary>
+    public ToneDeltaPair(
+        DynamicColor roleA,
+        DynamicColor roleB,
+        double delta,
+        TonePolarity polarity,
+        DeltaConstraint constraint
+    )
+    {
+        RoleA = roleA;
+        RoleB = roleB;
+        Delta = delta;
+        Polarity = polarity;
+        StayTogether = true;
+        Constraint = constraint;
     }
 }
