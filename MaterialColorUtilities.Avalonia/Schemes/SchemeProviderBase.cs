@@ -24,6 +24,9 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
             DynamicScheme.DefaultSpecVersion
         );
 
+    public static readonly StyledProperty<DynamicScheme.Platform> PlatformProperty =
+        AvaloniaProperty.Register<SchemeProviderBase, DynamicScheme.Platform>(nameof(Platform), DynamicScheme.DefaultPlatform);
+
     protected SchemeProviderBase()
     {
         PropertyChanged += OnPropertyChangedInternal;
@@ -47,8 +50,6 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
             throw new FormatException($"'{colorString}' is not a valid color string.");
     }
 
-    // TODO: Support for StaticResource, which calls ctor with Object? parameter
-
     public event EventHandler? SchemeChanged;
 
     public Color? Color
@@ -67,6 +68,12 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
     {
         get => GetValue(SpecVersionProperty);
         set => SetValue(SpecVersionProperty, value);
+    }
+
+    public DynamicScheme.Platform Platform
+    {
+        get => GetValue(PlatformProperty);
+        set => SetValue(PlatformProperty, value);
     }
 
     public abstract DynamicScheme CreateScheme(ThemeVariant theme);
@@ -90,12 +97,13 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
 
     protected DynamicScheme.Platform ResolvePlatform()
     {
-        return DynamicScheme.DefaultPlatform;
+        return Platform;
     }
 
     private void OnPropertyChangedInternal(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
-        if (e.Property == ColorProperty || e.Property == ContrastLevelProperty || e.Property == SpecVersionProperty)
+        if (e.Property == ColorProperty || e.Property == ContrastLevelProperty || e.Property == SpecVersionProperty ||
+            e.Property == PlatformProperty)
             OnSchemeChanged();
     }
 

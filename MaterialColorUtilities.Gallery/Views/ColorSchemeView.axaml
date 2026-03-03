@@ -19,21 +19,21 @@
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Transitions">
+<!--            <Setter Property="Transitions">
                 <Transitions>
                     <BrushTransition Duration="0:0:0.2" Property="Foreground" />
                 </Transitions>
-            </Setter>
+            </Setter>-->
         </Style>
 
         <Style Selector="Border#ColorTable Border">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="Transitions">
+<!--            <Setter Property="Transitions">
                 <Transitions>
                     <BrushTransition Duration="0:0:0.2" Property="Background" />
                 </Transitions>
-            </Setter>
+            </Setter>-->
         </Style>
 
         <Style Selector="Grid.single-width">

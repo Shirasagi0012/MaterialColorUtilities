@@ -31,7 +31,7 @@ public static class ColorSpecs
         {
             ColorSpec.SpecVersion.Spec2025 => Spec2025,
             ColorSpec.SpecVersion.Spec2026 => Spec2026,
-            _ => Spec2021,
+            _ => Spec2021
         };
     }
 }

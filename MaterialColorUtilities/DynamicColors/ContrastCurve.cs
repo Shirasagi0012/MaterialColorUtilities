@@ -16,7 +16,7 @@
 
 namespace MaterialColorUtilities.DynamicColors;
 
-using MaterialColorUtilities.Utils;
+using Utils;
 
 /// <summary>
 /// A class containing a value that changes with the contrast level.

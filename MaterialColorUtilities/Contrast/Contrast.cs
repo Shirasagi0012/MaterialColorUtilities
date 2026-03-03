@@ -49,23 +49,26 @@ public class Contrast
     /// <param name="tone">The tone to contrast with (0-100).</param>
     /// <param name="ratio">The desired contrast ratio (1.0 to 21.0).</param>
     /// <returns>Lighter tone (0-100), or -1 if the ratio cannot be achieved.</returns>
-    public static double Lighter(double tone, double ratio)
+    public static double? Lighter(double tone, double ratio)
     {
         if (tone is < 0.0 or > 100.0)
-            return -1.0;
+            return null;
 
         var darkY = ColorUtils.YFromLstar(tone);
         var lightY = ratio * (darkY + 5.0) - 5.0;
+        if (lightY is < 0.0 or > 100)
+            return null;
+        
         var realContrast = RatioOfYs(lightY, darkY);
         var delta = Math.Abs(realContrast - ratio);
         if (realContrast < ratio && delta > 0.04)
-            return -1;
+            return null;
 
         // Ensure gamut mapping, which requires a 'range' on tone, will still result
         // the correct ratio by darkening slightly.
         var returnValue = ColorUtils.LstarFromY(lightY) + 0.4;
         if (returnValue is < 0 or > 100)
-            return -1;
+            return null;
         return returnValue;
     }
 
@@ -75,24 +78,26 @@ public class Contrast
     /// <param name="tone">The tone to contrast with (0-100).</param>
     /// <param name="ratio">The desired contrast ratio (1.0 to 21.0).</param>
     /// <returns>Darker tone (0-100), or -1 if the ratio cannot be achieved.</returns>
-    public static double Darker(double tone, double ratio)
+    public static double? Darker(double tone, double ratio)
     {
         if (tone is < 0.0 or > 100.0)
-            return -1.0;
+            return null;
 
         var lightY = ColorUtils.YFromLstar(tone);
         var darkY = (lightY + 5.0) / ratio - 5.0;
+        if (darkY is < 0.0 or > 100)
+            return null;
+        
         var realContrast = RatioOfYs(lightY, darkY);
-
         var delta = Math.Abs(realContrast - ratio);
         if (realContrast < ratio && delta > 0.04)
-            return -1;
+            return null;
 
         // Ensure gamut mapping, which requires a 'range' on tone, will still result
         // the correct ratio by darkening slightly.
         var returnValue = ColorUtils.LstarFromY(darkY) - 0.4;
         if (returnValue is < 0 or > 100)
-            return -1;
+            return null;
         return returnValue;
     }
 
@@ -104,8 +109,7 @@ public class Contrast
     /// <returns>Lighter tone (0-100), or 100 if the ratio cannot be achieved.</returns>
     public static double LighterUnsafe(double tone, double ratio)
     {
-        var lighterSafe = Lighter(tone, ratio);
-        return lighterSafe < 0.0 ? 100.0 : lighterSafe;
+        return Lighter(tone, ratio) ?? 100;
     }
 
     /// <summary>
@@ -116,7 +120,6 @@ public class Contrast
     /// <returns>Darker tone (0-100), or 0 if the ratio cannot be achieved.</returns>
     public static double DarkerUnsafe(double tone, double ratio)
     {
-        var darkerSafe = Darker(tone, ratio);
-        return darkerSafe < 0.0 ? 0.0 : darkerSafe;
+        return Darker(tone, ratio) ?? 0;
     }
 }

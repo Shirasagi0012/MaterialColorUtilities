@@ -16,9 +16,9 @@
 
 namespace MaterialColorUtilities.DynamicColors;
 
-using MaterialColorUtilities.HCT;
-using MaterialColorUtilities.Palettes;
-using MaterialColorUtilities.Utils;
+using HCT;
+using Palettes;
+using Utils;
 
 /// <summary>
 /// Provides settings and palettes required to resolve dynamic colors.
@@ -185,11 +185,9 @@ public class DynamicScheme
             || variant == Variant.TonalSpot
             || variant == Variant.Neutral
         )
-        {
             return specVersion == ColorSpec.SpecVersion.Spec2026
                 ? ColorSpec.SpecVersion.Spec2025
                 : specVersion;
-        }
 
         return ColorSpec.SpecVersion.Spec2021;
     }
@@ -199,10 +197,8 @@ public class DynamicScheme
         var size = Math.Min(hueBreakpoints.Length - 1, values.Length);
         var sourceHue = sourceColor.Hue;
         for (var i = 0; i < size; i++)
-        {
             if (sourceHue >= hueBreakpoints[i] && sourceHue < hueBreakpoints[i + 1])
                 return MathUtils.SanitizeDegrees(values[i]);
-        }
 
         return sourceHue;
     }

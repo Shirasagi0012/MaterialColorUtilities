@@ -21,9 +21,18 @@ namespace MaterialColorUtilities.DynamicColors;
 /// </summary>
 public sealed class MaterialDynamicColors
 {
-    private readonly ColorSpec _colorSpec = ColorSpecs.Get(ColorSpec.SpecVersion.Spec2026);
+    private readonly ColorSpec _colorSpec;
 
-    public DynamicColor HighestSurface(DynamicScheme scheme) => _colorSpec.HighestSurface(scheme);
+    // TODO: Temp debug constructor for breakpoint
+    public MaterialDynamicColors()
+    {
+        _colorSpec = ColorSpecs.Get(ColorSpec.SpecVersion.Spec2026);
+    }
+
+    public DynamicColor HighestSurface(DynamicScheme scheme)
+    {
+        return _colorSpec.HighestSurface(scheme);
+    }
 
     public DynamicColor PrimaryPaletteKeyColor => _colorSpec.PrimaryPaletteKeyColor;
     public DynamicColor SecondaryPaletteKeyColor => _colorSpec.SecondaryPaletteKeyColor;

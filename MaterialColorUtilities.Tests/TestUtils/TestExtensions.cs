@@ -18,6 +18,24 @@ internal static class TestExtensions
                 $"Expected {expected} ± {tolerance}, but got {actual}");
         }
     }
+    
+    /// <summary>
+    /// Asserts that a value is close to expected with specified tolerance.
+    /// </summary>
+    internal static void AssertCloseTo(this double? actual, double expected, double tolerance)
+    {
+        if (actual == null)
+        {
+            throw new Xunit.Sdk.XunitException(
+                $"Expected {expected} ± {tolerance}, but got null");
+        }
+        
+        if (Math.Abs(actual.Value - expected) > tolerance)
+        {
+            throw new Xunit.Sdk.XunitException(
+                $"Expected {expected} ± {tolerance}, but got {actual.Value}");
+        }
+    }
 
     /// <summary>
     /// Asserts that two colors are equal.

@@ -30,7 +30,7 @@ public enum TonePolarity
     Nearer,
 
     [Obsolete("Use ToneDeltaPair.DeltaConstraint with RelativeDarker/RelativeLighter instead.")]
-    Farther,
+    Farther
 }
 
 /// <summary>
@@ -43,7 +43,7 @@ public sealed class ToneDeltaPair
     {
         Exact,
         Nearer,
-        Farther,
+        Farther
     }
 
     public DynamicColor RoleA { get; }

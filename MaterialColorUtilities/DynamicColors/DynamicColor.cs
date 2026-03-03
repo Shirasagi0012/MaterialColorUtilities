@@ -53,57 +53,6 @@ public sealed class DynamicColor
         Func<DynamicScheme, TonalPalette> palette,
         Func<DynamicScheme, double> tone,
         bool isBackground,
-        Func<DynamicScheme, DynamicColor?>? background,
-        Func<DynamicScheme, DynamicColor?>? secondBackground,
-        ContrastCurve? contrastCurve,
-        Func<DynamicScheme, ToneDeltaPair?>? toneDeltaPair
-    )
-        : this(
-            name,
-            palette,
-            tone,
-            isBackground,
-            null,
-            background,
-            secondBackground,
-            _ => contrastCurve,
-            toneDeltaPair,
-            null
-        )
-    {
-    }
-
-    public DynamicColor(
-        string name,
-        Func<DynamicScheme, TonalPalette> palette,
-        Func<DynamicScheme, double> tone,
-        bool isBackground,
-        Func<DynamicScheme, DynamicColor?>? background,
-        Func<DynamicScheme, DynamicColor?>? secondBackground,
-        ContrastCurve? contrastCurve,
-        Func<DynamicScheme, ToneDeltaPair?>? toneDeltaPair,
-        Func<DynamicScheme, double?>? opacity
-    )
-        : this(
-            name,
-            palette,
-            tone,
-            isBackground,
-            null,
-            background,
-            secondBackground,
-            _ => contrastCurve,
-            toneDeltaPair,
-            opacity
-        )
-    {
-    }
-
-    public DynamicColor(
-        string name,
-        Func<DynamicScheme, TonalPalette> palette,
-        Func<DynamicScheme, double> tone,
-        bool isBackground,
         Func<DynamicScheme, double>? chromaMultiplier,
         Func<DynamicScheme, DynamicColor?>? background,
         Func<DynamicScheme, DynamicColor?>? secondBackground,
@@ -131,8 +80,10 @@ public sealed class DynamicColor
         bool isBackground = false,
         Func<DynamicScheme, DynamicColor?>? background = null,
         Func<DynamicScheme, DynamicColor?>? secondBackground = null,
-        ContrastCurve? contrastCurve = null,
-        Func<DynamicScheme, ToneDeltaPair?>? toneDeltaPair = null
+        Func<DynamicScheme, ContrastCurve?>? contrastCurve = null,
+        Func<DynamicScheme, ToneDeltaPair?>? toneDeltaPair = null,
+        Func<DynamicScheme, double>? chromaMultiplier = null,
+        Func<DynamicScheme, double?>? opacity = null
     )
     {
         return new DynamicColor(
@@ -140,10 +91,12 @@ public sealed class DynamicColor
             palette,
             tone,
             isBackground,
+            chromaMultiplier,
             background,
             secondBackground,
             contrastCurve,
-            toneDeltaPair
+            toneDeltaPair,
+            opacity
         );
     }
 
@@ -199,6 +152,33 @@ public sealed class DynamicColor
         var hct = Hct.From(argb);
         var palette = new TonalPalette(hct);
         return FromPalette(name, _ => palette, _ => hct.Tone);
+    }
+
+    public DynamicColor With(
+        string? name = null,
+        Func<DynamicScheme, TonalPalette>? palette = null,
+        Func<DynamicScheme, double>? tone = null,
+        bool? isBackground = null,
+        Func<DynamicScheme, double>? chromaMultiplier = null,
+        Func<DynamicScheme, DynamicColor?>? background = null,
+        Func<DynamicScheme, DynamicColor?>? secondBackground = null,
+        Func<DynamicScheme, ContrastCurve?>? contrastCurve = null,
+        Func<DynamicScheme, ToneDeltaPair?>? toneDeltaPair = null,
+        Func<DynamicScheme, double?>? opacity = null
+    )
+    {
+        return new DynamicColor(
+            name ?? Name,
+            palette ?? Palette,
+            tone ?? Tone,
+            isBackground ?? IsBackground,
+            chromaMultiplier ?? ChromaMultiplier,
+            background ?? Background,
+            secondBackground ?? SecondBackground,
+            contrastCurve ?? ContrastCurve,
+            toneDeltaPair ?? ToneDeltaPair,
+            opacity ?? Opacity
+        );
     }
 
     public static double ForegroundTone(double bgTone, double ratio)

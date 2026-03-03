@@ -1,0 +1,62 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mcu="clr-namespace:MaterialColorUtilities.Avalonia;assembly=MaterialColorUtilities.Avalonia"
+             xmlns:controls="clr-namespace:MaterialColorUtilities.Gallery.Controls"
+             xmlns:converters="clr-namespace:MaterialColorUtilities.Gallery.Converters"
+             mc:Ignorable="d"
+             x:Class="MaterialColorUtilities.Gallery.Controls.SeedColorPicker"
+             x:Name="Root">
+    <StackPanel Spacing="12">
+        <TextBlock FontSize="18" Margin="0 4" Text="{Binding Title, ElementName=Root}" />
+
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="* * * Auto" RowSpacing="12" ColumnSpacing="8">
+            <controls:HctColorSlider
+                HctComponent="Hue"
+                Hct="{Binding Hct, ElementName=Root, Mode=TwoWay}" />
+            <TextBox Grid.Row="0" Grid.Column="1"
+                     Text="{Binding Hct, ElementName=Root, Mode=TwoWay, Converter={converters:HctComponentToStringConverter Hue}}"
+                     Width="72"
+                     VerticalAlignment="Center" />
+
+            <controls:HctColorSlider
+                Grid.Row="1" Grid.Column="0"
+                HctComponent="Chroma"
+                Hct="{Binding Hct, ElementName=Root, Mode=TwoWay}" />
+            <TextBox Grid.Row="1" Grid.Column="1"
+                     Text="{Binding Hct, ElementName=Root, Mode=TwoWay, Converter={converters:HctComponentToStringConverter Chroma}}"
+                     Width="72"
+                     VerticalAlignment="Center" />
+
+            <controls:HctColorSlider
+                Grid.Row="2" Grid.Column="0"
+                HctComponent="Tone"
+                Hct="{Binding Hct, ElementName=Root, Mode=TwoWay}" />
+            <TextBox Grid.Row="2" Grid.Column="1"
+                     Text="{Binding Hct, ElementName=Root, Mode=TwoWay, Converter={converters:HctComponentToStringConverter Tone}}"
+                     Width="72"
+                     VerticalAlignment="Center" />
+
+            <Grid Grid.Row="3" Grid.Column="0" ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="RGB Color" />
+                <SelectableTextBlock Grid.Row="1" Grid.Column="0"
+                                     Text="{Binding Hct, ElementName=Root, Converter={converters:HctToStringConverter RgbString}}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="HCT Color" />
+                <SelectableTextBlock Grid.Row="1" Grid.Column="1"
+                                     Text="{Binding Hct, ElementName=Root, Converter={converters:HctToStringConverter HctString}}" />
+            </Grid>
+
+            <Border Grid.Row="3" Grid.Column="1"
+                    CornerRadius="4"
+                    BorderBrush="{mcu:MdSysColor Outline}"
+                    BorderThickness="1"
+                    Background="{mcu:MdSysColor SurfaceContainerHighest}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Padding="2">
+                <Border CornerRadius="3" Background="{Binding Hct, ElementName=Root, Converter={converters:HctToBrushConverter}}" />
+            </Border>
+        </Grid>
+    </StackPanel>
+</UserControl>

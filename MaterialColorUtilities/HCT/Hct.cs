@@ -218,4 +218,19 @@ public struct Hct : IEquatable<Hct>
     {
         return !(left == right);
     }
+
+    public static bool IsBlue(double hue)
+    {
+        return hue >= 250 && hue < 270;
+    }
+
+    public static bool IsYellow(double hue)
+    {
+        return hue >= 105 && hue < 125;
+    }
+
+    public static bool IsCyan(double hue)
+    {
+        return hue >= 170 && hue < 207;
+    }
 }

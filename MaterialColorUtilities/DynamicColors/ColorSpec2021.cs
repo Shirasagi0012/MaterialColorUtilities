@@ -16,11 +16,11 @@
 
 namespace MaterialColorUtilities.DynamicColors;
 
-using MaterialColorUtilities.Dislike;
-using MaterialColorUtilities.HCT;
-using MaterialColorUtilities.Palettes;
-using MaterialColorUtilities.Temperature;
-using MaterialColorUtilities.Utils;
+using Dislike;
+using HCT;
+using Palettes;
+using Temperature;
+using Utils;
 
 /// <summary>
 /// Spec 2021 dynamic color behavior.
@@ -33,7 +33,10 @@ public class ColorSpec2021 : ColorSpec
         s => s.ErrorPalette.KeyColor.Tone
     );
 
-    public virtual DynamicColor HighestSurface(DynamicScheme scheme) => scheme.IsDark ? SurfaceBright : SurfaceDim;
+    public virtual DynamicColor HighestSurface(DynamicScheme scheme)
+    {
+        return scheme.IsDark ? SurfaceBright : SurfaceDim;
+    }
 
     public virtual DynamicColor PrimaryPaletteKeyColor => LegacyMaterialDynamicColors.PrimaryPaletteKeyColor;
 
@@ -166,10 +169,10 @@ public class ColorSpec2021 : ColorSpec
     private static bool IsLegacyNearer(TonePolarity polarity, bool isDark)
     {
         return polarity == TonePolarity.Nearer
-            || polarity == TonePolarity.RelativeLighter
-            || (polarity == TonePolarity.Lighter && !isDark)
-            || (polarity == TonePolarity.Darker && isDark)
-            || (polarity == TonePolarity.RelativeDarker && isDark);
+               || polarity == TonePolarity.RelativeLighter
+               || (polarity == TonePolarity.Lighter && !isDark)
+               || (polarity == TonePolarity.Darker && isDark)
+               || (polarity == TonePolarity.RelativeDarker && isDark);
     }
 
     public virtual double GetTone(DynamicScheme scheme, DynamicColor color)
@@ -306,20 +309,20 @@ public class ColorSpec2021 : ColorSpec
         var lightOption = Contrast.Contrast.Lighter(upper, desiredRatio);
         var darkOption = Contrast.Contrast.Darker(lower, desiredRatio);
         var availables = new List<double>();
-        if (lightOption != -1)
-            availables.Add(lightOption);
-        if (darkOption != -1)
-            availables.Add(darkOption);
+        if (lightOption is {})
+            availables.Add(lightOption.Value);
+        if (darkOption is {})
+            availables.Add(darkOption.Value);
 
         var prefersLight =
             DynamicColor.TonePrefersLightForeground(bgTone1)
             || DynamicColor.TonePrefersLightForeground(bgTone2);
 
         if (prefersLight)
-            return lightOption == -1 ? 100 : lightOption;
+            return lightOption ?? 100;
         if (availables.Count == 1)
             return availables[0];
-        return darkOption == -1 ? 0 : darkOption;
+        return darkOption ?? 0;
     }
 
     public virtual TonalPalette GetPrimaryPalette(

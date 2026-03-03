@@ -16,8 +16,8 @@
 
 namespace MaterialColorUtilities.DynamicColors;
 
-using MaterialColorUtilities.HCT;
-using MaterialColorUtilities.Palettes;
+using HCT;
+using Palettes;
 
 /// <summary>
 /// Interface for spec-versioned dynamic color behaviors.
@@ -96,7 +96,7 @@ public interface ColorSpec
     DynamicColor TertiaryFixedDim { get; }
     DynamicColor OnTertiaryFixed { get; }
     DynamicColor OnTertiaryFixedVariant { get; }
-    
+
     DynamicColor HighestSurface(DynamicScheme scheme);
 
     Hct GetHct(DynamicScheme scheme, DynamicColor color);

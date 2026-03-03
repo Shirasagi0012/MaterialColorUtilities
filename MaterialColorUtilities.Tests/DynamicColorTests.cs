@@ -1,5 +1,7 @@
 using System.Globalization;
 using System.Collections.Concurrent;
+using System.Collections;
+using System.Reflection;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Scheme;
 using MaterialColorUtilities.Utils;
@@ -98,6 +100,17 @@ public class DynamicColorTests
                 difference
             )
         );
+    }
+
+    private static int GetDynamicColorCacheCount(DynamicColorType color)
+    {
+        var cacheField = typeof(DynamicColorType).GetField(
+            "_hctCacheMap",
+            BindingFlags.Instance | BindingFlags.NonPublic
+        );
+        Assert.NotNull(cacheField);
+        var cache = Assert.IsAssignableFrom<IDictionary>(cacheField.GetValue(color));
+        return cache.Count;
     }
 
     [Fact]
@@ -249,6 +262,71 @@ public class DynamicColorTests
             exceptions.IsEmpty,
             $"Concurrent cache access failed with {exceptions.Count} exception(s)."
         );
+    }
+
+    [Fact]
+    public void WithWithoutOverridesReturnsEquivalentButDistinctInstance()
+    {
+        var original = DynamicColorType.FromPalette(
+            "copy_source",
+            s => s.PrimaryPalette,
+            _ => 35.0,
+            isBackground: true,
+            background: _ => Roles.Surface,
+            contrastCurve: new ContrastCurve(3.0, 4.5, 7.0, 11.0)
+        );
+        var copy = original.With();
+        var scheme = new SchemeTonalSpot(Hct.From(new ArgbColor(0xFF6750A4)), false, 0.0);
+
+        Assert.NotSame(original, copy);
+        Assert.Equal(original.Name, copy.Name);
+        Assert.Equal(original.IsBackground, copy.IsBackground);
+        Assert.Same(original.Palette, copy.Palette);
+        Assert.Same(original.Tone, copy.Tone);
+        Assert.Equal(original.GetTone(scheme), copy.GetTone(scheme), 8);
+        Assert.Equal(original.GetArgb(scheme).Value, copy.GetArgb(scheme).Value);
+    }
+
+    [Fact]
+    public void WithOverridesOnlySpecifiedMembers()
+    {
+        var original = DynamicColorType.FromPalette(
+            "copy_source",
+            s => s.PrimaryPalette,
+            _ => 30.0,
+            isBackground: true,
+            background: _ => Roles.Surface
+        );
+        var copy = original.With(name: "copy_override", tone: _ => 80.0);
+        var scheme = new SchemeTonalSpot(Hct.From(new ArgbColor(0xFF6750A4)), false, 0.0);
+
+        Assert.Equal("copy_source", original.Name);
+        Assert.Equal("copy_override", copy.Name);
+        Assert.Equal(30.0, original.GetTone(scheme), 8);
+        Assert.Equal(80.0, copy.GetTone(scheme), 8);
+        Assert.Same(original.Palette, copy.Palette);
+        Assert.Equal(original.IsBackground, copy.IsBackground);
+    }
+
+    [Fact]
+    public void WithCreatesInstanceWithIndependentCache()
+    {
+        var original = DynamicColorType.FromPalette(
+            "cache_source",
+            s => s.PrimaryPalette,
+            _ => 40.0
+        );
+        var scheme = new SchemeTonalSpot(Hct.From(new ArgbColor(0xFF6750A4)), true, 0.5);
+
+        _ = original.GetHct(scheme);
+        Assert.Equal(1, GetDynamicColorCacheCount(original));
+
+        var copy = original.With();
+        Assert.Equal(0, GetDynamicColorCacheCount(copy));
+
+        _ = copy.GetHct(scheme);
+        Assert.Equal(1, GetDynamicColorCacheCount(copy));
+        Assert.Equal(1, GetDynamicColorCacheCount(original));
     }
 
     [Fact]
