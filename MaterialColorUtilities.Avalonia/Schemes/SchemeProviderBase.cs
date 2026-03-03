@@ -18,6 +18,12 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
     public static readonly StyledProperty<double?> ContrastLevelProperty =
         AvaloniaProperty.Register<SchemeProviderBase, double?>(nameof(ContrastLevel));
 
+    public static readonly StyledProperty<ColorSpec.SpecVersion> SpecVersionProperty =
+        AvaloniaProperty.Register<SchemeProviderBase, ColorSpec.SpecVersion>(
+            nameof(SpecVersion),
+            DynamicScheme.DefaultSpecVersion
+        );
+
     protected SchemeProviderBase()
     {
         PropertyChanged += OnPropertyChangedInternal;
@@ -57,6 +63,12 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
         set => SetValue(ContrastLevelProperty, value);
     }
 
+    public ColorSpec.SpecVersion SpecVersion
+    {
+        get => GetValue(SpecVersionProperty);
+        set => SetValue(SpecVersionProperty, value);
+    }
+
     public abstract DynamicScheme CreateScheme(ThemeVariant theme);
 
     protected Hct ResolveSeedHct()
@@ -71,13 +83,23 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
         return ContrastLevel ?? 0;
     }
 
+    protected ColorSpec.SpecVersion ResolveSpecVersion()
+    {
+        return SpecVersion;
+    }
+
+    protected DynamicScheme.Platform ResolvePlatform()
+    {
+        return DynamicScheme.DefaultPlatform;
+    }
+
     private void OnPropertyChangedInternal(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
-        if (e.Property == ColorProperty || e.Property == ContrastLevelProperty)
+        if (e.Property == ColorProperty || e.Property == ContrastLevelProperty || e.Property == SpecVersionProperty)
             OnSchemeChanged();
     }
 
-    private void OnSchemeChanged()
+    protected void OnSchemeChanged()
     {
         SchemeChanged?.Invoke(this, EventArgs.Empty);
     }

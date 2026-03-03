@@ -28,9 +28,11 @@ public class FidelityScheme : SchemeProviderBase
     {
         var seedHct = ResolveSeedHct();
         var contrast = ResolveContrast();
+        var specVersion = ResolveSpecVersion();
+        var platform = ResolvePlatform();
         var isDark = theme == ThemeVariant.Dark;
 
-        return new SchemeFidelity(seedHct, isDark, contrast);
+        return new SchemeFidelity(seedHct, isDark, contrast, specVersion, platform);
     }
 
     public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)

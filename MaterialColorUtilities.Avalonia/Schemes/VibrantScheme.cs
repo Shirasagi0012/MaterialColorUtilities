@@ -28,9 +28,11 @@ public class VibrantScheme : SchemeProviderBase
     {
         var seedHct = ResolveSeedHct();
         var contrast = ResolveContrast();
+        var specVersion = ResolveSpecVersion();
+        var platform = ResolvePlatform();
         var isDark = theme == ThemeVariant.Dark;
 
-        return new SchemeVibrant(seedHct, isDark, contrast);
+        return new SchemeVibrant(seedHct, isDark, contrast, specVersion, platform);
     }
 
     public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
