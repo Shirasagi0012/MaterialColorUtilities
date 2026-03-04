@@ -34,6 +34,8 @@ This implementation is currently a **work-in-progress**. The API is mostly the s
 
 Most parts of material-color-utilities (except CorePalette, which is labeled as deprecated) and all unit tests have been ported. All ported unit tests are passing. Feel free to try it out and give your feedback.
 
+This project support all color schemes from original Material Design 3 and Material 3 Expressive. Watch variant is also ported.
+
 ⚠️ This library is **not yet** ready for production use.
 
 ## APIs
@@ -43,7 +45,6 @@ Most parts of material-color-utilities (except CorePalette, which is labeled as 
 Most API are identical to original implementation. There are some differences:
 
 - For convenience, this library uses ArgbColor struct to represent a color, instead of an int as the original implementation does.
-- Some `.From***(...)` method are replaced by constructor.
 
 ### Avalonia integration
 
