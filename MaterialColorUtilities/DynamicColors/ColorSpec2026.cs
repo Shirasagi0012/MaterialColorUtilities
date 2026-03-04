@@ -364,7 +364,7 @@ public sealed class ColorSpec2026 : ColorSpec2025
                         PrimaryContainer,
                         Primary,
                         5.0,
-                        TonePolarity.RelativeLighter,
+                        ToneDeltaPair.TonePolarity.RelativeLighter,
                         ToneDeltaPair.DeltaConstraint.Farther
                     )
             );
@@ -426,7 +426,7 @@ public sealed class ColorSpec2026 : ColorSpec2025
                         PrimaryFixedDim,
                         PrimaryFixed,
                         5.0,
-                        TonePolarity.Darker,
+                        ToneDeltaPair.TonePolarity.Darker,
                         ToneDeltaPair.DeltaConstraint.Exact
                     )
             );
@@ -518,7 +518,7 @@ public sealed class ColorSpec2026 : ColorSpec2025
                         SecondaryContainer,
                         Secondary,
                         5.0,
-                        TonePolarity.RelativeLighter,
+                        ToneDeltaPair.TonePolarity.RelativeLighter,
                         ToneDeltaPair.DeltaConstraint.Farther
                     )
             );
@@ -580,7 +580,7 @@ public sealed class ColorSpec2026 : ColorSpec2025
                         SecondaryFixedDim,
                         SecondaryFixed,
                         5.0,
-                        TonePolarity.Darker,
+                        ToneDeltaPair.TonePolarity.Darker,
                         ToneDeltaPair.DeltaConstraint.Exact
                     )
             );
@@ -679,7 +679,7 @@ public sealed class ColorSpec2026 : ColorSpec2025
                         TertiaryContainer,
                         Tertiary,
                         5.0,
-                        TonePolarity.RelativeLighter,
+                        ToneDeltaPair.TonePolarity.RelativeLighter,
                         ToneDeltaPair.DeltaConstraint.Farther
                     )
             );
@@ -741,7 +741,7 @@ public sealed class ColorSpec2026 : ColorSpec2025
                         TertiaryFixedDim,
                         TertiaryFixed,
                         5.0,
-                        TonePolarity.Darker,
+                        ToneDeltaPair.TonePolarity.Darker,
                         ToneDeltaPair.DeltaConstraint.Exact
                     )
             );
@@ -831,7 +831,7 @@ public sealed class ColorSpec2026 : ColorSpec2025
                         ErrorContainer,
                         Error,
                         5.0,
-                        TonePolarity.RelativeLighter,
+                        ToneDeltaPair.TonePolarity.RelativeLighter,
                         ToneDeltaPair.DeltaConstraint.Farther
                     )
             );

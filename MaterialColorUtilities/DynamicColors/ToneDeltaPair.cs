@@ -17,23 +17,6 @@
 namespace MaterialColorUtilities.DynamicColors;
 
 /// <summary>
-/// Describes the relationship in tone between two colors.
-/// </summary>
-public enum TonePolarity
-{
-    Darker,
-    Lighter,
-    RelativeDarker,
-    RelativeLighter,
-
-    [Obsolete("Use ToneDeltaPair.DeltaConstraint with RelativeDarker/RelativeLighter instead.")]
-    Nearer,
-
-    [Obsolete("Use ToneDeltaPair.DeltaConstraint with RelativeDarker/RelativeLighter instead.")]
-    Farther
-}
-
-/// <summary>
 /// Documents a constraint between two DynamicColors, in which their tones must
 /// have a certain distance from each other.
 /// </summary>
@@ -44,6 +27,18 @@ public sealed class ToneDeltaPair
         Exact,
         Nearer,
         Farther
+    }
+
+
+    /// <summary>
+    /// Describes the relationship in tone between two colors.
+    /// </summary>
+    public enum TonePolarity
+    {
+        Darker,
+        Lighter,
+        RelativeDarker,
+        RelativeLighter,
     }
 
     public DynamicColor RoleA { get; }
@@ -61,7 +56,8 @@ public sealed class ToneDeltaPair
         DynamicColor roleB,
         double delta,
         TonePolarity polarity,
-        bool stayTogether
+        bool stayTogether = true,
+        DeltaConstraint constraint = DeltaConstraint.Exact
     )
     {
         RoleA = roleA;
@@ -69,7 +65,7 @@ public sealed class ToneDeltaPair
         Delta = delta;
         Polarity = polarity;
         StayTogether = stayTogether;
-        Constraint = DeltaConstraint.Exact;
+        Constraint = constraint;
     }
 
     /// <summary>

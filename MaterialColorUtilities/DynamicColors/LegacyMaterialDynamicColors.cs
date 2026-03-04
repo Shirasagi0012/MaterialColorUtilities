@@ -240,11 +240,12 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(3, 4.5, 7, 7),
         toneDeltaPair: s => new ToneDeltaPair(
-            PrimaryContainer,
-            Primary,
+            PrimaryContainer!,
+            Primary!,
             10,
-            TonePolarity.Nearer,
-            false
+            ToneDeltaPair.TonePolarity.RelativeLighter,
+            false,
+            ToneDeltaPair.DeltaConstraint.Nearer
         )
     );
 
@@ -276,11 +277,12 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(1, 1, 3, 4.5),
         toneDeltaPair: s => new ToneDeltaPair(
-            PrimaryContainer,
+            PrimaryContainer!,
             Primary,
             10,
-            TonePolarity.Nearer,
-            false
+            ToneDeltaPair.TonePolarity.RelativeLighter,
+            false,
+            ToneDeltaPair.DeltaConstraint.Nearer
         )
     );
 
@@ -315,11 +317,12 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(3, 4.5, 7, 7),
         toneDeltaPair: s => new ToneDeltaPair(
-            SecondaryContainer,
-            Secondary,
+            SecondaryContainer!,
+            Secondary!,
             10,
-            TonePolarity.Nearer,
-            false
+            ToneDeltaPair.TonePolarity.RelativeLighter, 
+            false,
+            ToneDeltaPair.DeltaConstraint.Nearer
         )
     );
 
@@ -358,11 +361,12 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(1, 1, 3, 4.5),
         toneDeltaPair: s => new ToneDeltaPair(
-            SecondaryContainer,
-            Secondary,
+            SecondaryContainer!,
+            Secondary!,
             10,
-            TonePolarity.Nearer,
-            false
+            ToneDeltaPair.TonePolarity.RelativeLighter, 
+            false,
+            ToneDeltaPair.DeltaConstraint.Nearer
         )
     );
 
@@ -394,11 +398,12 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(3, 4.5, 7, 7),
         toneDeltaPair: s => new ToneDeltaPair(
-            TertiaryContainer,
-            Tertiary,
+            TertiaryContainer!,
+            Tertiary!,
             10,
-            TonePolarity.Nearer,
-            false
+            ToneDeltaPair.TonePolarity.RelativeLighter, 
+            false,
+            ToneDeltaPair.DeltaConstraint.Nearer
         )
     );
 
@@ -431,11 +436,12 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(1, 1, 3, 4.5),
         toneDeltaPair: s => new ToneDeltaPair(
-            TertiaryContainer,
+            TertiaryContainer!,
             Tertiary,
             10,
-            TonePolarity.Nearer,
-            false
+            ToneDeltaPair.TonePolarity.RelativeLighter, 
+            false,
+            ToneDeltaPair.DeltaConstraint.Nearer
         )
     );
 
@@ -461,7 +467,13 @@ public static class LegacyMaterialDynamicColors
         true,
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(3, 4.5, 7, 7),
-        toneDeltaPair: s => new ToneDeltaPair(ErrorContainer, Error, 10, TonePolarity.Nearer, false)
+        toneDeltaPair: s => new ToneDeltaPair(
+            ErrorContainer!, 
+            Error!, 
+            10, 
+            ToneDeltaPair.TonePolarity.RelativeLighter, 
+            false,
+            ToneDeltaPair.DeltaConstraint.Nearer)
     );
 
     public static readonly DynamicColor OnError = DynamicColor.FromPalette(
@@ -479,7 +491,7 @@ public static class LegacyMaterialDynamicColors
         true,
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(1, 1, 3, 4.5),
-        toneDeltaPair: s => new ToneDeltaPair(ErrorContainer, Error, 10, TonePolarity.Nearer, false)
+        toneDeltaPair: s => new ToneDeltaPair(ErrorContainer!, Error!, 10, ToneDeltaPair.TonePolarity.RelativeLighter, false, ToneDeltaPair.DeltaConstraint.Nearer)
     );
 
     public static readonly DynamicColor OnErrorContainer = DynamicColor.FromPalette(
@@ -503,10 +515,10 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(1, 1, 3, 4.5),
         toneDeltaPair: s => new ToneDeltaPair(
-            PrimaryFixed,
-            PrimaryFixedDim,
+            PrimaryFixed!,
+            PrimaryFixedDim!,
             10,
-            TonePolarity.Lighter,
+            ToneDeltaPair.TonePolarity.Lighter,
             true
         )
     );
@@ -519,10 +531,10 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(1, 1, 3, 4.5),
         toneDeltaPair: s => new ToneDeltaPair(
-            PrimaryFixed,
-            PrimaryFixedDim,
+            PrimaryFixed!,
+            PrimaryFixedDim!,
             10,
-            TonePolarity.Lighter,
+            ToneDeltaPair.TonePolarity.Lighter,
             true
         )
     );
@@ -553,10 +565,10 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(1, 1, 3, 4.5),
         toneDeltaPair: s => new ToneDeltaPair(
-            SecondaryFixed,
-            SecondaryFixedDim,
+            SecondaryFixed!,
+            SecondaryFixedDim!,
             10,
-            TonePolarity.Lighter,
+            ToneDeltaPair.TonePolarity.Lighter,
             true
         )
     );
@@ -569,10 +581,10 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(1, 1, 3, 4.5),
         toneDeltaPair: s => new ToneDeltaPair(
-            SecondaryFixed,
-            SecondaryFixedDim,
+            SecondaryFixed!,
+            SecondaryFixedDim!,
             10,
-            TonePolarity.Lighter,
+            ToneDeltaPair.TonePolarity.Lighter,
             true
         )
     );
@@ -603,10 +615,10 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(1, 1, 3, 4.5),
         toneDeltaPair: s => new ToneDeltaPair(
-            TertiaryFixed,
-            TertiaryFixedDim,
+            TertiaryFixed!,
+            TertiaryFixedDim!,
             10,
-            TonePolarity.Lighter,
+            ToneDeltaPair.TonePolarity.Lighter,
             true
         )
     );
@@ -619,10 +631,10 @@ public static class LegacyMaterialDynamicColors
         HighestSurface,
         contrastCurve: _ => new ContrastCurve(1, 1, 3, 4.5),
         toneDeltaPair: s => new ToneDeltaPair(
-            TertiaryFixed,
-            TertiaryFixedDim,
+            TertiaryFixed!,
+            TertiaryFixedDim!,
             10,
-            TonePolarity.Lighter,
+            ToneDeltaPair.TonePolarity.Lighter,
             true
         )
     );

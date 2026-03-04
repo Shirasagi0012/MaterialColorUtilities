@@ -24,12 +24,9 @@ namespace MaterialColorUtilities.Quantize;
 /// </summary>
 public sealed class QuantizerWsmeans
 {
-    private const bool Debug = false;
-
     private static void DebugLog(string log)
     {
-        if (Debug)
-            Console.WriteLine(log);
+        Console.WriteLine(log);
     }
 
     public static QuantizerResult Quantize(
@@ -107,7 +104,9 @@ public sealed class QuantizerWsmeans
             clusters.AddRange(indices.Select(index => points[index]));
         }
 
+#if DEBUG
         DebugLog($"have {clusters.Count} starting clusters, {points.Count} points");
+#endif
 
         var clusterIndices = new int[pointCount];
         for (var i = 0; i < pointCount; i++)
@@ -129,26 +128,26 @@ public sealed class QuantizerWsmeans
 
         for (var iteration = 0; iteration < maxIterations; iteration++)
         {
-            if (Debug)
+
+#if DEBUG
+            Array.Clear(pixelCountSums, 0, clusterCount);
+            for (var i = 0; i < pointCount; i++)
             {
-                Array.Clear(pixelCountSums, 0, clusterCount);
-                for (var i = 0; i < pointCount; i++)
-                {
-                    var clusterIndex = clusterIndices[i];
-                    var count = counts[i];
-                    pixelCountSums[clusterIndex] += count;
-                }
-
-                var emptyClusters = 0;
-                for (var cluster = 0; cluster < clusterCount; cluster++)
-                    if (pixelCountSums[cluster] == 0)
-                        emptyClusters++;
-
-                DebugLog(
-                    $"starting iteration {iteration + 1}; {emptyClusters} clusters are empty of {clusterCount}"
-                );
+                var clusterIndex = clusterIndices[i];
+                var count = counts[i];
+                pixelCountSums[clusterIndex] += count;
             }
 
+            var emptyClusters = 0;
+            for (var cluster = 0; cluster < clusterCount; cluster++)
+                if (pixelCountSums[cluster] == 0)
+                    emptyClusters++;
+
+            DebugLog(
+                $"starting iteration {iteration + 1}; {emptyClusters} clusters are empty of {clusterCount}"
+            );
+#endif
+            
             var pointsMoved = 0;
             for (var i = 0; i < clusterCount; i++)
             {
@@ -200,11 +199,14 @@ public sealed class QuantizerWsmeans
 
             if (pointsMoved == 0 && iteration > 0)
             {
+#if DEBUG
                 DebugLog($"terminated after {iteration} k-means iterations");
+#endif
                 break;
             }
-
+#if DEBUG
             DebugLog($"iteration {iteration + 1} moved {pointsMoved}");
+#endif
 
             var componentASums = new double[clusterCount];
             var componentBSums = new double[clusterCount];
@@ -255,10 +257,11 @@ public sealed class QuantizerWsmeans
             clusterArgbs.Add(possibleNewCluster);
             clusterPopulations.Add(count);
         }
-
+#if DEBUG
         DebugLog(
             $"kmeans finished and generated {clusterArgbs.Count} clusters; {clusterCount} were requested"
         );
+#endif
 
         var inputPixelToClusterPixel = new Dictionary<ArgbColor, ArgbColor>();
         if (returnInputPixelToClusterPixel)

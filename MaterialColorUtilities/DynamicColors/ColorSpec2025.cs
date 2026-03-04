@@ -614,7 +614,7 @@ public class ColorSpec2025 : ColorSpec2021
                             PrimaryContainer,
                             Primary,
                             5.0,
-                            TonePolarity.RelativeLighter,
+                            ToneDeltaPair.TonePolarity.RelativeLighter,
                             ToneDeltaPair.DeltaConstraint.Farther
                         )
                         : null
@@ -645,7 +645,7 @@ public class ColorSpec2025 : ColorSpec2021
                         PrimaryDim,
                         Primary,
                         5.0,
-                        TonePolarity.Darker,
+                        ToneDeltaPair.TonePolarity.Darker,
                         ToneDeltaPair.DeltaConstraint.Farther
                     )
             );
@@ -725,7 +725,7 @@ public class ColorSpec2025 : ColorSpec2021
                             PrimaryContainer,
                             PrimaryDim,
                             10.0,
-                            TonePolarity.Darker,
+                            ToneDeltaPair.TonePolarity.Darker,
                             ToneDeltaPair.DeltaConstraint.Farther
                         )
                         : null
@@ -808,7 +808,7 @@ public class ColorSpec2025 : ColorSpec2021
                             SecondaryContainer,
                             Secondary,
                             5.0,
-                            TonePolarity.RelativeLighter,
+                            ToneDeltaPair.TonePolarity.RelativeLighter,
                             ToneDeltaPair.DeltaConstraint.Farther
                         )
                         : null
@@ -834,7 +834,7 @@ public class ColorSpec2025 : ColorSpec2021
                         SecondaryDim!,
                         Secondary,
                         5.0,
-                        TonePolarity.Darker,
+                        ToneDeltaPair.TonePolarity.Darker,
                         ToneDeltaPair.DeltaConstraint.Farther
                     )
             );
@@ -898,7 +898,7 @@ public class ColorSpec2025 : ColorSpec2021
                             SecondaryContainer,
                             SecondaryDim!,
                             10.0,
-                            TonePolarity.Darker,
+                            ToneDeltaPair.TonePolarity.Darker,
                             ToneDeltaPair.DeltaConstraint.Farther
                         )
                         : null
@@ -969,7 +969,7 @@ public class ColorSpec2025 : ColorSpec2021
                             TertiaryContainer,
                             Tertiary,
                             5.0,
-                            TonePolarity.RelativeLighter,
+                            ToneDeltaPair.TonePolarity.RelativeLighter,
                             ToneDeltaPair.DeltaConstraint.Farther
                         )
                         : null
@@ -997,7 +997,7 @@ public class ColorSpec2025 : ColorSpec2021
                         TertiaryDim!,
                         Tertiary,
                         5.0,
-                        TonePolarity.Darker,
+                        ToneDeltaPair.TonePolarity.Darker,
                         ToneDeltaPair.DeltaConstraint.Farther
                     )
             );
@@ -1076,7 +1076,7 @@ public class ColorSpec2025 : ColorSpec2021
                             TertiaryContainer,
                             TertiaryDim!,
                             10.0,
-                            TonePolarity.Darker,
+                            ToneDeltaPair.TonePolarity.Darker,
                             ToneDeltaPair.DeltaConstraint.Farther
                         )
                         : null
@@ -1134,7 +1134,7 @@ public class ColorSpec2025 : ColorSpec2021
                             ErrorContainer,
                             Error,
                             5.0,
-                            TonePolarity.RelativeLighter,
+                            ToneDeltaPair.TonePolarity.RelativeLighter,
                             ToneDeltaPair.DeltaConstraint.Farther
                         )
                         : null
@@ -1160,7 +1160,7 @@ public class ColorSpec2025 : ColorSpec2021
                         ErrorDim!,
                         Error,
                         5.0,
-                        TonePolarity.Darker,
+                        ToneDeltaPair.TonePolarity.Darker,
                         ToneDeltaPair.DeltaConstraint.Farther
                     )
             );
@@ -1217,7 +1217,7 @@ public class ColorSpec2025 : ColorSpec2021
                             ErrorContainer,
                             ErrorDim!,
                             10.0,
-                            TonePolarity.Darker,
+                            ToneDeltaPair.TonePolarity.Darker,
                             ToneDeltaPair.DeltaConstraint.Farther
                         )
                         : null
@@ -1285,7 +1285,7 @@ public class ColorSpec2025 : ColorSpec2021
                         PrimaryFixedDim,
                         PrimaryFixed,
                         5.0,
-                        TonePolarity.Darker,
+                        ToneDeltaPair.TonePolarity.Darker,
                         ToneDeltaPair.DeltaConstraint.Exact
                     )
             );
@@ -1365,7 +1365,7 @@ public class ColorSpec2025 : ColorSpec2021
                         SecondaryFixedDim,
                         SecondaryFixed,
                         5.0,
-                        TonePolarity.Darker,
+                        ToneDeltaPair.TonePolarity.Darker,
                         ToneDeltaPair.DeltaConstraint.Exact
                     )
             );
@@ -1445,7 +1445,7 @@ public class ColorSpec2025 : ColorSpec2021
                         TertiaryFixedDim,
                         TertiaryFixed,
                         5.0,
-                        TonePolarity.Darker,
+                        ToneDeltaPair.TonePolarity.Darker,
                         ToneDeltaPair.DeltaConstraint.Exact
                     )
             );
@@ -1507,9 +1507,9 @@ public class ColorSpec2025 : ColorSpec2021
             var constraint = toneDeltaPair.Constraint;
 
             var absoluteDelta =
-                polarity == TonePolarity.Darker
-                || (polarity == TonePolarity.RelativeLighter && scheme.IsDark)
-                || (polarity == TonePolarity.RelativeDarker && !scheme.IsDark)
+                polarity == ToneDeltaPair.TonePolarity.Darker
+                || (polarity == ToneDeltaPair.TonePolarity.RelativeLighter && scheme.IsDark)
+                || (polarity == ToneDeltaPair.TonePolarity.RelativeDarker && !scheme.IsDark)
                     ? -toneDeltaPair.Delta
                     : toneDeltaPair.Delta;
 

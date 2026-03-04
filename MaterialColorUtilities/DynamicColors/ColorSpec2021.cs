@@ -166,15 +166,6 @@ public class ColorSpec2021 : ColorSpec
         return Hct.From(palette.Hue, palette.Chroma * chromaMultiplier, tone);
     }
 
-    private static bool IsLegacyNearer(TonePolarity polarity, bool isDark)
-    {
-        return polarity == TonePolarity.Nearer
-               || polarity == TonePolarity.RelativeLighter
-               || (polarity == TonePolarity.Lighter && !isDark)
-               || (polarity == TonePolarity.Darker && isDark)
-               || (polarity == TonePolarity.RelativeDarker && isDark);
-    }
-
     public virtual double GetTone(DynamicScheme scheme, DynamicColor color)
     {
         var decreasingContrast = scheme.ContrastLevel < 0;
@@ -187,13 +178,9 @@ public class ColorSpec2021 : ColorSpec
             var delta = toneDeltaPair.Delta;
             var polarity = toneDeltaPair.Polarity;
             var stayTogether = toneDeltaPair.StayTogether;
-
-            var aIsNearer = IsLegacyNearer(polarity, scheme.IsDark);
-            if (toneDeltaPair.Constraint == ToneDeltaPair.DeltaConstraint.Nearer)
-                aIsNearer = true;
-            if (toneDeltaPair.Constraint == ToneDeltaPair.DeltaConstraint.Farther)
-                aIsNearer = false;
-
+            var aIsNearer = (toneDeltaPair.Constraint == ToneDeltaPair.DeltaConstraint.Nearer) ||
+                            (polarity == ToneDeltaPair.TonePolarity.Lighter && !scheme.IsDark) ||
+                            (polarity == ToneDeltaPair.TonePolarity.Darker && !scheme.IsDark);
             var nearer = aIsNearer ? roleA : roleB;
             var farther = aIsNearer ? roleB : roleA;
             var amNearer = color.Name == nearer.Name;
