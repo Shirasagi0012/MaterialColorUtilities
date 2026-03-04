@@ -15,18 +15,18 @@ public class CmfScheme : SchemeProviderBase
 {
     public static readonly StyledProperty<Color?> SecondaryColorProperty =
         AvaloniaProperty.Register<CmfScheme, Color?>(nameof(SecondaryColor));
-    
+
     public Color? SecondaryColor
     {
         get => GetValue(SecondaryColorProperty);
         set => SetValue(SecondaryColorProperty, value);
     }
-    
+
     static CmfScheme()
     {
         SecondaryColorProperty.Changed.AddClassHandler<CmfScheme>((x, _) => x.OnSchemeChanged());
     }
-    
+
     public CmfScheme() : base()
     {
     }
@@ -52,7 +52,7 @@ public class CmfScheme : SchemeProviderBase
         var sourceColorHct = ResolveSeedHct();
         var contrast = ResolveContrast();
         var platform = ResolvePlatform();
-        var isDark = theme == ThemeVariant.Dark;
+        var isDark = IsDark(theme);
 
         var sourceColorHctList = SecondaryColor is { } secondaryColor
             ? new[] { sourceColorHct, Hct.From(ArgbColor.FromAvaloniaColor(secondaryColor)) }

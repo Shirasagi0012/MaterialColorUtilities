@@ -30,7 +30,7 @@ public class ContentScheme : SchemeProviderBase
         var contrast = ResolveContrast();
         var specVersion = ResolveSpecVersion();
         var platform = ResolvePlatform();
-        var isDark = theme == ThemeVariant.Dark;
+        var isDark = IsDark(theme);
 
         return new SchemeContent(seedHct, isDark, contrast, specVersion, platform);
     }

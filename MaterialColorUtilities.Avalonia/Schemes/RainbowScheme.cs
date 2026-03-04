@@ -30,7 +30,7 @@ public class RainbowScheme : SchemeProviderBase
         var contrast = ResolveContrast();
         var specVersion = ResolveSpecVersion();
         var platform = ResolvePlatform();
-        var isDark = theme == ThemeVariant.Dark;
+        var isDark = IsDark(theme);
 
         return new SchemeRainbow(seedHct, isDark, contrast, specVersion, platform);
     }

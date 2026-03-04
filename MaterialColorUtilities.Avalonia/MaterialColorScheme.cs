@@ -103,29 +103,6 @@ public class MaterialColorScheme : AvaloniaObject
             BuildCustomPalettes(CustomColors);
         }
 
-        private static bool IsDark(ThemeVariant variant)
-        {
-            if (variant == ThemeVariant.Dark)
-                return true;
-
-            if (variant == ThemeVariant.Light)
-                return false;
-
-            var inherited = variant.InheritVariant;
-            while (inherited is { })
-            {
-                if (inherited == ThemeVariant.Dark)
-                    return true;
-
-                if (inherited == ThemeVariant.Light)
-                    return false;
-
-                inherited = inherited.InheritVariant;
-            }
-
-            return false;
-        }
-
         private void BuildCustomPalettes(IEnumerable<MaterialCustomColor> customColors)
         {
             var result = new Dictionary<string, TonalPalette>(StringComparer.OrdinalIgnoreCase);
@@ -154,7 +131,7 @@ public class MaterialColorScheme : AvaloniaObject
 
         private DynamicScheme? ResolveDynamicScheme(ThemeVariant variant)
         {
-            return IsDark(variant) ? DarkScheme ?? LightScheme : LightScheme ?? DarkScheme;
+            return SchemeProviderBase.IsDark(variant) ? DarkScheme ?? LightScheme : LightScheme ?? DarkScheme;
         }
 
 
@@ -165,7 +142,7 @@ public class MaterialColorScheme : AvaloniaObject
                 if (!TryGetCustomPalette(customKey, out var palette))
                     return null;
 
-                var tone = GetCustomRoleTone(token, IsDark(themeVariant));
+                var tone = GetCustomRoleTone(token, SchemeProviderBase.IsDark(themeVariant));
                 return palette.Get(tone).ToAvaloniaColor();
             }
 

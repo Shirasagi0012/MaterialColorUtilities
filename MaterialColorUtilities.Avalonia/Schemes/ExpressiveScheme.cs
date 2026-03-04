@@ -30,7 +30,7 @@ public class ExpressiveScheme : SchemeProviderBase
         var contrast = ResolveContrast();
         var specVersion = ResolveSpecVersion();
         var platform = ResolvePlatform();
-        var isDark = theme == ThemeVariant.Dark;
+        var isDark = IsDark(theme);
 
         return new SchemeExpressive(seedHct, isDark, contrast, specVersion, platform);
     }

@@ -111,4 +111,27 @@ public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
     {
         SchemeChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    public static bool IsDark(ThemeVariant variant)
+    {
+        if (variant == ThemeVariant.Dark)
+            return true;
+
+        if (variant == ThemeVariant.Light)
+            return false;
+
+        var inherited = variant.InheritVariant;
+        while (inherited is { })
+        {
+            if (inherited == ThemeVariant.Dark)
+                return true;
+
+            if (inherited == ThemeVariant.Light)
+                return false;
+
+            inherited = inherited.InheritVariant;
+        }
+
+        return false;
+    }
 }
