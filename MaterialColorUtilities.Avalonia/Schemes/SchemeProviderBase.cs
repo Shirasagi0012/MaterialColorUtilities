@@ -10,7 +10,7 @@ namespace MaterialColorUtilities.Avalonia;
 using DynamicColors;
 using global::Avalonia.Data;
 
-public abstract class SchemeProviderBase : AvaloniaObject, ISchemeProvider
+public abstract class SchemeProviderBase : AvaloniaObject
 {
     public static readonly StyledProperty<Color?> ColorProperty =
         AvaloniaProperty.Register<SchemeProviderBase, Color?>(nameof(Color));

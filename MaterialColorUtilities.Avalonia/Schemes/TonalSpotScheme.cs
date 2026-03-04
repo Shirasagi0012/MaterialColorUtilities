@@ -39,7 +39,7 @@ public sealed class TonalSpotScheme : SchemeProviderBase
         return new SchemeTonalSpot(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

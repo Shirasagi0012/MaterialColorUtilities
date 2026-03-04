@@ -42,7 +42,7 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
     ];
 
 
-    [ObservableProperty] public partial ISchemeProvider? Scheme { get; set; }
+    [ObservableProperty] public partial SchemeProviderBase? Scheme { get; set; }
 
     [ObservableProperty]
     public partial HctSelection SelectedHct { get; set; } =
@@ -225,7 +225,7 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
         [typeof(CmfScheme)] = (p, s) => new CmfScheme(p) { SecondaryColor = s },
     };
 
-    private static ISchemeProvider CreateScheme(
+    private static SchemeProviderBase CreateScheme(
         SchemeOption option,
         HctSelection primaryHctSelection,
         HctSelection secondaryHctSelection,

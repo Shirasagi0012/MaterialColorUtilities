@@ -35,7 +35,7 @@ public class ContentScheme : SchemeProviderBase
         return new SchemeContent(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

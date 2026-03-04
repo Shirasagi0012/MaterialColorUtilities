@@ -35,7 +35,7 @@ public class VibrantScheme : SchemeProviderBase
         return new SchemeVibrant(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

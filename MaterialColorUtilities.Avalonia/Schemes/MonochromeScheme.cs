@@ -36,7 +36,7 @@ public sealed class MonochromeScheme : SchemeProviderBase
         return new SchemeMonochrome(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

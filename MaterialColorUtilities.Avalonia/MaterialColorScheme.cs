@@ -21,8 +21,8 @@ namespace MaterialColorUtilities.Avalonia;
 
 public class MaterialColorScheme : AvaloniaObject
 {
-    public static readonly DirectProperty<MaterialColorScheme, ISchemeProvider?> SchemeProperty =
-        AvaloniaProperty.RegisterDirect<MaterialColorScheme, ISchemeProvider?>(
+    public static readonly DirectProperty<MaterialColorScheme, SchemeProviderBase?> SchemeProperty =
+        AvaloniaProperty.RegisterDirect<MaterialColorScheme, SchemeProviderBase?>(
             nameof(Scheme),
             scheme => scheme.Scheme,
             (scheme, provider) => scheme.Scheme = provider
@@ -34,7 +34,7 @@ public class MaterialColorScheme : AvaloniaObject
     {
     }
 
-    public MaterialColorScheme(ISchemeProvider scheme)
+    public MaterialColorScheme(SchemeProviderBase scheme)
     {
         Scheme = scheme;
     }
@@ -45,7 +45,7 @@ public class MaterialColorScheme : AvaloniaObject
     }
 
     [ConstructorArgument("scheme")]
-    public ISchemeProvider? Scheme
+    public SchemeProviderBase? Scheme
     {
         get;
         set
@@ -87,7 +87,7 @@ public class MaterialColorScheme : AvaloniaObject
 
         public DynamicScheme? DarkScheme { get; private set; }
 
-        public void UpdateScheme(ISchemeProvider? provider)
+        public void UpdateScheme(SchemeProviderBase? provider)
         {
             if (provider is not SchemeProviderBase { Color: { } } p)
             {

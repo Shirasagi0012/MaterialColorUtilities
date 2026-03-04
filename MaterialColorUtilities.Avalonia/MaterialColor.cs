@@ -8,11 +8,14 @@ public class MaterialColor : AvaloniaObject
     {
         SchemeProperty.Changed.AddClassHandler<AvaloniaObject>((element, args) =>
         {
-            var value = args.NewValue as ISchemeProvider;
-            if (element.IsSet(SchemeHostProperty)) return;
+            var value = args.NewValue as SchemeProviderBase;
             if (value is null)
+            {
                 element.ClearValue(SchemeHostProperty);
-            else
+                return;
+            }
+
+            if (!element.IsSet(SchemeHostProperty))
                 element.SetValue(SchemeHostProperty, new MaterialColorScheme(element[!SchemeProperty]));
         });
     }
@@ -30,17 +33,17 @@ public class MaterialColor : AvaloniaObject
     {
         element.SetValue(SchemeHostProperty, value);
     }
-    
-    public static readonly AttachedProperty<ISchemeProvider?> SchemeProperty =
-        AvaloniaProperty.RegisterAttached<MaterialColor, AvaloniaObject, ISchemeProvider?>(
+
+    public static readonly AttachedProperty<SchemeProviderBase?> SchemeProperty =
+        AvaloniaProperty.RegisterAttached<MaterialColor, AvaloniaObject, SchemeProviderBase?>(
             "Scheme");
-    
-    public static ISchemeProvider? GetScheme(AvaloniaObject element)
+
+    public static SchemeProviderBase? GetScheme(AvaloniaObject element)
     {
         return element.GetValue(SchemeProperty);
     }
-    
-    public static void SetScheme(AvaloniaObject element, ISchemeProvider? value)
+
+    public static void SetScheme(AvaloniaObject element, SchemeProviderBase? value)
     {
         element.SetValue(SchemeProperty, value);
     }

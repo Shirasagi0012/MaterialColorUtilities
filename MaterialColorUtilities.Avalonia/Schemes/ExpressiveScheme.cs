@@ -35,7 +35,7 @@ public class ExpressiveScheme : SchemeProviderBase
         return new SchemeExpressive(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public ISchemeProvider ProvideTypedValue(IServiceProvider serviceProvider)
+    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

@@ -8,7 +8,7 @@ public class MaterialColorSchemeExtension : MaterialColorScheme
     {
     }
 
-    public MaterialColorSchemeExtension(ISchemeProvider scheme) : base(scheme)
+    public MaterialColorSchemeExtension(SchemeProviderBase scheme) : base(scheme)
     {
     }
 
