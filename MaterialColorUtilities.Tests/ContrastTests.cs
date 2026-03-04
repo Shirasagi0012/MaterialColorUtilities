@@ -17,21 +17,21 @@ public class ContrastTests
     public void Lighter_ImpossibleRatioErrors()
     {
         var result = MaterialColorUtilities.Contrast.Contrast.Lighter(tone: 90.0, ratio: 10.0);
-        result.AssertCloseTo(-1.0, 0.001);
+        result.AssertCloseTo(null, 0.001);
     }
 
     [Fact]
     public void Lighter_OutOfBoundsInputAboveErrors()
     {
         var result = MaterialColorUtilities.Contrast.Contrast.Lighter(tone: 110.0, ratio: 2.0);
-        result.AssertCloseTo(-1.0, 0.001);
+        result.AssertCloseTo(null, 0.001);
     }
 
     [Fact]
     public void Lighter_OutOfBoundsInputBelowErrors()
     {
         var result = MaterialColorUtilities.Contrast.Contrast.Lighter(tone: -10.0, ratio: 2.0);
-        result.AssertCloseTo(-1.0, 0.001);
+        result.AssertCloseTo(null, 0.001);
     }
 
     [Fact]
@@ -45,21 +45,21 @@ public class ContrastTests
     public void Darker_ImpossibleRatioErrors()
     {
         var result = MaterialColorUtilities.Contrast.Contrast.Darker(tone: 10.0, ratio: 20.0);
-        result.AssertCloseTo(-1.0, 0.001);
+        result.AssertCloseTo(null, 0.001);
     }
 
     [Fact]
     public void Darker_OutOfBoundsInputAboveErrors()
     {
         var result = MaterialColorUtilities.Contrast.Contrast.Darker(tone: 110.0, ratio: 2.0);
-        result.AssertCloseTo(-1.0, 0.001);
+        result.AssertCloseTo(null, 0.001);
     }
 
     [Fact]
     public void Darker_OutOfBoundsInputBelowErrors()
     {
         var result = MaterialColorUtilities.Contrast.Contrast.Darker(tone: -10.0, ratio: 2.0);
-        result.AssertCloseTo(-1.0, 0.001);
+        result.AssertCloseTo(null, 0.001);
     }
 
     [Fact]

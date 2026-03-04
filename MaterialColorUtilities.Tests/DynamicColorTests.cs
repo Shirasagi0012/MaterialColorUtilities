@@ -273,7 +273,7 @@ public class DynamicColorTests
             _ => 35.0,
             isBackground: true,
             background: _ => Roles.Surface,
-            contrastCurve: new ContrastCurve(3.0, 4.5, 7.0, 11.0)
+            contrastCurve: _ => new ContrastCurve(3.0, 4.5, 7.0, 11.0)
         );
         var copy = original.With();
         var scheme = new SchemeTonalSpot(Hct.From(new ArgbColor(0xFF6750A4)), false, 0.0);
