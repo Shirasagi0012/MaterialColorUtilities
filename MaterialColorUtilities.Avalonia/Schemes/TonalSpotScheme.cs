@@ -10,7 +10,7 @@ using global::Avalonia.Media;
 /// <summary>
 /// Provides the default Material tonal spot scheme.
 /// </summary>
-public sealed class TonalSpotScheme : SchemeProviderBase
+public sealed class TonalSpotScheme : ColorScheme
 {
     public TonalSpotScheme() : base()
     {
@@ -39,7 +39,7 @@ public sealed class TonalSpotScheme : SchemeProviderBase
         return new SchemeTonalSpot(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
+    public ColorScheme ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

@@ -41,7 +41,7 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
             Has2026: SchemeAvailability.Available, SupportsSecondSeed: true)
     ];
 
-    [ObservableProperty] public partial SchemeProviderBase? Scheme { get; set; }
+    [ObservableProperty] public partial ColorScheme? Scheme { get; set; }
 
     [ObservableProperty]
     public partial HctSelection SelectedHct { get; set; } =
@@ -55,6 +55,7 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
         [new("Phone", DynamicScheme.Platform.Phone), new("Watch", DynamicScheme.Platform.Watch)];
 
     [ObservableProperty] public partial PlatformOption SelectedPlatformOption { get; set; } = PlatformOptions[0];
+    [ObservableProperty] public partial double SelectedContrast { get; set; }
     [ObservableProperty] public partial IReadOnlyList<SpecOption> SpecOptions { get; set; } = [];
 
     [ObservableProperty]
@@ -100,6 +101,12 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
     }
 
     partial void OnSelectedPlatformOptionChanged(PlatformOption value)
+    {
+        (_syncing, var shouldRebuild) = (true, !_syncing);
+        RebuildScheme(shouldRebuild);
+    }
+
+    partial void OnSelectedContrastChanged(double value)
     {
         (_syncing, var shouldRebuild) = (true, !_syncing);
         RebuildScheme(shouldRebuild);
@@ -182,7 +189,7 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
             return;
 
         Scheme = CreateScheme(SelectedSchemeOption, SelectedHct, SelectedSecondaryHct, SelectedSpecVersion,
-            SelectedPlatformOption.Platform);
+            SelectedPlatformOption.Platform, SelectedContrast);
 
         _syncing = false;
     }
@@ -198,16 +205,18 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
     private static T ConfigureSpec<T>(
         T provider,
         ColorSpec.SpecVersion specVersion,
-        DynamicScheme.Platform platform
+        DynamicScheme.Platform platform,
+        double contrastLevel
     )
-        where T : SchemeProviderBase
+        where T : ColorScheme
     {
         provider.SpecVersion = specVersion;
         provider.Platform = platform;
+        provider.ContrastLevel = contrastLevel;
         return provider;
     }
 
-    private static readonly Dictionary<Type, Func<Color, Color, SchemeProviderBase>> Schemes = new()
+    private static readonly Dictionary<Type, Func<Color, Color, ColorScheme>> Schemes = new()
     {
         [typeof(TonalSpotScheme)] = (p, _) => new TonalSpotScheme(p),
         [typeof(ExpressiveScheme)] = (p, _) => new ExpressiveScheme(p),
@@ -221,12 +230,13 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
         [typeof(CmfScheme)] = (p, s) => new CmfScheme(p) { SecondaryColor = s },
     };
 
-    private static SchemeProviderBase CreateScheme(
+    private static ColorScheme CreateScheme(
         SchemeOption option,
         HctSelection primaryHctSelection,
         HctSelection secondaryHctSelection,
         ColorSpec.SpecVersion specVersion,
-        DynamicScheme.Platform platform
+        DynamicScheme.Platform platform,
+        double contrastLevel
     )
     {
         var primaryColor = primaryHctSelection.ToHct().ToAvaloniaColor();
@@ -235,7 +245,7 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
         if (!Schemes.TryGetValue(option.SchemeType, out var factory))
             throw new NotSupportedException($"Scheme type {option.SchemeType} is not supported.");
 
-        return ConfigureSpec(factory(primaryColor, secondaryColor), specVersion, platform);
+        return ConfigureSpec(factory(primaryColor, secondaryColor), specVersion, platform, contrastLevel);
     }
 }
 

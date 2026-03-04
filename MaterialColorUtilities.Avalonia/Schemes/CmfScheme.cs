@@ -11,7 +11,7 @@ using HCT;
 using Scheme;
 using Utils;
 
-public class CmfScheme : SchemeProviderBase
+public class CmfScheme : ColorScheme
 {
     public static readonly StyledProperty<Color?> SecondaryColorProperty =
         AvaloniaProperty.Register<CmfScheme, Color?>(nameof(SecondaryColor));
@@ -61,7 +61,7 @@ public class CmfScheme : SchemeProviderBase
         return new SchemeCmf(sourceColorHctList, isDark, contrast, specVersion, platform);
     }
 
-    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
+    public ColorScheme ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

@@ -6,7 +6,7 @@ using global::Avalonia.Media;
 using global::Avalonia.Styling;
 using Scheme;
 
-public class ExpressiveScheme : SchemeProviderBase
+public class ExpressiveScheme : ColorScheme
 {
     public ExpressiveScheme() : base()
     {
@@ -35,7 +35,7 @@ public class ExpressiveScheme : SchemeProviderBase
         return new SchemeExpressive(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
+    public ColorScheme ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

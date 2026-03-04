@@ -6,7 +6,7 @@ using global::Avalonia.Media;
 using global::Avalonia.Styling;
 using Scheme;
 
-public class VibrantScheme : SchemeProviderBase
+public class VibrantScheme : ColorScheme
 {
     public VibrantScheme() : base()
     {
@@ -35,7 +35,7 @@ public class VibrantScheme : SchemeProviderBase
         return new SchemeVibrant(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
+    public ColorScheme ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

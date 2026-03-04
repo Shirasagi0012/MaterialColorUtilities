@@ -21,8 +21,8 @@ namespace MaterialColorUtilities.Avalonia;
 
 public class MaterialColorScheme : AvaloniaObject
 {
-    public static readonly DirectProperty<MaterialColorScheme, SchemeProviderBase?> SchemeProperty =
-        AvaloniaProperty.RegisterDirect<MaterialColorScheme, SchemeProviderBase?>(
+    public static readonly DirectProperty<MaterialColorScheme, ColorScheme?> SchemeProperty =
+        AvaloniaProperty.RegisterDirect<MaterialColorScheme, ColorScheme?>(
             nameof(Scheme),
             scheme => scheme.Scheme,
             (scheme, provider) => scheme.Scheme = provider
@@ -34,7 +34,7 @@ public class MaterialColorScheme : AvaloniaObject
     {
     }
 
-    public MaterialColorScheme(SchemeProviderBase scheme)
+    public MaterialColorScheme(ColorScheme scheme)
     {
         Scheme = scheme;
     }
@@ -45,7 +45,7 @@ public class MaterialColorScheme : AvaloniaObject
     }
 
     [ConstructorArgument("scheme")]
-    public SchemeProviderBase? Scheme
+    public ColorScheme? Scheme
     {
         get;
         set
@@ -87,9 +87,9 @@ public class MaterialColorScheme : AvaloniaObject
 
         public DynamicScheme? DarkScheme { get; private set; }
 
-        public void UpdateScheme(SchemeProviderBase? provider)
+        public void UpdateScheme(ColorScheme? provider)
         {
-            if (provider is not SchemeProviderBase { Color: { } } p)
+            if (provider is not ColorScheme { Color: { } } p)
             {
                 LightScheme = null;
                 DarkScheme = null;
@@ -131,7 +131,7 @@ public class MaterialColorScheme : AvaloniaObject
 
         private DynamicScheme? ResolveDynamicScheme(ThemeVariant variant)
         {
-            return SchemeProviderBase.IsDark(variant) ? DarkScheme ?? LightScheme : LightScheme ?? DarkScheme;
+            return ColorScheme.IsDark(variant) ? DarkScheme ?? LightScheme : LightScheme ?? DarkScheme;
         }
 
 
@@ -142,7 +142,7 @@ public class MaterialColorScheme : AvaloniaObject
                 if (!TryGetCustomPalette(customKey, out var palette))
                     return null;
 
-                var tone = GetCustomRoleTone(token, SchemeProviderBase.IsDark(themeVariant));
+                var tone = GetCustomRoleTone(token, ColorScheme.IsDark(themeVariant));
                 return palette.Get(tone).ToAvaloniaColor();
             }
 

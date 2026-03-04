@@ -60,6 +60,19 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+
+                        <TextBlock FontSize="18" Margin="0 4">Contrast</TextBlock>
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <Slider Grid.Column="0"
+                                    Minimum="-1"
+                                    Maximum="1"
+                                    SmallChange="0.05"
+                                    LargeChange="0.25"
+                                    Value="{Binding SelectedContrast, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="1"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding SelectedContrast, StringFormat={}{0:0.00}}" />
+                        </Grid>
                         
                         <TextBlock Foreground="{mcu:MdSysColor Error}" IsVisible="{Binding IsFallback}">
                             fallback to older color spec

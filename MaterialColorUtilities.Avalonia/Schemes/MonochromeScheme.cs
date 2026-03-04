@@ -7,7 +7,7 @@ using DynamicColors;
 using global::Avalonia.Data;
 using global::Avalonia.Media;
 
-public sealed class MonochromeScheme : SchemeProviderBase
+public sealed class MonochromeScheme : ColorScheme
 {
     public MonochromeScheme() : base()
     {
@@ -36,7 +36,7 @@ public sealed class MonochromeScheme : SchemeProviderBase
         return new SchemeMonochrome(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
+    public ColorScheme ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

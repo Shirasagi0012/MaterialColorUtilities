@@ -6,7 +6,7 @@ using global::Avalonia.Media;
 using global::Avalonia.Styling;
 using Scheme;
 
-public class RainbowScheme : SchemeProviderBase
+public class RainbowScheme : ColorScheme
 {
     public RainbowScheme() : base()
     {
@@ -35,7 +35,7 @@ public class RainbowScheme : SchemeProviderBase
         return new SchemeRainbow(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
+    public ColorScheme ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

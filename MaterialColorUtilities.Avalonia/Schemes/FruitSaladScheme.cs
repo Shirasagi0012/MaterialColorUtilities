@@ -6,7 +6,7 @@ using global::Avalonia.Media;
 using global::Avalonia.Styling;
 using Scheme;
 
-public class FruitSaladScheme : SchemeProviderBase
+public class FruitSaladScheme : ColorScheme
 {
     public FruitSaladScheme() : base()
     {
@@ -35,7 +35,7 @@ public class FruitSaladScheme : SchemeProviderBase
         return new SchemeFruitSalad(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
+    public ColorScheme ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

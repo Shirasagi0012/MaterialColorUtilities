@@ -6,7 +6,7 @@ using global::Avalonia.Media;
 using global::Avalonia.Styling;
 using Scheme;
 
-public class FidelityScheme : SchemeProviderBase
+public class FidelityScheme : ColorScheme
 {
     public FidelityScheme() : base()
     {
@@ -35,7 +35,7 @@ public class FidelityScheme : SchemeProviderBase
         return new SchemeFidelity(seedHct, isDark, contrast, specVersion, platform);
     }
 
-    public SchemeProviderBase ProvideTypedValue(IServiceProvider serviceProvider)
+    public ColorScheme ProvideTypedValue(IServiceProvider serviceProvider)
     {
         return this;
     }

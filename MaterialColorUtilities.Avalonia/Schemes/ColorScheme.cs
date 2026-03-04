@@ -10,39 +10,39 @@ namespace MaterialColorUtilities.Avalonia;
 using DynamicColors;
 using global::Avalonia.Data;
 
-public abstract class SchemeProviderBase : AvaloniaObject
+public abstract class ColorScheme : AvaloniaObject
 {
     public static readonly StyledProperty<Color?> ColorProperty =
-        AvaloniaProperty.Register<SchemeProviderBase, Color?>(nameof(Color));
+        AvaloniaProperty.Register<ColorScheme, Color?>(nameof(Color));
 
     public static readonly StyledProperty<double?> ContrastLevelProperty =
-        AvaloniaProperty.Register<SchemeProviderBase, double?>(nameof(ContrastLevel));
+        AvaloniaProperty.Register<ColorScheme, double?>(nameof(ContrastLevel));
 
     public static readonly StyledProperty<ColorSpec.SpecVersion> SpecVersionProperty =
-        AvaloniaProperty.Register<SchemeProviderBase, ColorSpec.SpecVersion>(
+        AvaloniaProperty.Register<ColorScheme, ColorSpec.SpecVersion>(
             nameof(SpecVersion),
             DynamicScheme.DefaultSpecVersion
         );
 
     public static readonly StyledProperty<DynamicScheme.Platform> PlatformProperty =
-        AvaloniaProperty.Register<SchemeProviderBase, DynamicScheme.Platform>(nameof(Platform), DynamicScheme.DefaultPlatform);
+        AvaloniaProperty.Register<ColorScheme, DynamicScheme.Platform>(nameof(Platform), DynamicScheme.DefaultPlatform);
 
-    protected SchemeProviderBase()
+    protected ColorScheme()
     {
         PropertyChanged += OnPropertyChangedInternal;
     }
 
-    protected SchemeProviderBase(IBinding binding) : this()
+    protected ColorScheme(IBinding binding) : this()
     {
         this[!ColorProperty] = binding;
     }
 
-    protected SchemeProviderBase(Color color) : this()
+    protected ColorScheme(Color color) : this()
     {
         Color = color;
     }
 
-    protected SchemeProviderBase(string colorString) : this()
+    protected ColorScheme(string colorString) : this()
     {
         if (global::Avalonia.Media.Color.TryParse(colorString, out var color))
             Color = color;
