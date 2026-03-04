@@ -13,7 +13,7 @@ namespace MaterialColorUtilities.Gallery.ViewModels;
 public partial class SchemePlaygroundViewModel : ViewModelBase
 {
     private static readonly Color DefaultSeedColor = Color.FromRgb(0x67, 0x50, 0xa4);
-    private bool _syncingSecondarySeed;
+    private bool _syncing;
 
     private static readonly IReadOnlyList<SpecOption> AllSpecOptions =
     [
@@ -41,7 +41,6 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
             Has2026: SchemeAvailability.Available, SupportsSecondSeed: true)
     ];
 
-
     [ObservableProperty] public partial SchemeProviderBase? Scheme { get; set; }
 
     [ObservableProperty]
@@ -51,8 +50,6 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
     [ObservableProperty]
     public partial HctSelection SelectedSecondaryHct { get; set; } =
         HctSelection.FromHct(Hct.FromAvaloniaColor(DefaultSeedColor));
-
-    [ObservableProperty] public partial bool HasSecondarySeedOverride { get; set; }
 
     public static IReadOnlyList<PlatformOption> PlatformOptions { get; } =
         [new("Phone", DynamicScheme.Platform.Phone), new("Watch", DynamicScheme.Platform.Watch)];
@@ -84,41 +81,43 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
         RefreshSchemeOptions();
         RefreshSpecOptions();
         EnsureSecondarySeedDefault();
-        RebuildScheme();
+        RebuildScheme(true);
     }
 
     partial void OnSelectedSpecOptionChanged(SpecOption value)
     {
+        (_syncing, var shouldRebuild) = (true, !_syncing);
         EnsureSecondarySeedDefault();
-        RebuildScheme();
+        RebuildScheme(shouldRebuild);
     }
 
     partial void OnSelectedSchemeOptionChanged(SchemeOption? value)
     {
+        (_syncing, var shouldRebuild) = (true, !_syncing);
         RefreshSpecOptions();
         EnsureSecondarySeedDefault();
-        RebuildScheme();
+        RebuildScheme(shouldRebuild);
     }
 
     partial void OnSelectedPlatformOptionChanged(PlatformOption value)
     {
-        RebuildScheme();
+        (_syncing, var shouldRebuild) = (true, !_syncing);
+        RebuildScheme(shouldRebuild);
     }
 
     partial void OnSelectedHctChanged(HctSelection value)
     {
-        if (IsSecondarySeedVisible && !HasSecondarySeedOverride)
-            SyncSecondarySeedWithPrimary();
+        (_syncing, var shouldRebuild) = (true, !_syncing);
+        if (IsSecondarySeedVisible)
+            SelectedSecondaryHct = SelectedHct;
 
-        RebuildScheme();
+        RebuildScheme(shouldRebuild);
     }
 
     partial void OnSelectedSecondaryHctChanged(HctSelection value)
     {
-        if (!_syncingSecondarySeed)
-            HasSecondarySeedOverride = true;
-
-        RebuildScheme();
+        (_syncing, var shouldRebuild) = (true, !_syncing);
+        RebuildScheme(shouldRebuild);
     }
 
     private void RefreshSchemeOptions()
@@ -172,8 +171,10 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
         _ => SchemeAvailability.Unavailable
     } == SchemeAvailability.FallbackOnly;
 
-    private void RebuildScheme()
+    private void RebuildScheme(bool shouldRebuild)
     {
+        if (!shouldRebuild) return;
+        
         if (SelectedSchemeOption is null)
             return;
 
@@ -182,21 +183,16 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
 
         Scheme = CreateScheme(SelectedSchemeOption, SelectedHct, SelectedSecondaryHct, SelectedSpecVersion,
             SelectedPlatformOption.Platform);
+
+        _syncing = false;
     }
 
     private void EnsureSecondarySeedDefault()
     {
-        if (!IsSecondarySeedVisible || HasSecondarySeedOverride)
+        if (!IsSecondarySeedVisible)
             return;
 
-        SyncSecondarySeedWithPrimary();
-    }
-
-    private void SyncSecondarySeedWithPrimary()
-    {
-        _syncingSecondarySeed = true;
         SelectedSecondaryHct = SelectedHct;
-        _syncingSecondarySeed = false;
     }
 
     private static T ConfigureSpec<T>(
