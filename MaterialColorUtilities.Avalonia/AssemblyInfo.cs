@@ -1,3 +1,3 @@
 ﻿using Avalonia.Metadata;
 
-[assembly: XmlnsDefinition("https://github.com/Shirasagi0012/Material3Expressive.Avalonia", "MaterialColorUtilities.Avalonia")]
+[assembly: XmlnsDefinition("https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia", "MaterialColorUtilities.Avalonia")]

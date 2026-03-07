@@ -2,7 +2,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 x:Class="MaterialColorUtilities.Gallery.App"
 			 xmlns:local="using:MaterialColorUtilities.Gallery"
-			 xmlns:mcu="clr-namespace:MaterialColorUtilities.Avalonia;assembly=MaterialColorUtilities.Avalonia"
+			 xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
 			 RequestedThemeVariant="Default">
 	<!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 

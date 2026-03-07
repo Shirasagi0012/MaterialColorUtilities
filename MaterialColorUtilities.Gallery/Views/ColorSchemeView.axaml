@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:mcu="clr-namespace:MaterialColorUtilities.Avalonia;assembly=MaterialColorUtilities.Avalonia"
+    xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
     d:DesignHeight="650"
     d:DesignWidth="1000"
     mc:Ignorable="d">
@@ -19,21 +19,21 @@
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Transitions">
-                <Transitions>
-                    <BrushTransition Duration="0:0:0.2" Property="Foreground" />
-                </Transitions>
-            </Setter>
+            <!-- <Setter Property="Transitions"> -->
+            <!--     <Transitions> -->
+            <!--         <BrushTransition Duration="0:0:0.2" Property="Foreground" /> -->
+            <!--     </Transitions> -->
+            <!-- </Setter> -->
         </Style>
 
         <Style Selector="Border#ColorTable Border">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="Transitions">
-                <Transitions>
-                    <BrushTransition Duration="0:0:0.2" Property="Background" />
-                </Transitions>
-            </Setter>
+            <!-- <Setter Property="Transitions"> -->
+            <!--     <Transitions> -->
+            <!--         <BrushTransition Duration="0:0:0.2" Property="Background" /> -->
+            <!--     </Transitions> -->
+            <!-- </Setter> -->
         </Style>
 
         <Style Selector="Grid.single-width">

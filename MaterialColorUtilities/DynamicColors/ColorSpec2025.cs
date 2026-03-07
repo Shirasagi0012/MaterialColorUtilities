@@ -1820,8 +1820,8 @@ public class ColorSpec2025 : ColorSpec2021
 
         var errorHue = DynamicScheme.GetPiecewiseValue(
             sourceColorHct,
-            [0.0, 3.0, 13.0, 23.0, 33.0, 43.0, 153.0, 273.0, 360.0],
-            [12.0, 22.0, 32.0, 12.0, 22.0, 32.0, 22.0, 12.0]
+            hueBreakpoints: [0.0, 3.0, 13.0, 23.0, 33.0, 43.0, 153.0, 273.0, 360.0],
+            values: [12.0, 22.0, 32.0, 12.0, 22.0, 32.0, 22.0, 12.0]
         );
 
         return variant switch

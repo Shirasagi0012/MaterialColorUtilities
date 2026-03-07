@@ -3,9 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:MaterialColorUtilities.Gallery.Views"
-             xmlns:mcu="clr-namespace:MaterialColorUtilities.Avalonia;assembly=MaterialColorUtilities.Avalonia"
              xmlns:vm="clr-namespace:MaterialColorUtilities.Gallery.ViewModels"
              xmlns:controls="clr-namespace:MaterialColorUtilities.Gallery.Controls"
+             xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
              mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="1200"
              x:Class="MaterialColorUtilities.Gallery.Views.SchemePlaygroundView"
              x:DataType="vm:SchemePlaygroundViewModel">
