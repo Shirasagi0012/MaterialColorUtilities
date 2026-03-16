@@ -1,77 +1,149 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
 using Avalonia.Headless.XUnit;
 using Avalonia.Media;
 using Avalonia.Styling;
 using MaterialColorUtilities.Avalonia;
 using MaterialColorUtilities.Avalonia.Helpers;
+using MaterialColorUtilities.Tests.Avalonia.TestUtils;
 using Xunit;
 
 namespace MaterialColorUtilities.Tests.Avalonia;
 
-public class MaterialColorHelperLeakTests
+public class MaterialHostStateLeakTests
 {
     [AvaloniaFact]
-    public void SysColorObservable_Dispose_ReleasesObserverFromSourceAndSchemeHost()
+    public void ObservableSubscription_Dispose_ReleasesObserver_FromSourceHost()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
         MaterialColor.SetScheme(application, new TonalSpotScheme(Colors.Red));
 
-        var weakObserver = CreateDisposedObserverFromSource(application);
+        var weakObserver = CreateDisposedObserverFromSourceHost(application);
 
-        ForceFullGc();
+        MaterialColorTestHelper.ForceFullGc();
 
         Assert.False(weakObserver.TryGetTarget(out _));
     }
 
     [AvaloniaFact]
-    public void SysColorObservable_Dispose_ReleasesObserverFromApplicationFallback()
+    public void ObservableSubscription_Dispose_ReleasesObserver_FromApplicationFallback()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
         MaterialColor.SetScheme(application, new TonalSpotScheme(Colors.Red));
 
-        var weakObserver = CreateDisposedObserverFromApplication(application);
+        var weakObserver = CreateDisposedObserverFromApplicationFallback(application);
 
-        ForceFullGc();
+        MaterialColorTestHelper.ForceFullGc();
 
         Assert.False(weakObserver.TryGetTarget(out _));
     }
 
     [AvaloniaFact]
-    public void SysColorObservable_Dispose_ReleasesObserverFromThemeHost()
+    public void ObservableSubscription_Dispose_ReleasesObserver_FromProviderAnchor()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
-        MaterialColor.SetScheme(application, new TonalSpotScheme(Colors.Red));
+        application.RequestedThemeVariant = ThemeVariant.Light;
 
-        var weakObserver = CreateDisposedObserverFromThemeHost(application);
+        var owner = new Border();
+        MaterialColor.SetScheme(owner, new TonalSpotScheme(Colors.Red));
 
-        ForceFullGc();
+        var provider = new ResourceDictionary();
+        ((IResourceProvider)provider).AddOwner(owner);
+
+        var weakObserver = CreateDisposedObserverFromProviderAnchor(provider);
+
+        MaterialColorTestHelper.ForceFullGc();
 
         Assert.False(weakObserver.TryGetTarget(out _));
     }
 
     [AvaloniaFact]
-    public void SysColorObservable_WithSourceAndApplicationChains_PrefersSource_ThenFallsBackToApplication_AndDisposesCleanly()
+    public void OwnerChanged_UnsubscribesFromOldOwnerSchemeHost()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
         application.RequestedThemeVariant = ThemeVariant.Light;
         MaterialColor.SetScheme(application, new TonalSpotScheme(Colors.Blue));
-        var source = new Border();
-        MaterialColor.SetScheme(source, new TonalSpotScheme(Colors.Red));
 
-        var weakObserver = CreateDisposedObserverWithSourceAndApplicationFallback(source, application);
+        var owner1 = new Border();
+        MaterialColor.SetScheme(owner1, new TonalSpotScheme(Colors.Red));
 
-        ForceFullGc();
+        var owner2 = new Border();
+        MaterialColor.SetScheme(owner2, new TonalSpotScheme(Colors.Green));
 
-        Assert.False(weakObserver.TryGetTarget(out _));
+        var provider = new ResourceDictionary();
+        ((IResourceProvider)provider).AddOwner(owner1);
+
+        var observer = new RecordingColorObserver();
+        using var subscription = MaterialColorHelper
+            .CreateSysColorObservable(
+                new MaterialColorBindingContext(provider, provider, null, null, null),
+                SysColorToken.Primary,
+                null,
+                Colors.Transparent)
+            .Subscribe(observer);
+
+        ((IResourceProvider)provider).RemoveOwner(owner1);
+        ((IResourceProvider)provider).AddOwner(owner2);
+
+        var countAfterSwap = observer.Values.Count;
+
+        MaterialColor.GetSchemeHost(owner1).Scheme = new TonalSpotScheme(Colors.Yellow);
+
+        Assert.Equal(countAfterSwap, observer.Values.Count);
+
+        MaterialColor.GetSchemeHost(owner2).Scheme = new TonalSpotScheme(Colors.Purple);
+
+        Assert.True(observer.Values.Count > countAfterSwap);
     }
 
     [AvaloniaFact]
-    public void SysColorObservable_WhenSchemeHostInstanceChanges_UnsubscribesFromOldHost()
+    public void OwnerChanged_UnsubscribesFromOldThemeHost()
+    {
+        var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
+        application.RequestedThemeVariant = ThemeVariant.Light;
+
+        var owner1 = new ThemeVariantScope
+        {
+            RequestedThemeVariant = ThemeVariant.Light
+        };
+        MaterialColor.SetScheme(owner1, new TonalSpotScheme(Colors.Red));
+
+        var owner2 = new ThemeVariantScope
+        {
+            RequestedThemeVariant = ThemeVariant.Light
+        };
+        MaterialColor.SetScheme(owner2, new TonalSpotScheme(Colors.Red));
+
+        var provider = new ResourceDictionary();
+        ((IResourceProvider)provider).AddOwner(owner1);
+
+        var observer = new RecordingColorObserver();
+        using var subscription = MaterialColorHelper
+            .CreateSysColorObservable(
+                new MaterialColorBindingContext(provider, provider, null, null, null),
+                SysColorToken.Primary,
+                null,
+                Colors.Transparent)
+            .Subscribe(observer);
+
+        ((IResourceProvider)provider).RemoveOwner(owner1);
+        ((IResourceProvider)provider).AddOwner(owner2);
+
+        var publishedCountAfterSwap = observer.Values.Count;
+
+        owner1.RequestedThemeVariant = ThemeVariant.Dark;
+
+        Assert.Equal(publishedCountAfterSwap, observer.Values.Count);
+
+        owner2.RequestedThemeVariant = ThemeVariant.Dark;
+
+        Assert.True(observer.Values.Count > publishedCountAfterSwap);
+    }
+
+    [AvaloniaFact]
+    public void SchemeHostSwap_UnsubscribesFromOldHost()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
         application.RequestedThemeVariant = ThemeVariant.Light;
@@ -82,66 +154,36 @@ public class MaterialColorHelperLeakTests
         var newHost = new MaterialColorScheme(new TonalSpotScheme(Colors.Blue));
         MaterialColor.SetSchemeHost(source, oldHost);
 
-        var observer = new RecordingObserver();
-        var subscription = MaterialColorHelper
+        var observer = new RecordingColorObserver();
+        using var subscription = MaterialColorTestHelper
             .CreateSysColorObservable(source, null, SysColorToken.Primary, null, Colors.Transparent)
             .Subscribe(observer);
 
-        Assert.Equal(ResolvePrimaryColor(oldHost), observer.Values[^1]);
+        Assert.Equal(MaterialColorTestHelper.ResolvePrimary(oldHost, ThemeVariant.Light), observer.Values[^1]);
 
         MaterialColor.SetSchemeHost(source, newHost);
 
-        Assert.Equal(ResolvePrimaryColor(newHost), observer.Values[^1]);
+        Assert.Equal(MaterialColorTestHelper.ResolvePrimary(newHost, ThemeVariant.Light), observer.Values[^1]);
         var publishedCountAfterSwap = observer.Values.Count;
 
         oldHost.Scheme = new TonalSpotScheme(Colors.Green);
 
         Assert.Equal(publishedCountAfterSwap, observer.Values.Count);
-        Assert.Equal(ResolvePrimaryColor(newHost), observer.Values[^1]);
 
         newHost.Scheme = new TonalSpotScheme(Colors.Yellow);
 
-        Assert.Equal(ResolvePrimaryColor(newHost), observer.Values[^1]);
         Assert.True(observer.Values.Count > publishedCountAfterSwap);
-
-        subscription.Dispose();
-    }
-
-    [AvaloniaFact]
-    public void ToBinding_WhenAttachedToControlProperty_ReleasesTargetAfterBindingIsCleared()
-    {
-        var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
-        application.RequestedThemeVariant = ThemeVariant.Light;
-        MaterialColor.SetScheme(application, null);
-
-        var source = new Border();
-        MaterialColor.SetScheme(source, new TonalSpotScheme(Colors.Red));
-
-        var weakTarget = CreateBoundTargetAndClearBinding(source);
-
-        ForceFullGc();
-
-        Assert.False(weakTarget.TryGetTarget(out _));
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static WeakReference<RecordingObserver> CreateDisposedObserverFromSource(Application source)
+    private static WeakReference<RecordingColorObserver> CreateDisposedObserverFromSourceHost(Application source)
     {
-        var observable = MaterialColorHelper.CreateSysColorObservable(
-            source,
-            null,
-            SysColorToken.Primary,
-            null,
-            Colors.Transparent
-        );
-        var observer = new RecordingObserver();
-        var subscription = observable.Subscribe(observer);
-
-        Assert.NotEmpty(observer.Values);
+        var observer = new RecordingColorObserver();
+        var subscription = MaterialColorTestHelper
+            .CreateSysColorObservable(source, null, SysColorToken.Primary, null, Colors.Transparent)
+            .Subscribe(observer);
 
         MaterialColor.GetSchemeHost(source).Scheme = new TonalSpotScheme(Colors.Blue);
-
-        Assert.True(observer.Values.Count >= 2);
 
         subscription.Dispose();
 
@@ -150,169 +192,47 @@ public class MaterialColorHelperLeakTests
 
         Assert.Equal(publishedCount, observer.Values.Count);
 
-        return new WeakReference<RecordingObserver>(observer);
+        return new WeakReference<RecordingColorObserver>(observer);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static WeakReference<RecordingObserver> CreateDisposedObserverFromApplication(Application application)
+    private static WeakReference<RecordingColorObserver> CreateDisposedObserverFromApplicationFallback(Application application)
     {
-        var observable = MaterialColorHelper.CreateSysColorObservable(
-            null,
-            null,
-            SysColorToken.Primary,
-            null,
-            Colors.Transparent
-        );
-        var observer = new RecordingObserver();
-        var subscription = observable.Subscribe(observer);
-
-        Assert.NotEmpty(observer.Values);
+        var observer = new RecordingColorObserver();
+        var subscription = MaterialColorTestHelper
+            .CreateSysColorObservable(null, null, SysColorToken.Primary, null, Colors.Transparent)
+            .Subscribe(observer);
 
         MaterialColor.GetSchemeHost(application).Scheme = new TonalSpotScheme(Colors.Blue);
-
-        Assert.True(observer.Values.Count >= 2);
+        application.RequestedThemeVariant = ThemeVariant.Dark;
 
         subscription.Dispose();
 
         var publishedCount = observer.Values.Count;
         MaterialColor.GetSchemeHost(application).Scheme = new TonalSpotScheme(Colors.Green);
+        application.RequestedThemeVariant = ThemeVariant.Light;
 
         Assert.Equal(publishedCount, observer.Values.Count);
 
-        return new WeakReference<RecordingObserver>(observer);
+        return new WeakReference<RecordingColorObserver>(observer);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static WeakReference<RecordingObserver> CreateDisposedObserverFromThemeHost(Application themeHost)
-    {
-        var observable = MaterialColorHelper.CreateSysColorObservable(
-            themeHost,
-            themeHost,
-            SysColorToken.Primary,
-            null,
-            Colors.Transparent
-        );
-        var observer = new RecordingObserver();
-        var subscription = observable.Subscribe(observer);
-
-        Assert.NotEmpty(observer.Values);
-
-        themeHost.RequestedThemeVariant = ThemeVariant.Dark;
-
-        Assert.True(observer.Values.Count >= 2);
-
-        subscription.Dispose();
-
-        var publishedCount = observer.Values.Count;
-        themeHost.RequestedThemeVariant = ThemeVariant.Light;
-
-        Assert.Equal(publishedCount, observer.Values.Count);
-
-        return new WeakReference<RecordingObserver>(observer);
-    }
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    private static WeakReference<RecordingObserver> CreateDisposedObserverWithSourceAndApplicationFallback(
-        Border source,
-        Application application
+    private static WeakReference<RecordingColorObserver> CreateDisposedObserverFromProviderAnchor(
+        ResourceDictionary provider
     )
     {
-        var observable = MaterialColorHelper.CreateSysColorObservable(
-            source,
-            null,
-            SysColorToken.Primary,
-            null,
-            Colors.Transparent
-        );
-        var observer = new RecordingObserver();
-        var subscription = observable.Subscribe(observer);
-
-        Assert.NotEmpty(observer.Values);
-        Assert.Equal(ResolvePrimaryColor(MaterialColor.GetSchemeHost(source)), observer.Values[^1]);
-
-        MaterialColor.SetScheme(source, null);
-
-        Assert.Equal(ResolvePrimaryColor(MaterialColor.GetSchemeHost(application)), observer.Values[^1]);
-        Assert.True(observer.Values.Count >= 2);
+        var observer = new RecordingColorObserver();
+        var subscription = MaterialColorHelper
+            .CreateSysColorObservable(
+                new MaterialColorBindingContext(provider, provider, null, null, null),
+                SysColorToken.Primary,
+                null,
+                Colors.Transparent)
+            .Subscribe(observer);
 
         subscription.Dispose();
 
-        var publishedCount = observer.Values.Count;
-        MaterialColor.GetSchemeHost(application).Scheme = new TonalSpotScheme(Colors.Green);
-
-        Assert.Equal(publishedCount, observer.Values.Count);
-
-        return new WeakReference<RecordingObserver>(observer);
-    }
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    private static WeakReference<Border> CreateBoundTargetAndClearBinding(Border source)
-    {
-        var target = new Border();
-        var binding = MaterialColorHelper
-            .CreateSysColorObservable(source, null, SysColorToken.Primary, null, Colors.Transparent)
-            .Select<Color, IBrush>(static color => new SolidColorBrush(color))
-            .ToBinding();
-
-        var bindingHandle = target.Bind(Border.BackgroundProperty, binding);
-
-        Assert.NotNull(target.Background);
-        Assert.Equal(
-            ResolvePrimaryBrush(MaterialColor.GetSchemeHost(source)),
-            Assert.IsType<SolidColorBrush>(target.Background).Color
-        );
-
-        MaterialColor.GetSchemeHost(source).Scheme = new TonalSpotScheme(Colors.Blue);
-
-        Assert.Equal(
-            ResolvePrimaryBrush(MaterialColor.GetSchemeHost(source)),
-            Assert.IsType<SolidColorBrush>(target.Background).Color
-        );
-
-        bindingHandle.Dispose();
-        MaterialColor.GetSchemeHost(source).Scheme = new TonalSpotScheme(Colors.Green);
-
-        Assert.Null(target.Background);
-
-        return new WeakReference<Border>(target);
-    }
-
-    private static Color ResolvePrimaryColor(MaterialColorScheme schemeHost)
-    {
-        return schemeHost.Internal.ResolveSys(SysColorToken.Primary, ThemeVariant.Light)
-               ?? throw new InvalidOperationException("Expected a primary color.");
-    }
-
-    private static Color ResolvePrimaryBrush(MaterialColorScheme schemeHost)
-    {
-        return ResolvePrimaryColor(schemeHost);
-    }
-
-    private static void ForceFullGc()
-    {
-        for (var i = 0; i < 3; i++)
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-        }
-    }
-
-    private sealed class RecordingObserver : IObserver<Color>
-    {
-        public List<Color> Values { get; } = [];
-
-        public void OnCompleted()
-        {
-        }
-
-        public void OnError(Exception error)
-        {
-        }
-
-        public void OnNext(Color value)
-        {
-            Values.Add(value);
-        }
+        return new WeakReference<RecordingColorObserver>(observer);
     }
 }

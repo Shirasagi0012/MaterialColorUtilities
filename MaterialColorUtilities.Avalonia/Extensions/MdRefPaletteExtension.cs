@@ -48,13 +48,12 @@ public class MdRefPaletteExtension
     public object ProvideValue(IServiceProvider serviceProvider)
     {
         var (target, parentStack) = GetContextServices(serviceProvider);
-        var normalizedKey = CustomKey?.Trim();
 
         return ShouldProvideBrush(target)
-            ? ProvideRefColorBinding(parentStack, Palette, Tone, CustomKey)
+            ? ProvideRefColorBinding(parentStack, Palette, Tone, CustomKey, targetObject: target.TargetObject as AvaloniaObject)
                 .Select(IBrush (color) => new SolidColorBrush(color))
                 .ToBinding()
-            : ProvideRefColorBinding(parentStack, Palette, Tone, CustomKey)
+            : ProvideRefColorBinding(parentStack, Palette, Tone, CustomKey, targetObject: target.TargetObject as AvaloniaObject)
                 .ToBinding();
     }
 }

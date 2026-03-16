@@ -39,13 +39,12 @@ public class MdSysColorExtension
     public object ProvideValue(IServiceProvider serviceProvider)
     {
         var (target, parentStack) = GetContextServices(serviceProvider);
-        var normalizedKey = CustomKey?.Trim();
 
         return ShouldProvideBrush(target)
-            ? ProvideSysColorBinding(parentStack, Token, CustomKey, themeVariant: Theme)
+            ? ProvideSysColorBinding(parentStack, Token, CustomKey, themeVariant: Theme, targetObject: target.TargetObject as AvaloniaObject)
                 .Select(IBrush (color) => new SolidColorBrush(color))
                 .ToBinding()
-            : ProvideSysColorBinding(parentStack, Token, CustomKey, themeVariant: Theme)
+            : ProvideSysColorBinding(parentStack, Token, CustomKey, themeVariant: Theme, targetObject: target.TargetObject as AvaloniaObject)
                 .ToBinding();
     }
 }

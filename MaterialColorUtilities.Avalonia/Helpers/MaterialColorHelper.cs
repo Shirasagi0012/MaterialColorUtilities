@@ -1,9 +1,6 @@
-using System;
-using System.ComponentModel;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.XamlIl.Runtime;
 using Avalonia.Media;
@@ -14,8 +11,6 @@ namespace MaterialColorUtilities.Avalonia.Helpers;
 
 internal static class MaterialColorHelper
 {
-    internal static readonly IBrush TransparentBrush = new ImmutableSolidColorBrush(Colors.Transparent);
-
     public static (IProvideValueTarget, IAvaloniaXamlIlParentStackProvider) GetContextServices(
         IServiceProvider services
     )
@@ -35,18 +30,18 @@ internal static class MaterialColorHelper
         SysColorToken token,
         string? customKey = null,
         Color? fallback = null,
-        ThemeVariant? themeVariant = null
+        ThemeVariant? themeVariant = null,
+        AvaloniaObject? targetObject = null
     )
     {
         if (TokenHelper.IsCustom(token) && String.IsNullOrWhiteSpace(customKey))
             throw new InvalidOperationException($"Token '{token}' requires a non-empty custom key.");
 
-        var source = ResolveSource(parentStack);
         var fallbackColor = fallback ?? Colors.Transparent;
-        var themeHost = ResolveThemeHost(parentStack);
         var normalizedKey = customKey?.Trim();
+        var context = CaptureContext(parentStack, targetObject, themeVariant);
 
-        return CreateSysColorObservable(source, themeHost, token, normalizedKey, fallbackColor, themeVariant);
+        return CreateSysColorObservable(context, token, normalizedKey, fallbackColor);
     }
 
     public static IObservable<Color> ProvideRefColorBinding(
@@ -54,46 +49,73 @@ internal static class MaterialColorHelper
         RefPaletteToken token,
         byte tone,
         string? customKey = null,
-        Color? fallback = null
+        Color? fallback = null,
+        AvaloniaObject? targetObject = null
     )
     {
         if (TokenHelper.IsCustom(token) && String.IsNullOrWhiteSpace(customKey))
             throw new InvalidOperationException($"Token '{token}' requires a non-empty custom key.");
 
-        var source = ResolveSource(parentStack);
         var fallbackColor = fallback ?? Colors.Transparent;
-        var themeHost = ResolveThemeHost(parentStack);
         var normalizedKey = customKey?.Trim();
+        var context = CaptureContext(parentStack, targetObject);
 
-        return CreateRefColorObservable(source, themeHost, token, tone, normalizedKey, fallbackColor);
+        return CreateRefColorObservable(context, token, tone, normalizedKey, fallbackColor);
     }
 
     internal static IObservable<Color> CreateSysColorObservable(
-        AvaloniaObject? source,
-        IThemeVariantHost? themeHost,
+        MaterialColorBindingContext context,
         SysColorToken token,
         string? customKey,
-        Color fallbackColor,
-        ThemeVariant? themeVariant = null
+        Color fallbackColor
     )
     {
-        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor = (scheme, theme) =>
+        return new MaterialColorObservable(context, Application.Current, fallbackColor, ResolveColor);
+
+        Color ResolveColor(MaterialColorScheme.MaterialColorSchemeInternal? scheme, ThemeVariant theme) =>
             scheme?.ResolveSys(token, theme, customKey) ?? fallbackColor;
-        return new MaterialColorObservable(source, Application.Current, themeHost, fallbackColor, resolveColor, themeVariant);
     }
 
     internal static IObservable<Color> CreateRefColorObservable(
-        AvaloniaObject? source,
-        IThemeVariantHost? themeHost,
+        MaterialColorBindingContext context,
         RefPaletteToken token,
         byte tone,
         string? customKey,
         Color fallbackColor
     )
     {
-        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor = (scheme, theme) =>
+        return new MaterialColorObservable(context, Application.Current, fallbackColor, ResolveColor);
+
+        Color ResolveColor(MaterialColorScheme.MaterialColorSchemeInternal? scheme, ThemeVariant theme) =>
             scheme?.ResolveRef(token, tone, customKey) ?? fallbackColor;
-        return new MaterialColorObservable(source, Application.Current, themeHost, fallbackColor, resolveColor, null);
+    }
+
+    public static MaterialColorBindingContext CaptureContext(
+        IAvaloniaXamlIlParentStackProvider parentStack,
+        AvaloniaObject? targetObject = null,
+        ThemeVariant? explicitThemeVariant = null
+    )
+    {
+        var providerAnchor = FindFirstParent<IResourceProvider>(parentStack);
+        var anchor = (object?)providerAnchor
+                     ?? FindFirstParent<IResourceHost>(parentStack)
+                     ?? FindFirstParent<StyledElement>(parentStack);
+
+        ThemeVariant? dictionaryVariant = null;
+        foreach (var parent in parentStack.Parents)
+            if (parent is IThemeVariantProvider { Key: { } setKey })
+            {
+                dictionaryVariant = setKey;
+                break;
+            }
+
+        return new MaterialColorBindingContext(
+            anchor,
+            providerAnchor,
+            targetObject,
+            explicitThemeVariant,
+            dictionaryVariant
+        );
     }
 
     public static bool ShouldProvideBrush(IProvideValueTarget provideValueTarget)
@@ -109,159 +131,12 @@ internal static class MaterialColorHelper
         return type != typeof(Color) && type != typeof(Color?);
     }
 
-    private static AvaloniaObject? ResolveSource(IAvaloniaXamlIlParentStackProvider parentStack)
+    private static T? FindFirstParent<T>(IAvaloniaXamlIlParentStackProvider parentStack) where T : class
     {
-        if (parentStack is not { Parents: { } parents })
-            return null;
-
-        foreach (var parent in parents)
-        {
-            if (parent is StyledElement styled)
-                return styled;
-        }
+        foreach (var parent in parentStack.Parents)
+            if (parent is T typed)
+                return typed;
 
         return null;
-    }
-
-    private static IThemeVariantHost? ResolveThemeHost(IAvaloniaXamlIlParentStackProvider parentStack)
-    {
-        if (parentStack is not { Parents: { } parents })
-            return null;
-
-        foreach (var context in parents)
-        {
-            if (context is IThemeVariantHost host)
-                return host;
-        }
-
-        return null;
-    }
-
-    private sealed class MaterialColorObservable(
-        AvaloniaObject? source,
-        Application? application,
-        IThemeVariantHost? themeHost,
-        Color fallbackColor,
-        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor,
-        ThemeVariant? themeVariant
-    )
-        : IObservable<Color>
-    {
-        private readonly AvaloniaObject? _source = source;
-        private readonly Application? _application = application;
-        private readonly IThemeVariantHost? _themeHost = themeHost;
-        private readonly Color _fallbackColor = fallbackColor;
-        private readonly Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> _resolveColor = resolveColor;
-        private readonly ThemeVariant? _themeVariant = themeVariant;
-
-        public IDisposable Subscribe(IObserver<Color> observer)
-        {
-            return new Subscription(this, observer);
-        }
-
-        private sealed class Subscription : IDisposable
-        {
-            private readonly MaterialColorObservable _owner;
-            private readonly IObserver<Color> _observer;
-            private readonly PropertyChangedEventHandler _schemeChangedHandler;
-            private readonly IDisposable? _sourceSubscription;
-            private readonly IDisposable? _applicationSubscription;
-            private MaterialColorScheme? _sourceSchemeHost;
-            private MaterialColorScheme? _applicationSchemeHost;
-            private bool _isDisposed;
-
-            public Subscription(MaterialColorObservable owner, IObserver<Color> observer)
-            {
-                _owner = owner;
-                _observer = observer;
-                _schemeChangedHandler = (_, _) => Publish();
-
-                if (_owner._source is not null)
-                {
-                    _sourceSubscription = _owner._source
-                        .GetObservable(MaterialColor.SchemeHostProperty)
-                        .Subscribe(new Observer<MaterialColorScheme?>(OnSourceSchemeChanged));
-                }
-
-                if (_owner._application is not null && !ReferenceEquals(_owner._source, _owner._application))
-                {
-                    _applicationSubscription = _owner._application
-                        .GetObservable(MaterialColor.SchemeHostProperty)
-                        .Subscribe(new Observer<MaterialColorScheme?>(OnApplicationSchemeChanged));
-                }
-
-                if (_owner._themeVariant is null && _owner._themeHost is not null)
-                {
-                    _owner._themeHost.ActualThemeVariantChanged += OnActualThemeVariantChanged;
-                }
-
-                Publish();
-            }
-
-            public void Dispose()
-            {
-                if (_isDisposed)
-                    return;
-
-                _isDisposed = true;
-
-                if (_owner._themeVariant is null && _owner._themeHost is not null)
-                {
-                    _owner._themeHost.ActualThemeVariantChanged -= OnActualThemeVariantChanged;
-                }
-
-                _sourceSubscription?.Dispose();
-                _applicationSubscription?.Dispose();
-                SetSchemeHost(ref _sourceSchemeHost, null);
-                SetSchemeHost(ref _applicationSchemeHost, null);
-            }
-
-            private void OnSourceSchemeChanged(MaterialColorScheme? schemeHost)
-            {
-                SetSchemeHost(ref _sourceSchemeHost, schemeHost);
-                Publish();
-            }
-
-            private void OnApplicationSchemeChanged(MaterialColorScheme? schemeHost)
-            {
-                SetSchemeHost(ref _applicationSchemeHost, schemeHost);
-                Publish();
-            }
-
-            private void OnActualThemeVariantChanged(object? sender, EventArgs e)
-            {
-                Publish();
-            }
-
-            private void SetSchemeHost(ref MaterialColorScheme? current, MaterialColorScheme? next)
-            {
-                if (ReferenceEquals(current, next))
-                    return;
-
-                if (current is not null)
-                {
-                    current.Internal.PropertyChanged -= _schemeChangedHandler;
-                }
-
-                current = next;
-
-                if (current is not null)
-                {
-                    current.Internal.PropertyChanged += _schemeChangedHandler;
-                }
-            }
-
-            private void Publish()
-            {
-                if (_isDisposed)
-                    return;
-
-                var theme = _owner._themeVariant ?? _owner._themeHost?.ActualThemeVariant ?? ThemeVariant.Light;
-                var scheme = _sourceSchemeHost?.Internal ?? _applicationSchemeHost?.Internal;
-                var color = scheme is null ? _owner._fallbackColor : _owner._resolveColor(scheme, theme);
-
-                _observer.OnNext(color);
-            }
-        }
     }
 }
