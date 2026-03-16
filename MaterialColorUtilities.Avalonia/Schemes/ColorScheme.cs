@@ -32,7 +32,7 @@ public abstract class ColorScheme : AvaloniaObject
         PropertyChanged += OnPropertyChangedInternal;
     }
 
-    protected ColorScheme(IBinding binding) : this()
+    protected ColorScheme(BindingBase binding) : this()
     {
         this[!ColorProperty] = binding;
     }

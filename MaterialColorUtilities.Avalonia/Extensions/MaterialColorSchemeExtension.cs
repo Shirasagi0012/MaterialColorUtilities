@@ -12,7 +12,7 @@ public class MaterialColorSchemeExtension : MaterialColorScheme
     {
     }
 
-    public MaterialColorSchemeExtension(IBinding scheme) : base(scheme)
+    public MaterialColorSchemeExtension(BindingBase scheme) : base(scheme)
     {
         
     }

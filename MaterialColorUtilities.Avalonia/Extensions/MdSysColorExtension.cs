@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Markup.Xaml;
+using Avalonia.Metadata;
 using Avalonia.Styling;
 using static MaterialColorUtilities.Avalonia.Helpers.MaterialColorHelper;
 

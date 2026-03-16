@@ -12,7 +12,7 @@ public class FruitSaladScheme : ColorScheme
     {
     }
 
-    public FruitSaladScheme(IBinding binding) : base(binding)
+    public FruitSaladScheme(BindingBase binding) : base(binding)
     {
     }
 

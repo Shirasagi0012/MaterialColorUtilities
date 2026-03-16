@@ -39,7 +39,7 @@ public class MaterialColorScheme : AvaloniaObject
         Scheme = scheme;
     }
 
-    public MaterialColorScheme(IBinding scheme)
+    public MaterialColorScheme(BindingBase scheme)
     {
         this[!SchemeProperty] = scheme;
     }

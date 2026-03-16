@@ -12,7 +12,7 @@ public class RainbowScheme : ColorScheme
     {
     }
 
-    public RainbowScheme(IBinding binding) : base(binding)
+    public RainbowScheme(BindingBase binding) : base(binding)
     {
     }
 

@@ -13,7 +13,7 @@ public sealed class MonochromeScheme : ColorScheme
     {
     }
 
-    public MonochromeScheme(IBinding binding) : base(binding)
+    public MonochromeScheme(BindingBase binding) : base(binding)
     {
     }
 

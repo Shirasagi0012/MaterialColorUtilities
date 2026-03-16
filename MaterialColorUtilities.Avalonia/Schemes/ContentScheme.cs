@@ -12,7 +12,7 @@ public class ContentScheme : ColorScheme
     {
     }
 
-    public ContentScheme(IBinding binding) : base(binding)
+    public ContentScheme(BindingBase binding) : base(binding)
     {
     }
 

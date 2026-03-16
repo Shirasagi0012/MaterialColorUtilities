@@ -2,7 +2,7 @@
     <PropertyGroup>
         <!-- Enable central package management, https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management -->
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-        <AvaloniaVersion>11.3.12</AvaloniaVersion>
+        <AvaloniaVersion>12.0.0-preview2</AvaloniaVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)"/>
@@ -10,7 +10,7 @@
         <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)"/>
         <PackageVersion Include="Avalonia.Controls.ColorPicker" Version="$(AvaloniaVersion)"/>
         <PackageVersion Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)"/>
-        <PackageVersion Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)"/>
+        <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.0-beta3"/>
         <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.1"/>
         <PackageVersion Include="coverlet.collector" Version="6.0.2"/>
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>

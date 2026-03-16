@@ -17,5 +17,6 @@ internal sealed class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
+            .WithDeveloperTools()
             .LogToTrace();
 }

@@ -12,7 +12,7 @@ public class FidelityScheme : ColorScheme
     {
     }
 
-    public FidelityScheme(IBinding binding) : base(binding)
+    public FidelityScheme(BindingBase binding) : base(binding)
     {
     }
 

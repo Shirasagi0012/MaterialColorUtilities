@@ -12,7 +12,7 @@ public class ExpressiveScheme : ColorScheme
     {
     }
 
-    public ExpressiveScheme(IBinding binding) : base(binding)
+    public ExpressiveScheme(BindingBase binding) : base(binding)
     {
     }
 

@@ -12,7 +12,7 @@ public class NeutralScheme : ColorScheme
     {
     }
 
-    public NeutralScheme(IBinding binding) : base(binding)
+    public NeutralScheme(BindingBase binding) : base(binding)
     {
     }
 

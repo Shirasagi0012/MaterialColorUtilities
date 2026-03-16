@@ -28,7 +28,7 @@
                                   ItemsSource="{Binding SchemeOptions}"
                                   SelectedItem="{Binding SelectedSchemeOption, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate x:DataType="vm:SchemeOption">
                                     <TextBlock Text="{Binding Name}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
@@ -44,7 +44,7 @@
                                 </Style>
                             </ComboBox.Styles>
                             <ComboBox.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate x:DataType="vm:SpecOption">
                                     <TextBlock Text="{Binding Name}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
@@ -55,8 +55,8 @@
                                   ItemsSource="{x:Static vm:SchemePlaygroundViewModel.PlatformOptions}"
                                   SelectedItem="{Binding SelectedPlatformOption, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding  Name}" />
+                                <DataTemplate x:DataType="vm:PlatformOption">
+                                    <TextBlock Text="{Binding Name}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>

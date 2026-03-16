@@ -12,7 +12,7 @@ public class VibrantScheme : ColorScheme
     {
     }
 
-    public VibrantScheme(IBinding binding) : base(binding)
+    public VibrantScheme(BindingBase binding) : base(binding)
     {
     }
 

@@ -31,7 +31,7 @@ public class CmfScheme : ColorScheme
     {
     }
 
-    public CmfScheme(IBinding binding) : base(binding)
+    public CmfScheme(BindingBase binding) : base(binding)
     {
     }
 

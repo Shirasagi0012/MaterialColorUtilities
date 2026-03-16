@@ -7,6 +7,7 @@
              xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
              mc:Ignorable="d"
              x:Class="MaterialColorUtilities.Gallery.Controls.SeedColorPicker"
+             x:DataType="controls:SeedColorPicker"
              x:Name="Root">
     <StackPanel Spacing="12">
         <TextBlock FontSize="18" Margin="0 4" Text="{Binding Title, ElementName=Root}" />

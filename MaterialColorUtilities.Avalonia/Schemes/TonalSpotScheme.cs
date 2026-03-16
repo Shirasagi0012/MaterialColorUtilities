@@ -16,7 +16,7 @@ public sealed class TonalSpotScheme : ColorScheme
     {
     }
 
-    public TonalSpotScheme(IBinding binding) : base(binding)
+    public TonalSpotScheme(BindingBase binding) : base(binding)
     {
     }
 

@@ -59,7 +59,7 @@ internal static class MaterialColorHelper
         return (target, parentStack);
     }
 
-    public static IBinding ProvideSysColorBinding(
+    public static BindingBase ProvideSysColorBinding(
         IAvaloniaXamlIlParentStackProvider parentStack,
         SysColorToken token,
         string? customKey = null,
@@ -84,7 +84,7 @@ internal static class MaterialColorHelper
         );
     }
 
-    public static IBinding ProvideRefColorBinding(
+    public static BindingBase ProvideRefColorBinding(
         IAvaloniaXamlIlParentStackProvider parentStack,
         RefPaletteToken token,
         byte tone,
@@ -120,7 +120,7 @@ internal static class MaterialColorHelper
         return null;
     }
 
-    private static IBinding CreateBinding(
+    private static BindingBase CreateBinding(
         IAvaloniaXamlIlParentStackProvider parentStack,
         IThemeVariantHost? themeHost,
         Color fallbackColor,
@@ -214,7 +214,7 @@ internal static class MaterialColorHelper
         return binding;
     }
 
-    public static IBinding ProvideSysBrushBinding(
+    public static BindingBase ProvideSysBrushBinding(
         IAvaloniaXamlIlParentStackProvider parentStack,
         SysColorToken token,
         string? customKey = null,
@@ -227,7 +227,7 @@ internal static class MaterialColorHelper
         return CreateBrushBinding(colorBinding, fallbackBrush);
     }
 
-    public static IBinding ProvideRefBrushBinding(
+    public static BindingBase ProvideRefBrushBinding(
         IAvaloniaXamlIlParentStackProvider parentStack,
         RefPaletteToken token,
         byte tone,
@@ -240,7 +240,7 @@ internal static class MaterialColorHelper
         return CreateBrushBinding(colorBinding, fallbackBrush);
     }
 
-    private static IBinding CreateBrushBinding(IBinding colorBinding, IBrush fallbackBrush)
+    private static BindingBase CreateBrushBinding(BindingBase colorBinding, IBrush fallbackBrush)
     {
         return new MultiBinding
         {
