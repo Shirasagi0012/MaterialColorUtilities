@@ -37,3 +37,19 @@ internal static class ObservableExtensions
         }
     }
 }
+
+internal sealed class Observer<T>(Action<T> onNext) : IObserver<T>
+{
+    public void OnCompleted()
+    {
+    }
+
+    public void OnError(Exception error)
+    {
+    }
+
+    public void OnNext(T value)
+    {
+        onNext(value);
+    }
+}

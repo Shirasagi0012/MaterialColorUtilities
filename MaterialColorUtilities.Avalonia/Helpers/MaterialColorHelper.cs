@@ -46,9 +46,7 @@ internal static class MaterialColorHelper
         var themeHost = ResolveThemeHost(parentStack);
         var normalizedKey = customKey?.Trim();
 
-        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor = (scheme, theme) =>
-            scheme?.ResolveSys(token, theme, normalizedKey) ?? fallbackColor;
-        return new MaterialColorObservable(source, Application.Current, themeHost, fallbackColor, resolveColor, themeVariant);
+        return CreateSysColorObservable(source, themeHost, token, normalizedKey, fallbackColor, themeVariant);
     }
 
     public static IObservable<Color> ProvideRefColorBinding(
@@ -67,8 +65,34 @@ internal static class MaterialColorHelper
         var themeHost = ResolveThemeHost(parentStack);
         var normalizedKey = customKey?.Trim();
 
+        return CreateRefColorObservable(source, themeHost, token, tone, normalizedKey, fallbackColor);
+    }
+
+    internal static IObservable<Color> CreateSysColorObservable(
+        AvaloniaObject? source,
+        IThemeVariantHost? themeHost,
+        SysColorToken token,
+        string? customKey,
+        Color fallbackColor,
+        ThemeVariant? themeVariant = null
+    )
+    {
         Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor = (scheme, theme) =>
-            scheme?.ResolveRef(token, tone, normalizedKey) ?? fallbackColor;
+            scheme?.ResolveSys(token, theme, customKey) ?? fallbackColor;
+        return new MaterialColorObservable(source, Application.Current, themeHost, fallbackColor, resolveColor, themeVariant);
+    }
+
+    internal static IObservable<Color> CreateRefColorObservable(
+        AvaloniaObject? source,
+        IThemeVariantHost? themeHost,
+        RefPaletteToken token,
+        byte tone,
+        string? customKey,
+        Color fallbackColor
+    )
+    {
+        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor = (scheme, theme) =>
+            scheme?.ResolveRef(token, tone, customKey) ?? fallbackColor;
         return new MaterialColorObservable(source, Application.Current, themeHost, fallbackColor, resolveColor, null);
     }
 
@@ -111,34 +135,6 @@ internal static class MaterialColorHelper
         }
 
         return null;
-    }
-
-    internal static IObservable<Color> ObserveSysColor(
-        AvaloniaObject? source,
-        IThemeVariantHost? themeHost,
-        SysColorToken token,
-        string? customKey,
-        Color fallbackColor,
-        ThemeVariant? themeVariant = null
-    )
-    {
-        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor = (scheme, theme) =>
-            scheme?.ResolveSys(token, theme, customKey) ?? fallbackColor;
-        return new MaterialColorObservable(source, Application.Current, themeHost, fallbackColor, resolveColor, themeVariant);
-    }
-
-    internal static IObservable<Color> ObserveRefColor(
-        AvaloniaObject? source,
-        IThemeVariantHost? themeHost,
-        RefPaletteToken token,
-        byte tone,
-        string? customKey,
-        Color fallbackColor
-    )
-    {
-        Func<MaterialColorScheme.MaterialColorSchemeInternal?, ThemeVariant, Color> resolveColor = (scheme, theme) =>
-            scheme?.ResolveRef(token, tone, customKey) ?? fallbackColor;
-        return new MaterialColorObservable(source, Application.Current, themeHost, fallbackColor, resolveColor, null);
     }
 
     private sealed class MaterialColorObservable(
@@ -266,22 +262,6 @@ internal static class MaterialColorHelper
 
                 _observer.OnNext(color);
             }
-        }
-    }
-
-    private sealed class Observer<T>(Action<T> onNext) : IObserver<T>
-    {
-        public void OnCompleted()
-        {
-        }
-
-        public void OnError(Exception error)
-        {
-        }
-
-        public void OnNext(T value)
-        {
-            onNext(value);
         }
     }
 }

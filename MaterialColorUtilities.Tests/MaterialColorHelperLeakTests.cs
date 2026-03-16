@@ -16,7 +16,7 @@ namespace MaterialColorUtilities.Tests.Avalonia;
 public class MaterialColorHelperLeakTests
 {
     [AvaloniaFact]
-    public void ObserveSysColor_Dispose_ReleasesObserverFromSourceAndSchemeHost()
+    public void SysColorObservable_Dispose_ReleasesObserverFromSourceAndSchemeHost()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
         MaterialColor.SetScheme(application, new TonalSpotScheme(Colors.Red));
@@ -29,7 +29,7 @@ public class MaterialColorHelperLeakTests
     }
 
     [AvaloniaFact]
-    public void ObserveSysColor_Dispose_ReleasesObserverFromApplicationFallback()
+    public void SysColorObservable_Dispose_ReleasesObserverFromApplicationFallback()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
         MaterialColor.SetScheme(application, new TonalSpotScheme(Colors.Red));
@@ -42,7 +42,7 @@ public class MaterialColorHelperLeakTests
     }
 
     [AvaloniaFact]
-    public void ObserveSysColor_Dispose_ReleasesObserverFromThemeHost()
+    public void SysColorObservable_Dispose_ReleasesObserverFromThemeHost()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
         MaterialColor.SetScheme(application, new TonalSpotScheme(Colors.Red));
@@ -55,7 +55,7 @@ public class MaterialColorHelperLeakTests
     }
 
     [AvaloniaFact]
-    public void ObserveSysColor_WithSourceAndApplicationChains_PrefersSource_ThenFallsBackToApplication_AndDisposesCleanly()
+    public void SysColorObservable_WithSourceAndApplicationChains_PrefersSource_ThenFallsBackToApplication_AndDisposesCleanly()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
         application.RequestedThemeVariant = ThemeVariant.Light;
@@ -71,7 +71,7 @@ public class MaterialColorHelperLeakTests
     }
 
     [AvaloniaFact]
-    public void ObserveSysColor_WhenSchemeHostInstanceChanges_UnsubscribesFromOldHost()
+    public void SysColorObservable_WhenSchemeHostInstanceChanges_UnsubscribesFromOldHost()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
         application.RequestedThemeVariant = ThemeVariant.Light;
@@ -84,7 +84,7 @@ public class MaterialColorHelperLeakTests
 
         var observer = new RecordingObserver();
         var subscription = MaterialColorHelper
-            .ObserveSysColor(source, null, SysColorToken.Primary, null, Colors.Transparent)
+            .CreateSysColorObservable(source, null, SysColorToken.Primary, null, Colors.Transparent)
             .Subscribe(observer);
 
         Assert.Equal(ResolvePrimaryColor(oldHost), observer.Values[^1]);
@@ -127,7 +127,7 @@ public class MaterialColorHelperLeakTests
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static WeakReference<RecordingObserver> CreateDisposedObserverFromSource(Application source)
     {
-        var observable = MaterialColorHelper.ObserveSysColor(
+        var observable = MaterialColorHelper.CreateSysColorObservable(
             source,
             null,
             SysColorToken.Primary,
@@ -156,7 +156,7 @@ public class MaterialColorHelperLeakTests
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static WeakReference<RecordingObserver> CreateDisposedObserverFromApplication(Application application)
     {
-        var observable = MaterialColorHelper.ObserveSysColor(
+        var observable = MaterialColorHelper.CreateSysColorObservable(
             null,
             null,
             SysColorToken.Primary,
@@ -185,7 +185,7 @@ public class MaterialColorHelperLeakTests
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static WeakReference<RecordingObserver> CreateDisposedObserverFromThemeHost(Application themeHost)
     {
-        var observable = MaterialColorHelper.ObserveSysColor(
+        var observable = MaterialColorHelper.CreateSysColorObservable(
             themeHost,
             themeHost,
             SysColorToken.Primary,
@@ -217,7 +217,7 @@ public class MaterialColorHelperLeakTests
         Application application
     )
     {
-        var observable = MaterialColorHelper.ObserveSysColor(
+        var observable = MaterialColorHelper.CreateSysColorObservable(
             source,
             null,
             SysColorToken.Primary,
@@ -250,8 +250,8 @@ public class MaterialColorHelperLeakTests
     {
         var target = new Border();
         var binding = MaterialColorHelper
-            .ObserveSysColor(source, null, SysColorToken.Primary, null, Colors.Transparent)
-            .Select<global::Avalonia.Media.Color, IBrush>(static color => new SolidColorBrush(color))
+            .CreateSysColorObservable(source, null, SysColorToken.Primary, null, Colors.Transparent)
+            .Select<Color, IBrush>(static color => new SolidColorBrush(color))
             .ToBinding();
 
         var bindingHandle = target.Bind(Border.BackgroundProperty, binding);
