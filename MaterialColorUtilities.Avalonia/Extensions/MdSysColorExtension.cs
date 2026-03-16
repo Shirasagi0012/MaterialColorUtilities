@@ -1,7 +1,11 @@
 using System;
+using Avalonia;
+using Avalonia.Media;
 using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.XamlIl.Runtime;
 using Avalonia.Metadata;
 using Avalonia.Styling;
+using MaterialColorUtilities.Avalonia.Helpers;
 using static MaterialColorUtilities.Avalonia.Helpers.MaterialColorHelper;
 
 namespace MaterialColorUtilities.Avalonia;
@@ -35,9 +39,13 @@ public class MdSysColorExtension
     public object ProvideValue(IServiceProvider serviceProvider)
     {
         var (target, parentStack) = GetContextServices(serviceProvider);
+        var normalizedKey = CustomKey?.Trim();
 
         return ShouldProvideBrush(target)
-            ? ProvideSysBrushBinding(parentStack, Token, CustomKey,themeVariant: Theme)
-            : ProvideSysColorBinding(parentStack, Token, CustomKey,themeVariant: Theme);
+            ? ProvideSysColorBinding(parentStack, Token, CustomKey, themeVariant: Theme)
+                .Select(IBrush (color) => new SolidColorBrush(color))
+                .ToBinding()
+            : ProvideSysColorBinding(parentStack, Token, CustomKey, themeVariant: Theme)
+                .ToBinding();
     }
 }

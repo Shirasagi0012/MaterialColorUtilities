@@ -1,6 +1,11 @@
 using System;
+using Avalonia;
+using Avalonia.Media;
 using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.XamlIl.Runtime;
 using Avalonia.Metadata;
+using Avalonia.Styling;
+using MaterialColorUtilities.Avalonia.Helpers;
 using static MaterialColorUtilities.Avalonia.Helpers.MaterialColorHelper;
 
 namespace MaterialColorUtilities.Avalonia;
@@ -43,9 +48,13 @@ public class MdRefPaletteExtension
     public object ProvideValue(IServiceProvider serviceProvider)
     {
         var (target, parentStack) = GetContextServices(serviceProvider);
+        var normalizedKey = CustomKey?.Trim();
 
         return ShouldProvideBrush(target)
-            ? ProvideRefBrushBinding(parentStack, Palette, Tone, CustomKey)
-            : ProvideRefColorBinding(parentStack, Palette, Tone, CustomKey);
+            ? ProvideRefColorBinding(parentStack, Palette, Tone, CustomKey)
+                .Select(IBrush (color) => new SolidColorBrush(color))
+                .ToBinding()
+            : ProvideRefColorBinding(parentStack, Palette, Tone, CustomKey)
+                .ToBinding();
     }
 }
