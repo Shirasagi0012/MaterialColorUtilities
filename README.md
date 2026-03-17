@@ -24,10 +24,6 @@ develop color themes and schemes in your app.
 
 This repository contains a C# port of Google's official `material-color-utilities` library.
 
-## Motivation
-
-An earlier C# port (albi005/MaterialColorUtilities) exists but seems no longer actively maintained and outdated. This project was initiated to provide an up-to-date implementation targeting the latest .NET platform.
-
 ## Current Status
 
 This implementation is currently a **work-in-progress**. The API is mostly the same as the original, with minor adjustments to add some C# flavor.
@@ -50,7 +46,7 @@ Most API are identical to original implementation. There are some differences:
 
 #### Setup
 
-There are a separate project for Avalonia app to use, which give you ability to directly define a dynamic scheme in XAML with no C# code needed, and easy access to material color tokens with markup extensions. Seed color can be bind to a property, or a dynamic resource. Extended Colors and color harmonization will soon be supported.
+There are a separate project for Avalonia app to use, which give you ability to directly define a dynamic scheme in XAML with no C# code needed, and easy access to material color tokens with markup extensions. Seed color can be bind to a property, or a dynamic resource. The binding layer is powered by `DesignTokens.Avalonia`.
 
 To setup a dynamic scheme, just set an attached property `MaterialColor.Scheme` with your preferred scheme. Set to Application will apply to the whole app. The scheme will inherit to all element down the logical tree.
 
@@ -74,10 +70,10 @@ Currently color extract XAML markup extension is not implemented, but it will be
 
 #### Color Token with Markup Extension
 
-Access Material 3 design tokens using strongly-typed markup extensions. These extensions automatically resolve to either a `SolidColorBrush` or a `Color` binding depending on the target property. The binding will automatically update when theme/scheme/seed color/custom color change.
+Access Material 3 design tokens using strongly-typed markup extensions. These extensions automatically resolve to either a `SolidColorBrush` or a `Color` binding depending on the target property. The binding will automatically update when theme/scheme/seed color change.
 
-- `MdSysColor (SysColorToken token[, string customColorKey = null])`
-- `MdRefPalette (RefPaletteToken palette, byte tone[, string customColorKey])`
+- `MdSysColor (SysColorToken token)`
+- `MdRefPalette (RefPaletteToken palette, byte tone)`
 
 ```xml
 <Border Background="{mcu:MdRefPalette Primary, 60}" Grid.Row="0">
@@ -87,12 +83,8 @@ Access Material 3 design tokens using strongly-typed markup extensions. These ex
 
 #### Custom & Extended Colors
 
-To use custom (aka extended) colors, provide the custom color key or tone value:
+Currently custom color token and extended color token are not implemented, but it will be here after some time.
 
-```
-{mcu:MdSysColor OnCustomContainer, Brand}
-{mcu:MdRefPalette Custom, 95, Brand}
-```
 #### Theme Override
 
 By default, the `MdSysColor` markup extension reacts to the current `ActualThemeVariant`. However, you can explicitly set the `Theme` parameter to ensure a resource always resolves to a specific theme, which is particularly useful when defining `ThemeDictionaries`.

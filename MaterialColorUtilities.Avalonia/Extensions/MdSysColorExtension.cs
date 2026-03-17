@@ -1,50 +1,38 @@
-using System;
 using Avalonia;
-using Avalonia.Media;
 using Avalonia.Markup.Xaml;
-using Avalonia.Markup.Xaml.XamlIl.Runtime;
+using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Styling;
+using DesignTokens;
 using MaterialColorUtilities.Avalonia.Helpers;
-using static MaterialColorUtilities.Avalonia.Helpers.MaterialColorHelper;
 
 namespace MaterialColorUtilities.Avalonia;
 
 public class MdSysColorExtension
 {
-    public MdSysColorExtension()
-    {
-    }
-
     public MdSysColorExtension(SysColorToken token)
     {
         Token = token;
     }
 
-    public MdSysColorExtension(SysColorToken token, string customKey)
-    {
-        if (!TokenHelper.IsCustom(token))
-            throw new ArgumentException($"The token '{token}' does not support a custom key.", nameof(token));
+    [ConstructorArgument("token")]
+    public SysColorToken Token { get; set; }
 
-        Token = token;
-        CustomKey = customKey;
-    }
-
-    [ConstructorArgument("customKey")] public string? CustomKey { get; set; }
-
-    [ConstructorArgument("token")] public SysColorToken Token { get; set; }
-    
     public ThemeVariant? Theme { get; set; }
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        var (target, parentStack) = GetContextServices(serviceProvider);
+        var observable = TokenExtensionHelper<Color, SysColorTokenKey>.ProvideObservable(
+            serviceProvider,
+            new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(Token)),
+            Theme,
+            Colors.Transparent);
 
-        return ShouldProvideBrush(target)
-            ? ProvideSysColorBinding(parentStack, Token, CustomKey, themeVariant: Theme, targetObject: target.TargetObject as AvaloniaObject)
-                .Select(IBrush (color) => new SolidColorBrush(color))
-                .ToBinding()
-            : ProvideSysColorBinding(parentStack, Token, CustomKey, themeVariant: Theme, targetObject: target.TargetObject as AvaloniaObject)
+        if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget target
+            && MaterialMarkupExtensionHelper.ShouldProvideBrush(target))
+            return new ColorToBrushObservable(observable)
                 .ToBinding();
+
+        return observable.ToBinding();
     }
 }

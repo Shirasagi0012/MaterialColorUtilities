@@ -1,60 +1,56 @@
 using System;
 using System.Collections.Generic;
 using Avalonia;
+using Avalonia.Data;
+using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.XamlIl.Runtime;
 using Avalonia.Media;
 using Avalonia.Styling;
+using DesignTokens;
 using MaterialColorUtilities.Avalonia;
-using MaterialColorUtilities.Avalonia.Helpers;
+using Xunit;
 
 namespace MaterialColorUtilities.Tests.Avalonia.TestUtils;
 
 internal static class MaterialColorTestHelper
 {
-    internal static Color ResolveSys(
-        MaterialColorScheme.MaterialColorSchemeInternal? scheme,
-        SysColorToken token,
-        ThemeVariant themeVariant
+    internal static ITokenResolver<Color, RefPaletteTokenKey>? GetRefPaletteTokenResolver(AvaloniaObject element)
+    {
+        return element.GetValue(TokenHost<Color, RefPaletteTokenKey>.ResolverProperty);
+    }
+
+    internal static ITokenResolver<Color, SysColorTokenKey>? GetSysColorTokenResolver(AvaloniaObject element)
+    {
+        return element.GetValue(TokenHost<Color, SysColorTokenKey>.ResolverProperty);
+    }
+
+    internal static Color ResolveSys(ColorScheme scheme, SysColorToken token, ThemeVariant themeVariant)
+    {
+        return new MaterialColorScheme(scheme).ResolveSys(token, themeVariant);
+    }
+
+    internal static Color ResolveRef(ColorScheme scheme, RefPaletteToken palette, byte tone)
+    {
+        return new MaterialColorScheme(scheme).ResolveRef(palette, tone);
+    }
+
+    internal static BindingBase CreateBinding(
+        object extension,
+        AvaloniaObject targetObject,
+        object targetProperty,
+        params object[] parents
     )
     {
-        return scheme?.ResolveSys(token, themeVariant)
-               ?? throw new InvalidOperationException("Expected a resolved system color.");
-    }
+        var services = new TestServiceProvider(
+            new TestProvideValueTarget(targetObject, targetProperty),
+            new TestParentStackProvider(parents));
 
-    internal static Color ResolvePrimary(MaterialColorScheme schemeHost, ThemeVariant themeVariant)
-    {
-        return schemeHost.Internal.ResolveSys(SysColorToken.Primary, themeVariant)
-               ?? throw new InvalidOperationException("Expected a primary color.");
-    }
-
-    internal static void ForceFullGc()
-    {
-        for (var i = 0; i < 3; i++)
+        return Assert.IsAssignableFrom<BindingBase>(extension switch
         {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-        }
-    }
-
-    internal static IObservable<Color> CreateSysColorObservable(
-        AvaloniaObject? source,
-        IThemeVariantHost? themeHost,
-        SysColorToken token,
-        string? customKey,
-        Color fallbackColor,
-        ThemeVariant? themeVariant = null
-    )
-    {
-        var context = new MaterialColorBindingContext(
-            (object?)themeHost ?? source,
-            null,
-            source,
-            themeVariant,
-            null
-        );
-
-        return MaterialColorHelper.CreateSysColorObservable(context, token, customKey, fallbackColor);
+            MdSysColorExtension sys => sys.ProvideValue(services),
+            MdRefPaletteExtension palette => palette.ProvideValue(services),
+            _ => throw new ArgumentOutOfRangeException(nameof(extension))
+        });
     }
 }
 
@@ -76,7 +72,31 @@ internal sealed class RecordingColorObserver : IObserver<Color>
     }
 }
 
+internal sealed class TestProvideValueTarget(object targetObject, object targetProperty) : IProvideValueTarget
+{
+    public object TargetObject { get; } = targetObject;
+
+    public object TargetProperty { get; } = targetProperty;
+}
+
 internal sealed class TestParentStackProvider(IEnumerable<object> parents) : IAvaloniaXamlIlParentStackProvider
 {
     public IEnumerable<object> Parents { get; } = parents;
+}
+
+internal sealed class TestServiceProvider(
+    IProvideValueTarget provideValueTarget,
+    IAvaloniaXamlIlParentStackProvider parentStackProvider
+) : IServiceProvider
+{
+    public object? GetService(Type serviceType)
+    {
+        if (serviceType == typeof(IProvideValueTarget))
+            return provideValueTarget;
+
+        if (serviceType == typeof(IAvaloniaXamlIlParentStackProvider))
+            return parentStackProvider;
+
+        return null;
+    }
 }

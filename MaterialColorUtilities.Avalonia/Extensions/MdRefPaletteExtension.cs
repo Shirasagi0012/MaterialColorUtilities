@@ -1,40 +1,23 @@
-using System;
 using Avalonia;
-using Avalonia.Media;
 using Avalonia.Markup.Xaml;
-using Avalonia.Markup.Xaml.XamlIl.Runtime;
+using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Styling;
+using DesignTokens;
 using MaterialColorUtilities.Avalonia.Helpers;
-using static MaterialColorUtilities.Avalonia.Helpers.MaterialColorHelper;
 
 namespace MaterialColorUtilities.Avalonia;
 
 public class MdRefPaletteExtension
 {
-    public MdRefPaletteExtension()
-    {
-    }
-
     public MdRefPaletteExtension(RefPaletteToken palette, byte tone)
     {
         Palette = palette;
         Tone = tone;
     }
 
-    public MdRefPaletteExtension(RefPaletteToken palette, byte tone, string customKey)
-    {
-        if (!TokenHelper.IsCustom(palette))
-            throw new ArgumentException($"The token '{palette}' does not support a custom key.", nameof(palette));
-
-        Palette = palette;
-        Tone = tone;
-        CustomKey = customKey;
-    }
-
-    [ConstructorArgument("customKey")] public string? CustomKey { get; set; }
-
-    [ConstructorArgument("palette")] public RefPaletteToken Palette { get; set; }
+    [ConstructorArgument("palette")]
+    public RefPaletteToken Palette { get; set; }
 
     [ConstructorArgument("tone")]
     public byte Tone
@@ -45,15 +28,23 @@ public class MdRefPaletteExtension
             : throw new ArgumentOutOfRangeException(nameof(value), "Tone must be in range 0..100.");
     } = 40;
 
+    public ThemeVariant? Theme { get; set; }
+
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        var (target, parentStack) = GetContextServices(serviceProvider);
+        var observable = TokenExtensionHelper<Color, RefPaletteTokenKey>.ProvideObservable(
+            serviceProvider,
+            new TokenKey<Color, RefPaletteTokenKey>(new RefPaletteTokenKey(Palette, Tone)),
+            Theme,
+            Colors.Transparent);
 
-        return ShouldProvideBrush(target)
-            ? ProvideRefColorBinding(parentStack, Palette, Tone, CustomKey, targetObject: target.TargetObject as AvaloniaObject)
-                .Select(IBrush (color) => new SolidColorBrush(color))
-                .ToBinding()
-            : ProvideRefColorBinding(parentStack, Palette, Tone, CustomKey, targetObject: target.TargetObject as AvaloniaObject)
+
+        if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget target
+            && MaterialMarkupExtensionHelper.ShouldProvideBrush(target))
+            return new ColorToBrushObservable(observable)
                 .ToBinding();
+
+        return observable
+            .ToBinding();
     }
 }

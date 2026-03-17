@@ -67,20 +67,3 @@ public enum RefPaletteToken
     Error,
     Custom
 }
-
-public static class TokenHelper
-{
-    public static bool IsCustom(SysColorToken token)
-    {
-        return token is SysColorToken.Custom
-            or SysColorToken.OnCustom
-            or SysColorToken.CustomContainer
-            or SysColorToken.OnCustomContainer;
-    }
-
-
-    public static bool IsCustom(RefPaletteToken token)
-    {
-        return token is RefPaletteToken.Custom;
-    }
-}

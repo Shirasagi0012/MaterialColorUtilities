@@ -1,11 +1,11 @@
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using Avalonia.Styling;
+using DesignTokens;
 using MaterialColorUtilities.Avalonia;
-using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.Tests.Avalonia.TestUtils;
 using Xunit;
 
@@ -14,120 +14,113 @@ namespace MaterialColorUtilities.Tests.Avalonia;
 public class MaterialColorBindingIntegrationTests
 {
     [AvaloniaFact]
-    public void CaptureContext_PrefersProviderAnchorAndReadsDictionaryVariant()
-    {
-        var owner = new Border();
-        var provider = new ResourceDictionary();
-        ((IThemeVariantProvider)provider).Key = ThemeVariant.Dark;
-        var target = new SolidColorBrush();
-
-        var context = MaterialColorHelper.CaptureContext(
-            new TestParentStackProvider([provider, owner]),
-            target,
-            null);
-
-        Assert.Same(provider, context.Anchor);
-        Assert.Same(provider, context.ProviderAnchor);
-        Assert.Same(target, context.TargetObject);
-        Assert.Equal(ThemeVariant.Dark, context.DictionaryThemeVariant);
-    }
-
-    [AvaloniaFact]
-    public void ProvideSysColorBinding_UsesCapturedProviderOwner()
+    public void CreateObservable_UsesCapturedProviderOwner()
     {
         var owner = new ThemeVariantScope
         {
             RequestedThemeVariant = ThemeVariant.Light
         };
-        MaterialColor.SetScheme(owner, new TonalSpotScheme(Colors.Red));
+        var scheme = new TonalSpotScheme(Colors.Red);
+        MaterialColor.SetScheme(owner, scheme);
+
         var provider = new ResourceDictionary();
         ((IResourceProvider)provider).AddOwner(owner);
 
         var observer = new RecordingColorObserver();
-        using var subscription = MaterialColorHelper
-            .ProvideSysColorBinding(
-                new TestParentStackProvider([provider, owner]),
-                SysColorToken.Primary,
-                targetObject: null)
+        var context = TokenBinding.CaptureContext(new TestParentStackProvider([provider, owner]), null, null);
+        using var subscription = TokenBinding
+            .CreateObservable(context, new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(SysColorToken.Primary)),
+                Colors.Transparent)
             .Subscribe(observer);
 
         Assert.Equal(
-            MaterialColorTestHelper.ResolvePrimary(MaterialColor.GetSchemeHost(owner), ThemeVariant.Light),
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Light),
             observer.Values[^1]);
     }
 
     [AvaloniaFact]
-    public void ProvideSysColorBinding_UsesDictionaryThemeVariantFromParentStack()
+    public void MdSysColor_ProvideValue_BindsBrushTargetsAndRefreshesOnSchemeChange()
+    {
+        var target = new Border();
+        var scheme = new TonalSpotScheme(Colors.Red);
+        MaterialColor.SetScheme(target, scheme);
+
+        var binding = MaterialColorTestHelper.CreateBinding(
+            new MdSysColorExtension(SysColorToken.Primary),
+            target,
+            Border.BackgroundProperty,
+            target);
+
+        target.Bind(Border.BackgroundProperty, binding);
+
+        Assert.Equal(
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Light),
+            Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
+
+        scheme.Color = Colors.Blue;
+
+        Assert.Equal(
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Light),
+            Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
+    }
+
+    [AvaloniaFact]
+    public void MdSysColor_ProvideValue_BindsColorTargetsAndHonorsExplicitTheme()
     {
         var owner = new ThemeVariantScope
         {
-            RequestedThemeVariant = ThemeVariant.Dark
+            RequestedThemeVariant = ThemeVariant.Light
         };
-        MaterialColor.SetScheme(owner, new TonalSpotScheme(Colors.Red));
+        var scheme = new TonalSpotScheme(Colors.Red);
+        MaterialColor.SetScheme(owner, scheme);
 
-        var provider = new ResourceDictionary();
-        ((IThemeVariantProvider)provider).Key = ThemeVariant.Light;
-        ((IResourceProvider)provider).AddOwner(owner);
+        var brush = new SolidColorBrush();
+        var binding = MaterialColorTestHelper.CreateBinding(
+            new MdSysColorExtension(SysColorToken.Primary)
+            {
+                Theme = ThemeVariant.Dark
+            },
+            brush,
+            SolidColorBrush.ColorProperty,
+            owner);
 
-        var observer = new RecordingColorObserver();
-        using var subscription = MaterialColorHelper
-            .ProvideSysColorBinding(
-                new TestParentStackProvider([provider, owner]),
-                SysColorToken.Primary,
-                targetObject: null)
-            .Subscribe(observer);
+        brush.Bind(SolidColorBrush.ColorProperty, binding);
 
         Assert.Equal(
-            MaterialColorTestHelper.ResolvePrimary(MaterialColor.GetSchemeHost(owner), ThemeVariant.Light),
-            observer.Values[^1]);
-        Assert.NotEqual(
-            MaterialColorTestHelper.ResolvePrimary(MaterialColor.GetSchemeHost(owner), ThemeVariant.Dark),
-            observer.Values[^1]);
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Dark),
+            brush.Color);
+
+        owner.RequestedThemeVariant = ThemeVariant.Dark;
+        scheme.Color = Colors.Blue;
+
+        Assert.Equal(
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Dark),
+            brush.Color);
     }
 
     [AvaloniaFact]
-    public void ToBinding_WhenAttachedToControlProperty_UpdatesAndReleasesTargetAfterClear()
-    {
-        var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
-        application.RequestedThemeVariant = ThemeVariant.Light;
-        MaterialColor.SetScheme(application, null);
-
-        var source = new Border();
-        MaterialColor.SetScheme(source, new TonalSpotScheme(Colors.Red));
-
-        var weakTarget = CreateBoundTargetAndClearBinding(source);
-
-        MaterialColorTestHelper.ForceFullGc();
-
-        Assert.False(weakTarget.TryGetTarget(out _));
-    }
-
-    private static WeakReference<Border> CreateBoundTargetAndClearBinding(Border source)
+    public void MdRefPalette_ProvideValue_BindsBrushTargetsAndRefreshesOnSchemeChange()
     {
         var target = new Border();
-        var binding = MaterialColorTestHelper
-            .CreateSysColorObservable(source, null, SysColorToken.Primary, null, Colors.Transparent)
-            .Select<Color, IBrush>(static color => new SolidColorBrush(color))
-            .ToBinding();
+        var scheme = new TonalSpotScheme(Colors.Red);
+        MaterialColor.SetScheme(target, scheme);
 
-        var bindingHandle = target.Bind(Border.BackgroundProperty, binding);
+        var binding = MaterialColorTestHelper.CreateBinding(
+            new MdRefPaletteExtension(RefPaletteToken.Primary, 60),
+            target,
+            Border.BackgroundProperty,
+            target);
 
-        Assert.NotNull(target.Background);
-        Assert.Equal(
-            MaterialColorTestHelper.ResolvePrimary(MaterialColor.GetSchemeHost(source), ThemeVariant.Light),
-            Assert.IsType<SolidColorBrush>(target.Background).Color);
-
-        MaterialColor.GetSchemeHost(source).Scheme = new TonalSpotScheme(Colors.Blue);
+        target.Bind(Border.BackgroundProperty, binding);
 
         Assert.Equal(
-            MaterialColorTestHelper.ResolvePrimary(MaterialColor.GetSchemeHost(source), ThemeVariant.Light),
-            Assert.IsType<SolidColorBrush>(target.Background).Color);
+            MaterialColorTestHelper.ResolveRef(scheme, RefPaletteToken.Primary, 60),
+            Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
 
-        bindingHandle.Dispose();
-        MaterialColor.GetSchemeHost(source).Scheme = new TonalSpotScheme(Colors.Green);
+        scheme.Color = Colors.Blue;
 
-        Assert.Null(target.Background);
-
-        return new WeakReference<Border>(target);
+        Assert.Equal(
+            MaterialColorTestHelper.ResolveRef(scheme, RefPaletteToken.Primary, 60),
+            Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
     }
 }
