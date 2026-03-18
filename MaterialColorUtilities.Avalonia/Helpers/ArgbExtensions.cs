@@ -1,7 +1,7 @@
-﻿namespace MaterialColorUtilities.Avalonia;
+﻿using Avalonia.Media;
+using MaterialColorUtilities.Utils;
 
-using global::Avalonia.Media;
-using Utils;
+namespace MaterialColorUtilities.Avalonia.Helpers;
 
 public static class ArgbExtensions
 {

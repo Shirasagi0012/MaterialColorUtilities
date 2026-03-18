@@ -4,6 +4,7 @@ using System.Linq;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MaterialColorUtilities.Avalonia;
+using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.DynamicColors;
 using MaterialColorUtilities.Gallery.Controls;
 using MaterialColorUtilities.HCT;

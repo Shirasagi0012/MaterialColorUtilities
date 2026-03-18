@@ -1,12 +1,12 @@
-using System;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
 using DesignTokens;
+using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.DynamicColors;
 using ArgbColor = MaterialColorUtilities.Utils.ArgbColor;
 
-namespace MaterialColorUtilities.Avalonia;
+namespace MaterialColorUtilities.Avalonia.Tokens;
 
 internal sealed class MaterialColorScheme(ColorScheme scheme)
     : ITokenResolver<Color, RefPaletteTokenKey>, ITokenResolver<Color, SysColorTokenKey>

@@ -10,6 +10,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using MaterialColorUtilities.Avalonia;
+using MaterialColorUtilities.Avalonia.Helpers;
 using PropertyGenerator.Avalonia;
 using HctColor = MaterialColorUtilities.HCT.Hct;
 

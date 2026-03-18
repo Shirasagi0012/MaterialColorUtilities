@@ -2,7 +2,7 @@
 using Avalonia.Media;
 using DesignTokens;
 
-namespace MaterialColorUtilities.Avalonia;
+namespace MaterialColorUtilities.Avalonia.Tokens;
 
 internal class MaterialColorSchemeHost : 
     ITokenHost<Color, SysColorTokenKey, MaterialColorSchemeHost>,

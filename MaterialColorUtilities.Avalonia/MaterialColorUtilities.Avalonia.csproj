@@ -13,7 +13,7 @@
 
     <PropertyGroup>
         <PackageId>Shirasagi0012.MaterialColorUtilities.Avalonia</PackageId>
-        <Version>0.2.0</Version>
+        <Version>0.3.0-alpha</Version>
         <Authors>Shirasagi0012</Authors>
         <Description>Avalonia integration for Material Color Utilities with Material 3 dynamic color resources.</Description>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
+using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Utils;
 

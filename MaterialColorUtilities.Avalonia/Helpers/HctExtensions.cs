@@ -1,7 +1,7 @@
 ﻿using Avalonia.Media;
 using MaterialColorUtilities.HCT;
 
-namespace MaterialColorUtilities.Avalonia;
+namespace MaterialColorUtilities.Avalonia.Helpers;
 
 public static class HctExtensions
 {

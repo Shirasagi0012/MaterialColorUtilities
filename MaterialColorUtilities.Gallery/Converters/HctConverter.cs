@@ -3,6 +3,7 @@ using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using MaterialColorUtilities.Avalonia;
+using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.Gallery.Controls;
 
 namespace MaterialColorUtilities.Gallery.Converters;

@@ -1,4 +1,6 @@
-namespace MaterialColorUtilities.Avalonia;
+﻿namespace MaterialColorUtilities.Avalonia.Tokens;
+
+internal readonly record struct SysColorTokenKey(SysColorToken Token);
 
 public enum SysColorToken
 {
@@ -55,15 +57,4 @@ public enum SysColorToken
     OnCustom,
     CustomContainer,
     OnCustomContainer
-}
-
-public enum RefPaletteToken
-{
-    Primary,
-    Secondary,
-    Tertiary,
-    Neutral,
-    NeutralVariant,
-    Error,
-    Custom
 }
