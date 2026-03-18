@@ -994,7 +994,7 @@ public class ColorSpec2025 : ColorSpec2021
                 contrastCurve: _ => GetContrastCurve(4.5),
                 toneDeltaPair: _ =>
                     new ToneDeltaPair(
-                        TertiaryDim!,
+                        TertiaryDim,
                         Tertiary,
                         5.0,
                         ToneDeltaPair.TonePolarity.Darker,
@@ -1157,7 +1157,7 @@ public class ColorSpec2025 : ColorSpec2021
                 contrastCurve: _ => GetContrastCurve(4.5),
                 toneDeltaPair: _ =>
                     new ToneDeltaPair(
-                        ErrorDim!,
+                        ErrorDim,
                         Error,
                         5.0,
                         ToneDeltaPair.TonePolarity.Darker,

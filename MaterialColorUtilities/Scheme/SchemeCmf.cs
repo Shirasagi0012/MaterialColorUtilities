@@ -77,11 +77,29 @@ public class SchemeCmf : DynamicScheme
             GetTertiaryPalette(sourceColorHctList),
             new TonalPalette(sourceColorHctList[0].Hue, sourceColorHctList[0].Chroma * 0.2),
             new TonalPalette(sourceColorHctList[0].Hue, sourceColorHctList[0].Chroma * 0.2),
-            new TonalPalette(23.0, Math.Max(sourceColorHctList[0].Chroma, 50.0))
+            new TonalPalette(
+                GetErrorHue(sourceColorHctList[0].Hue, GetTertiaryPalette(sourceColorHctList).Hue),
+                Math.Max(sourceColorHctList[0].Chroma, 50))
         )
     {
         if (specVersion != ColorSpec.SpecVersion.Spec2026)
             throw new ArgumentException("SchemeCmf can only be used with spec version 2026.");
+    }
+    
+    private static double GetErrorHue(double primaryHue, double tertiaryHue)
+    {
+        return primaryHue switch
+        {
+            <= 8   => tertiaryHue <= 24 ? 28.0 : tertiaryHue <= 32 ? 16.0 : 20.0,
+            <= 16  => tertiaryHue <= 24 ? 32.0 : tertiaryHue <= 32 ? 20.0 : 24.0,
+            <= 20  => tertiaryHue <= 28 ? 32.0 : tertiaryHue <= 32 ? 24.0 : 28.0,
+            <= 28  => tertiaryHue <= 24 ? 32.0 : 16.0,
+            <= 32  => tertiaryHue <= 20 ? 24.0 : tertiaryHue <= 28 ? 16.0 : 20.0,
+            <= 40  => tertiaryHue > 20 && tertiaryHue <= 28 ? 16.0 : 24.0,
+            <= 152 => tertiaryHue > 24 && tertiaryHue <= 36 ? 20.0 : 32.0,
+            <= 272 => tertiaryHue > 20 && tertiaryHue <= 28 ? 16.0 : 24.0,
+            _      => tertiaryHue > 12 && tertiaryHue <= 28 ? 32.0 : 16.0
+        };
     }
 
     private static TonalPalette GetTertiaryPalette(IReadOnlyList<Hct> sourceColorHctList)
