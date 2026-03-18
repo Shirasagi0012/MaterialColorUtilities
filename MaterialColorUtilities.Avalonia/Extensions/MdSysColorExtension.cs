@@ -22,7 +22,7 @@ public class MdSysColorExtension
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        var observable = TokenExtensionHelper<Color, SysColorTokenKey>.ProvideObservable(
+        var observable = TokenExtensionHelper<Color, SysColorTokenKey, MaterialColorSchemeHost>.ProvideObservable(
             serviceProvider,
             new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(Token)),
             Theme,

@@ -12,9 +12,15 @@ internal class ColorToBrushObservable(IObservable<Color> source) : IObservable<o
 
     private class ColorToBrushObserver(IObserver<object> observer) : IObserver<Color>
     {
-        public void OnCompleted() => observer.OnCompleted();
+        public void OnCompleted()
+        {
+            observer.OnCompleted();
+        }
 
-        public void OnError(Exception error) => observer.OnError(error);
+        public void OnError(Exception error)
+        {
+            observer.OnError(error);
+        }
 
         public void OnNext(Color value)
         {

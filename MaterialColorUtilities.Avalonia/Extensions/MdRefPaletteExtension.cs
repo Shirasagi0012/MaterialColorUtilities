@@ -32,7 +32,7 @@ public class MdRefPaletteExtension
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        var observable = TokenExtensionHelper<Color, RefPaletteTokenKey>.ProvideObservable(
+        var observable = TokenExtensionHelper<Color, RefPaletteTokenKey, MaterialColorSchemeHost>.ProvideObservable(
             serviceProvider,
             new TokenKey<Color, RefPaletteTokenKey>(new RefPaletteTokenKey(Palette, Tone)),
             Theme,
