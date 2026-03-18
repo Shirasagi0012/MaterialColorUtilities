@@ -4,7 +4,6 @@ using Avalonia.Styling;
 using DesignTokens;
 using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.DynamicColors;
-using ArgbColor = MaterialColorUtilities.Utils.ArgbColor;
 
 namespace MaterialColorUtilities.Avalonia.Tokens;
 
@@ -21,7 +20,17 @@ internal sealed class MaterialColorScheme(ColorScheme scheme)
         out Color value
     )
     {
-        value = ResolveRef(key.Value.Palette, key.Value.Tone);
+        value = (key.Value.Palette switch
+        {
+            RefPaletteToken.Primary => _lightScheme.PrimaryPalette.Get(key.Value.Tone),
+            RefPaletteToken.Secondary => _lightScheme.SecondaryPalette.Get(key.Value.Tone),
+            RefPaletteToken.Tertiary => _lightScheme.TertiaryPalette.Get(key.Value.Tone),
+            RefPaletteToken.Neutral => _lightScheme.NeutralPalette.Get(key.Value.Tone),
+            RefPaletteToken.NeutralVariant => _lightScheme.NeutralVariantPalette.Get(key.Value.Tone),
+            RefPaletteToken.Error => _lightScheme.ErrorPalette.Get(key.Value.Tone),
+            RefPaletteToken.Custom => throw new ArgumentOutOfRangeException(nameof(key)),
+            _ => throw new ArgumentOutOfRangeException(nameof(key))
+        }).ToAvaloniaColor();
 
         return true;
     }
@@ -33,95 +42,65 @@ internal sealed class MaterialColorScheme(ColorScheme scheme)
         out Color value
     )
     {
-        value = ResolveSys(key.Value.Token, themeVariant);
+        var dynamicScheme = ColorScheme.IsDark(themeVariant) ? _darkScheme : _lightScheme;
+        value = (key.Value.Token switch
+        {
+            SysColorToken.Background => dynamicScheme.Background,
+            SysColorToken.OnBackground => dynamicScheme.OnBackground,
+            SysColorToken.Surface => dynamicScheme.Surface,
+            SysColorToken.SurfaceDim => dynamicScheme.SurfaceDim,
+            SysColorToken.SurfaceBright => dynamicScheme.SurfaceBright,
+            SysColorToken.SurfaceContainerLowest => dynamicScheme.SurfaceContainerLowest,
+            SysColorToken.SurfaceContainerLow => dynamicScheme.SurfaceContainerLow,
+            SysColorToken.SurfaceContainer => dynamicScheme.SurfaceContainer,
+            SysColorToken.SurfaceContainerHigh => dynamicScheme.SurfaceContainerHigh,
+            SysColorToken.SurfaceContainerHighest => dynamicScheme.SurfaceContainerHighest,
+            SysColorToken.OnSurface => dynamicScheme.OnSurface,
+            SysColorToken.SurfaceVariant => dynamicScheme.SurfaceVariant,
+            SysColorToken.OnSurfaceVariant => dynamicScheme.OnSurfaceVariant,
+            SysColorToken.InverseSurface => dynamicScheme.InverseSurface,
+            SysColorToken.InverseOnSurface => dynamicScheme.InverseOnSurface,
+            SysColorToken.Outline => dynamicScheme.Outline,
+            SysColorToken.OutlineVariant => dynamicScheme.OutlineVariant,
+            SysColorToken.Shadow => dynamicScheme.Shadow,
+            SysColorToken.Scrim => dynamicScheme.Scrim,
+            SysColorToken.SurfaceTint => dynamicScheme.SurfaceTint,
+            SysColorToken.Primary => dynamicScheme.Primary,
+            SysColorToken.OnPrimary => dynamicScheme.OnPrimary,
+            SysColorToken.PrimaryContainer => dynamicScheme.PrimaryContainer,
+            SysColorToken.OnPrimaryContainer => dynamicScheme.OnPrimaryContainer,
+            SysColorToken.InversePrimary => dynamicScheme.InversePrimary,
+            SysColorToken.Secondary => dynamicScheme.Secondary,
+            SysColorToken.OnSecondary => dynamicScheme.OnSecondary,
+            SysColorToken.SecondaryContainer => dynamicScheme.SecondaryContainer,
+            SysColorToken.OnSecondaryContainer => dynamicScheme.OnSecondaryContainer,
+            SysColorToken.Tertiary => dynamicScheme.Tertiary,
+            SysColorToken.OnTertiary => dynamicScheme.OnTertiary,
+            SysColorToken.TertiaryContainer => dynamicScheme.TertiaryContainer,
+            SysColorToken.OnTertiaryContainer => dynamicScheme.OnTertiaryContainer,
+            SysColorToken.Error => dynamicScheme.Error,
+            SysColorToken.OnError => dynamicScheme.OnError,
+            SysColorToken.ErrorContainer => dynamicScheme.ErrorContainer,
+            SysColorToken.OnErrorContainer => dynamicScheme.OnErrorContainer,
+            SysColorToken.PrimaryFixed => dynamicScheme.PrimaryFixed,
+            SysColorToken.PrimaryFixedDim => dynamicScheme.PrimaryFixedDim,
+            SysColorToken.OnPrimaryFixed => dynamicScheme.OnPrimaryFixed,
+            SysColorToken.OnPrimaryFixedVariant => dynamicScheme.OnPrimaryFixedVariant,
+            SysColorToken.SecondaryFixed => dynamicScheme.SecondaryFixed,
+            SysColorToken.SecondaryFixedDim => dynamicScheme.SecondaryFixedDim,
+            SysColorToken.OnSecondaryFixed => dynamicScheme.OnSecondaryFixed,
+            SysColorToken.OnSecondaryFixedVariant => dynamicScheme.OnSecondaryFixedVariant,
+            SysColorToken.TertiaryFixed => dynamicScheme.TertiaryFixed,
+            SysColorToken.TertiaryFixedDim => dynamicScheme.TertiaryFixedDim,
+            SysColorToken.OnTertiaryFixed => dynamicScheme.OnTertiaryFixed,
+            SysColorToken.OnTertiaryFixedVariant => dynamicScheme.OnTertiaryFixedVariant,
+            SysColorToken.Custom => throw new ArgumentOutOfRangeException(nameof(key)),
+            SysColorToken.OnCustom => throw new ArgumentOutOfRangeException(nameof(key)),
+            SysColorToken.CustomContainer => throw new ArgumentOutOfRangeException(nameof(key)),
+            SysColorToken.OnCustomContainer => throw new ArgumentOutOfRangeException(nameof(key)),
+            _ => throw new ArgumentOutOfRangeException(nameof(key))
+        }).ToAvaloniaColor();
 
         return true;
-    }
-
-    internal Color ResolveSys(SysColorToken token, ThemeVariant themeVariant)
-    {
-        var dynamicScheme = ColorScheme.IsDark(themeVariant) ? _darkScheme : _lightScheme;
-        return ResolveSysArgb(dynamicScheme, token).ToAvaloniaColor();
-    }
-
-    internal Color ResolveRef(RefPaletteToken palette, byte tone)
-    {
-        return ResolveRefArgb(_lightScheme, palette, tone).ToAvaloniaColor();
-    }
-
-    private static ArgbColor ResolveSysArgb(DynamicScheme scheme, SysColorToken token)
-    {
-        return token switch
-        {
-            SysColorToken.Background => scheme.Background,
-            SysColorToken.OnBackground => scheme.OnBackground,
-            SysColorToken.Surface => scheme.Surface,
-            SysColorToken.SurfaceDim => scheme.SurfaceDim,
-            SysColorToken.SurfaceBright => scheme.SurfaceBright,
-            SysColorToken.SurfaceContainerLowest => scheme.SurfaceContainerLowest,
-            SysColorToken.SurfaceContainerLow => scheme.SurfaceContainerLow,
-            SysColorToken.SurfaceContainer => scheme.SurfaceContainer,
-            SysColorToken.SurfaceContainerHigh => scheme.SurfaceContainerHigh,
-            SysColorToken.SurfaceContainerHighest => scheme.SurfaceContainerHighest,
-            SysColorToken.OnSurface => scheme.OnSurface,
-            SysColorToken.SurfaceVariant => scheme.SurfaceVariant,
-            SysColorToken.OnSurfaceVariant => scheme.OnSurfaceVariant,
-            SysColorToken.InverseSurface => scheme.InverseSurface,
-            SysColorToken.InverseOnSurface => scheme.InverseOnSurface,
-            SysColorToken.Outline => scheme.Outline,
-            SysColorToken.OutlineVariant => scheme.OutlineVariant,
-            SysColorToken.Shadow => scheme.Shadow,
-            SysColorToken.Scrim => scheme.Scrim,
-            SysColorToken.SurfaceTint => scheme.SurfaceTint,
-            SysColorToken.Primary => scheme.Primary,
-            SysColorToken.OnPrimary => scheme.OnPrimary,
-            SysColorToken.PrimaryContainer => scheme.PrimaryContainer,
-            SysColorToken.OnPrimaryContainer => scheme.OnPrimaryContainer,
-            SysColorToken.InversePrimary => scheme.InversePrimary,
-            SysColorToken.Secondary => scheme.Secondary,
-            SysColorToken.OnSecondary => scheme.OnSecondary,
-            SysColorToken.SecondaryContainer => scheme.SecondaryContainer,
-            SysColorToken.OnSecondaryContainer => scheme.OnSecondaryContainer,
-            SysColorToken.Tertiary => scheme.Tertiary,
-            SysColorToken.OnTertiary => scheme.OnTertiary,
-            SysColorToken.TertiaryContainer => scheme.TertiaryContainer,
-            SysColorToken.OnTertiaryContainer => scheme.OnTertiaryContainer,
-            SysColorToken.Error => scheme.Error,
-            SysColorToken.OnError => scheme.OnError,
-            SysColorToken.ErrorContainer => scheme.ErrorContainer,
-            SysColorToken.OnErrorContainer => scheme.OnErrorContainer,
-            SysColorToken.PrimaryFixed => scheme.PrimaryFixed,
-            SysColorToken.PrimaryFixedDim => scheme.PrimaryFixedDim,
-            SysColorToken.OnPrimaryFixed => scheme.OnPrimaryFixed,
-            SysColorToken.OnPrimaryFixedVariant => scheme.OnPrimaryFixedVariant,
-            SysColorToken.SecondaryFixed => scheme.SecondaryFixed,
-            SysColorToken.SecondaryFixedDim => scheme.SecondaryFixedDim,
-            SysColorToken.OnSecondaryFixed => scheme.OnSecondaryFixed,
-            SysColorToken.OnSecondaryFixedVariant => scheme.OnSecondaryFixedVariant,
-            SysColorToken.TertiaryFixed => scheme.TertiaryFixed,
-            SysColorToken.TertiaryFixedDim => scheme.TertiaryFixedDim,
-            SysColorToken.OnTertiaryFixed => scheme.OnTertiaryFixed,
-            SysColorToken.OnTertiaryFixedVariant => scheme.OnTertiaryFixedVariant,
-            SysColorToken.Custom => throw new ArgumentOutOfRangeException(nameof(token)),
-            SysColorToken.OnCustom => throw new ArgumentOutOfRangeException(nameof(token)),
-            SysColorToken.CustomContainer => throw new ArgumentOutOfRangeException(nameof(token)),
-            SysColorToken.OnCustomContainer => throw new ArgumentOutOfRangeException(nameof(token)),
-            _ => throw new ArgumentOutOfRangeException(nameof(token))
-        };
-    }
-
-    private static ArgbColor ResolveRefArgb(DynamicScheme scheme, RefPaletteToken palette, byte tone)
-    {
-        return palette switch
-        {
-            RefPaletteToken.Primary => scheme.PrimaryPalette.Get(tone),
-            RefPaletteToken.Secondary => scheme.SecondaryPalette.Get(tone),
-            RefPaletteToken.Tertiary => scheme.TertiaryPalette.Get(tone),
-            RefPaletteToken.Neutral => scheme.NeutralPalette.Get(tone),
-            RefPaletteToken.NeutralVariant => scheme.NeutralVariantPalette.Get(tone),
-            RefPaletteToken.Error => scheme.ErrorPalette.Get(tone),
-            RefPaletteToken.Custom => throw new ArgumentOutOfRangeException(nameof(palette)),
-            _ => throw new ArgumentOutOfRangeException(nameof(palette))
-        };
     }
 }
