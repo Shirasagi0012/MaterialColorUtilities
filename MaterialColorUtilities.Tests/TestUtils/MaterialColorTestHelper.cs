@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Avalonia.Styling;
 using DesignTokens;
 using MaterialColorUtilities.Avalonia;
+using MaterialColorUtilities.Avalonia.Tokens;
 using Xunit;
 
 namespace MaterialColorUtilities.Tests.Avalonia.TestUtils;
@@ -16,22 +17,26 @@ internal static class MaterialColorTestHelper
 {
     internal static ITokenResolver<Color, RefPaletteTokenKey>? GetRefPaletteTokenResolver(AvaloniaObject element)
     {
-        return element.GetValue(TokenHost<Color, RefPaletteTokenKey>.ResolverProperty);
+        return element.GetValue(MaterialColorSchemeHost.RefPaletteHostProperty);
     }
 
     internal static ITokenResolver<Color, SysColorTokenKey>? GetSysColorTokenResolver(AvaloniaObject element)
     {
-        return element.GetValue(TokenHost<Color, SysColorTokenKey>.ResolverProperty);
+        return element.GetValue(MaterialColorSchemeHost.SysColorHostProperty);
     }
 
     internal static Color ResolveSys(ColorScheme scheme, SysColorToken token, ThemeVariant themeVariant)
     {
-        return new MaterialColorScheme(scheme).ResolveSys(token, themeVariant);
+        _ = (new MaterialColorScheme(scheme) as ITokenResolver<Color, SysColorTokenKey>).TryResolve(
+            new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(token)), themeVariant, null, out var color);
+        return color;
     }
 
     internal static Color ResolveRef(ColorScheme scheme, RefPaletteToken palette, byte tone)
     {
-        return new MaterialColorScheme(scheme).ResolveRef(palette, tone);
+        _ = (new MaterialColorScheme(scheme) as ITokenResolver<Color, RefPaletteTokenKey>).TryResolve(
+            new TokenKey<Color, RefPaletteTokenKey>(new RefPaletteTokenKey(palette, tone)), ThemeVariant.Light, null, out var color);
+        return color;
     }
 
     internal static BindingBase CreateBinding(

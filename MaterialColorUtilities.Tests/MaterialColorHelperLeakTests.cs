@@ -1,9 +1,13 @@
+using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Styling;
 using MaterialColorUtilities.Avalonia;
+using MaterialColorUtilities.Avalonia.Tokens;
 using MaterialColorUtilities.Tests.Avalonia.TestUtils;
 using Xunit;
 
@@ -11,6 +15,23 @@ namespace MaterialColorUtilities.Tests.Avalonia;
 
 public class MaterialColorBindingLifecycleTests
 {
+    [AvaloniaFact]
+    public void DetachedButton_CanBeCollectedWhileGlobalSchemeStaysAlive()
+    {
+        var scheme = new TonalSpotScheme(Colors.Red);
+        var weakButton = CreateDetachedButtonReference(scheme);
+
+        Assert.Equal(1, GetSchemeChangedSubscriberCount(scheme));
+
+        ForceFullCollection();
+
+        Assert.False(weakButton.TryGetTarget(out _));
+
+        scheme.Color = Colors.Blue;
+
+        Assert.Equal(0, GetSchemeChangedSubscriberCount(scheme));
+    }
+
     [AvaloniaFact]
     public void ReplacingSchemeInput_UnsubscribesFromOldScheme()
     {
@@ -58,5 +79,37 @@ public class MaterialColorBindingLifecycleTests
         scheme.Color = Colors.Blue;
 
         Assert.Null(target.Background);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference<Button> CreateDetachedButtonReference(ColorScheme scheme)
+    {
+        var host = new StackPanel();
+        var button = new Button();
+        host.Children.Add(button);
+
+        MaterialColor.SetScheme(button, scheme);
+
+        host.Children.Remove(button);
+
+        return new WeakReference<Button>(button);
+    }
+
+    private static void ForceFullCollection()
+    {
+        for (var i = 0; i < 3; i++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+    }
+
+    private static int GetSchemeChangedSubscriberCount(ColorScheme scheme)
+    {
+        var field = typeof(ColorScheme).GetField("SchemeChanged", BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?? throw new InvalidOperationException("Failed to locate ColorScheme.SchemeChanged backing field.");
+
+        return ((EventHandler?)field.GetValue(scheme))?.GetInvocationList().Length ?? 0;
     }
 }

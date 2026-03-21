@@ -3,11 +3,57 @@ using MaterialColorUtilities.Avalonia.Tokens;
 
 namespace MaterialColorUtilities.Avalonia;
 
-public class MaterialColor : AvaloniaObject
+public class MaterialColor
 {
+    private static readonly AttachedProperty<EventHandler?> SchemeChangedHandlerProperty =
+        AvaloniaProperty.RegisterAttached<MaterialColor, AvaloniaObject, EventHandler?>("SchemeChangedHandler");
+    
     static MaterialColor()
     {
-        SchemeProperty.Changed.AddClassHandler<AvaloniaObject>(OnSchemeChanged);
+        SchemeProperty.Changed.AddClassHandler<AvaloniaObject>((o, args) =>
+        {
+            if (args.OldValue is ColorScheme prevScheme)
+            {
+                var oldHandler = o.GetValue(SchemeChangedHandlerProperty);
+                if (oldHandler != null)
+                {
+                    prevScheme.SchemeChanged -= oldHandler;
+                }
+            }
+
+            if (args.NewValue is not ColorScheme nextScheme)
+            {
+                ClearResolvers(o);
+                o.ClearValue(SchemeChangedHandlerProperty);
+                return;
+            }
+
+            WeakReference<AvaloniaObject> weakObj = new(o);
+            EventHandler? newHandler = null;
+
+            newHandler = (sender, e) =>
+            {
+                if (weakObj.TryGetTarget(out var target))
+                {
+                    if (sender is ColorScheme scheme)
+                    {
+                        SetResolvers(target, new MaterialColorScheme(scheme));
+                    }
+                }
+                else
+                {
+                    if (sender is ColorScheme scheme && newHandler != null)
+                    {
+                        scheme.SchemeChanged -= newHandler;
+                    }
+                }
+            };
+
+            nextScheme.SchemeChanged += newHandler;
+            o.SetValue(SchemeChangedHandlerProperty, newHandler);
+
+            SetResolvers(o, new MaterialColorScheme(nextScheme));
+        });
     }
 
     public static readonly AttachedProperty<ColorScheme?> SchemeProperty =
@@ -21,17 +67,6 @@ public class MaterialColor : AvaloniaObject
     public static void SetScheme(AvaloniaObject element, ColorScheme? value)
     {
         element.SetValue(SchemeProperty, value);
-    }
-
-    private static void OnSchemeChanged(AvaloniaObject element, AvaloniaPropertyChangedEventArgs args)
-    {
-        if (args.NewValue is not ColorScheme nextScheme)
-        {
-            ClearResolvers(element);
-            return;
-        }
-
-        SetResolvers(element, new MaterialColorScheme(nextScheme));
     }
 
     private static void ClearResolvers(AvaloniaObject element)

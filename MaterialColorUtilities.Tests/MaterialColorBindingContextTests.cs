@@ -6,6 +6,7 @@ using Avalonia.Media.Immutable;
 using Avalonia.Styling;
 using DesignTokens;
 using MaterialColorUtilities.Avalonia;
+using MaterialColorUtilities.Avalonia.Tokens;
 using MaterialColorUtilities.Tests.Avalonia.TestUtils;
 using Xunit;
 
@@ -29,7 +30,7 @@ public class MaterialColorBindingIntegrationTests
         var observer = new RecordingColorObserver();
         var context = TokenBinding.CaptureContext(new TestParentStackProvider([provider, owner]), null, null);
         using var subscription = TokenBinding
-            .CreateObservable(context, new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(SysColorToken.Primary)),
+            .CreateObservable<Color, SysColorTokenKey, MaterialColorSchemeHost>(context, new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(SysColorToken.Primary)),
                 Colors.Transparent)
             .Subscribe(observer);
 
