@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
-using DesignTokens;
 using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.DynamicColors;
+using MaterialColorUtilities.Palettes;
 
 namespace MaterialColorUtilities.Avalonia.Tokens;
 
@@ -12,6 +13,7 @@ internal sealed class MaterialColorScheme(ColorScheme scheme)
 {
     private readonly DynamicScheme _lightScheme = scheme.CreateScheme(ThemeVariant.Light);
     private readonly DynamicScheme _darkScheme = scheme.CreateScheme(ThemeVariant.Dark);
+    private readonly IReadOnlyDictionary<string, TonalPalette> _customPalettes = scheme.CreateCustomPalettes();
 
     bool ITokenResolver<Color, RefPaletteTokenKey>.TryResolve(
         TokenKey<Color, RefPaletteTokenKey> key,
@@ -20,6 +22,18 @@ internal sealed class MaterialColorScheme(ColorScheme scheme)
         out Color value
     )
     {
+        if (key.Value.Palette == RefPaletteToken.Custom)
+        {
+            if (!TryGetCustomPalette(key.Value.CustomKey, out var customPalette))
+            {
+                value = default;
+                return false;
+            }
+
+            value = customPalette.Get(key.Value.Tone).ToAvaloniaColor();
+            return true;
+        }
+
         value = (key.Value.Palette switch
         {
             RefPaletteToken.Primary => _lightScheme.PrimaryPalette.Get(key.Value.Tone),
@@ -28,11 +42,19 @@ internal sealed class MaterialColorScheme(ColorScheme scheme)
             RefPaletteToken.Neutral => _lightScheme.NeutralPalette.Get(key.Value.Tone),
             RefPaletteToken.NeutralVariant => _lightScheme.NeutralVariantPalette.Get(key.Value.Tone),
             RefPaletteToken.Error => _lightScheme.ErrorPalette.Get(key.Value.Tone),
-            RefPaletteToken.Custom => throw new ArgumentOutOfRangeException(nameof(key)),
             _ => throw new ArgumentOutOfRangeException(nameof(key))
         }).ToAvaloniaColor();
 
         return true;
+    }
+
+    private bool TryGetCustomPalette(string? customKey, out TonalPalette palette)
+    {
+        if (customKey is { Length: > 0 })
+            return _customPalettes.TryGetValue(customKey, out palette!);
+
+        palette = null!;
+        return false;
     }
 
     bool ITokenResolver<Color, SysColorTokenKey>.TryResolve(
@@ -42,7 +64,37 @@ internal sealed class MaterialColorScheme(ColorScheme scheme)
         out Color value
     )
     {
-        var dynamicScheme = ColorScheme.IsDark(themeVariant) ? _darkScheme : _lightScheme;
+        var isDark = ColorScheme.IsDark(themeVariant);
+
+        if (key.Value.Token is SysColorToken.Custom or SysColorToken.OnCustom or SysColorToken.CustomContainer
+            or SysColorToken.OnCustomContainer)
+        {
+            if (!TryGetCustomPalette(key.Value.CustomKey, out var customPalette))
+            {
+                value = default;
+                return false;
+            }
+
+            // Tones per the Material 3 custom-color spec; unlike the generated roles these are
+            // fixed and do not respond to the contrast level.
+            var tone = (key.Value.Token, isDark) switch
+            {
+                (SysColorToken.Custom, false) => 40,
+                (SysColorToken.OnCustom, false) => 100,
+                (SysColorToken.CustomContainer, false) => 90,
+                (SysColorToken.OnCustomContainer, false) => 10,
+                (SysColorToken.Custom, true) => 80,
+                (SysColorToken.OnCustom, true) => 20,
+                (SysColorToken.CustomContainer, true) => 30,
+                (SysColorToken.OnCustomContainer, true) => 90,
+                _ => throw new ArgumentOutOfRangeException(nameof(key))
+            };
+
+            value = customPalette.Get(tone).ToAvaloniaColor();
+            return true;
+        }
+
+        var dynamicScheme = isDark ? _darkScheme : _lightScheme;
         value = (key.Value.Token switch
         {
             SysColorToken.Background => dynamicScheme.Background,
@@ -94,10 +146,6 @@ internal sealed class MaterialColorScheme(ColorScheme scheme)
             SysColorToken.TertiaryFixedDim => dynamicScheme.TertiaryFixedDim,
             SysColorToken.OnTertiaryFixed => dynamicScheme.OnTertiaryFixed,
             SysColorToken.OnTertiaryFixedVariant => dynamicScheme.OnTertiaryFixedVariant,
-            SysColorToken.Custom => throw new ArgumentOutOfRangeException(nameof(key)),
-            SysColorToken.OnCustom => throw new ArgumentOutOfRangeException(nameof(key)),
-            SysColorToken.CustomContainer => throw new ArgumentOutOfRangeException(nameof(key)),
-            SysColorToken.OnCustomContainer => throw new ArgumentOutOfRangeException(nameof(key)),
             _ => throw new ArgumentOutOfRangeException(nameof(key))
         }).ToAvaloniaColor();
 

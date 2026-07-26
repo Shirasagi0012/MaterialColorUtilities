@@ -1,9 +1,9 @@
 using Avalonia;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Styling;
-using DesignTokens;
 using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.Avalonia.Tokens;
 
@@ -21,11 +21,19 @@ public class MdSysColorExtension
 
     public ThemeVariant? Theme { get; set; }
 
-    public object ProvideValue(IServiceProvider serviceProvider)
+    /// <summary>
+    /// Names the <see cref="CustomColor"/> to resolve against. Required for the
+    /// <see cref="SysColorToken.Custom"/>, <see cref="SysColorToken.OnCustom"/>,
+    /// <see cref="SysColorToken.CustomContainer"/> and <see cref="SysColorToken.OnCustomContainer"/>
+    /// tokens, and ignored for every other token.
+    /// </summary>
+    public string? CustomKey { get; set; }
+
+    public BindingBase ProvideValue(IServiceProvider serviceProvider)
     {
         var observable = TokenExtensionHelper<Color, SysColorTokenKey, MaterialColorSchemeHost>.ProvideObservable(
             serviceProvider,
-            new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(Token)),
+            new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(Token, CustomKey)),
             Theme,
             Colors.Transparent);
 

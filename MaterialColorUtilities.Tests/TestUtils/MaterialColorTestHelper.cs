@@ -6,7 +6,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.XamlIl.Runtime;
 using Avalonia.Media;
 using Avalonia.Styling;
-using DesignTokens;
 using MaterialColorUtilities.Avalonia;
 using MaterialColorUtilities.Avalonia.Tokens;
 using Xunit;
@@ -25,18 +24,47 @@ internal static class MaterialColorTestHelper
         return element.GetValue(MaterialColorSchemeHost.SysColorHostProperty);
     }
 
-    internal static Color ResolveSys(ColorScheme scheme, SysColorToken token, ThemeVariant themeVariant)
+    internal static Color ResolveSys(
+        ColorScheme scheme,
+        SysColorToken token,
+        ThemeVariant themeVariant,
+        string? customKey = null
+    )
     {
-        _ = (new MaterialColorScheme(scheme) as ITokenResolver<Color, SysColorTokenKey>).TryResolve(
-            new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(token)), themeVariant, null, out var color);
+        _ = TryResolveSys(scheme, token, themeVariant, customKey, out var color);
         return color;
     }
 
-    internal static Color ResolveRef(ColorScheme scheme, RefPaletteToken palette, byte tone)
+    internal static bool TryResolveSys(
+        ColorScheme scheme,
+        SysColorToken token,
+        ThemeVariant themeVariant,
+        string? customKey,
+        out Color color
+    )
     {
-        _ = (new MaterialColorScheme(scheme) as ITokenResolver<Color, RefPaletteTokenKey>).TryResolve(
-            new TokenKey<Color, RefPaletteTokenKey>(new RefPaletteTokenKey(palette, tone)), ThemeVariant.Light, null, out var color);
+        return (new MaterialColorScheme(scheme) as ITokenResolver<Color, SysColorTokenKey>).TryResolve(
+            new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(token, customKey)), themeVariant, null,
+            out color);
+    }
+
+    internal static Color ResolveRef(ColorScheme scheme, RefPaletteToken palette, byte tone, string? customKey = null)
+    {
+        _ = TryResolveRef(scheme, palette, tone, customKey, out var color);
         return color;
+    }
+
+    internal static bool TryResolveRef(
+        ColorScheme scheme,
+        RefPaletteToken palette,
+        byte tone,
+        string? customKey,
+        out Color color
+    )
+    {
+        return (new MaterialColorScheme(scheme) as ITokenResolver<Color, RefPaletteTokenKey>).TryResolve(
+            new TokenKey<Color, RefPaletteTokenKey>(new RefPaletteTokenKey(palette, tone, customKey)),
+            ThemeVariant.Light, null, out color);
     }
 
     internal static BindingBase CreateBinding(

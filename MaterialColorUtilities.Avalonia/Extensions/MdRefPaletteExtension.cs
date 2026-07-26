@@ -1,9 +1,9 @@
 using Avalonia;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Styling;
-using DesignTokens;
 using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.Avalonia.Tokens;
 
@@ -31,11 +31,17 @@ public class MdRefPaletteExtension
 
     public ThemeVariant? Theme { get; set; }
 
-    public object ProvideValue(IServiceProvider serviceProvider)
+    /// <summary>
+    /// Names the <see cref="CustomColor"/> whose tonal palette to read. Required for
+    /// <see cref="RefPaletteToken.Custom"/>, and ignored for every other palette.
+    /// </summary>
+    public string? CustomKey { get; set; }
+
+    public BindingBase ProvideValue(IServiceProvider serviceProvider)
     {
         var observable = TokenExtensionHelper<Color, RefPaletteTokenKey, MaterialColorSchemeHost>.ProvideObservable(
             serviceProvider,
-            new TokenKey<Color, RefPaletteTokenKey>(new RefPaletteTokenKey(Palette, Tone)),
+            new TokenKey<Color, RefPaletteTokenKey>(new RefPaletteTokenKey(Palette, Tone, CustomKey)),
             Theme,
             Colors.Transparent);
 

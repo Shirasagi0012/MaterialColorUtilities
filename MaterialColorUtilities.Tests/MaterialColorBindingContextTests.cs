@@ -4,7 +4,6 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Styling;
-using DesignTokens;
 using MaterialColorUtilities.Avalonia;
 using MaterialColorUtilities.Avalonia.Tokens;
 using MaterialColorUtilities.Tests.Avalonia.TestUtils;

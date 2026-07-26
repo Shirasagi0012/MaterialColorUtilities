@@ -1,15 +1,21 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Media;
+using Avalonia.Metadata;
 using Avalonia.Styling;
 using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.HCT;
+using MaterialColorUtilities.Palettes;
 using MaterialColorUtilities.Utils;
 
 namespace MaterialColorUtilities.Avalonia;
 
 using DynamicColors;
 using global::Avalonia.Data;
+using Blend = MaterialColorUtilities.Blend.Blend;
 
 public abstract class ColorScheme : AvaloniaObject
 {
@@ -28,9 +34,12 @@ public abstract class ColorScheme : AvaloniaObject
     public static readonly StyledProperty<DynamicScheme.Platform> PlatformProperty =
         AvaloniaProperty.Register<ColorScheme, DynamicScheme.Platform>(nameof(Platform), DynamicScheme.DefaultPlatform);
 
+    private readonly AvaloniaList<CustomColor> _customColors = [];
+
     protected ColorScheme()
     {
         PropertyChanged += OnPropertyChangedInternal;
+        _customColors.CollectionChanged += OnCustomColorsChanged;
     }
 
     protected ColorScheme(BindingBase binding) : this()
@@ -77,7 +86,49 @@ public abstract class ColorScheme : AvaloniaObject
         set => SetValue(PlatformProperty, value);
     }
 
+    /// <summary>
+    /// Named key colors contributed on top of the generated scheme. Declared inline in XAML:
+    /// <code>
+    /// &lt;mcu:TonalSpotScheme Color="#6750A4"&gt;
+    ///     &lt;mcu:CustomColor Name="Brand" Color="#FF5722" /&gt;
+    /// &lt;/mcu:TonalSpotScheme&gt;
+    /// </code>
+    /// </summary>
+    [Content]
+    public AvaloniaList<CustomColor> CustomColors => _customColors;
+
     public abstract DynamicScheme CreateScheme(ThemeVariant theme);
+
+    /// <summary>
+    /// Builds one tonal palette per named custom color, harmonizing toward the scheme's source
+    /// color where requested. Entries without a name or seed color are skipped; a duplicate name
+    /// keeps the last declaration.
+    /// </summary>
+    internal IReadOnlyDictionary<string, TonalPalette> CreateCustomPalettes()
+    {
+        if (_customColors.Count == 0)
+            return EmptyCustomPalettes;
+
+        var seed = Color is { } sourceColor ? ArgbColor.FromAvaloniaColor(sourceColor) : (ArgbColor?)null;
+        var palettes = new Dictionary<string, TonalPalette>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var custom in _customColors)
+        {
+            if (string.IsNullOrEmpty(custom.Name) || custom.Color is not { } customColor)
+                continue;
+
+            var argb = ArgbColor.FromAvaloniaColor(customColor);
+            if (custom.Harmonize && seed is { } source)
+                argb = Blend.Harmonize(argb, source);
+
+            palettes[custom.Name] = new TonalPalette(Hct.From(argb));
+        }
+
+        return palettes;
+    }
+
+    private static readonly IReadOnlyDictionary<string, TonalPalette> EmptyCustomPalettes =
+        new Dictionary<string, TonalPalette>(StringComparer.OrdinalIgnoreCase);
 
     protected Hct ResolveSeedHct()
     {
@@ -105,6 +156,26 @@ public abstract class ColorScheme : AvaloniaObject
     {
         if (e.Property == ColorProperty || e.Property == ContrastLevelProperty || e.Property == SpecVersionProperty ||
             e.Property == PlatformProperty)
+            OnSchemeChanged();
+    }
+
+    private void OnCustomColorsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.OldItems is { } removed)
+            foreach (CustomColor custom in removed)
+                custom.PropertyChanged -= OnCustomColorPropertyChanged;
+
+        if (e.NewItems is { } added)
+            foreach (CustomColor custom in added)
+                custom.PropertyChanged += OnCustomColorPropertyChanged;
+
+        OnSchemeChanged();
+    }
+
+    private void OnCustomColorPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == CustomColor.NameProperty || e.Property == CustomColor.ColorProperty ||
+            e.Property == CustomColor.HarmonizeProperty)
             OnSchemeChanged();
     }
 

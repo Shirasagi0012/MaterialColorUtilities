@@ -30,7 +30,6 @@
 
     <ItemGroup>
         <PackageReference Include="Avalonia"/>
-        <PackageReference Include="DesignTokens.Avalonia"/>
         <PackageReference Include="JetBrains.Annotations" />
     </ItemGroup>
 

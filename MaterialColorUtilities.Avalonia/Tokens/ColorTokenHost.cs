@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Media;
-using DesignTokens;
 
 namespace MaterialColorUtilities.Avalonia.Tokens;
 
