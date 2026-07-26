@@ -1,7 +1,6 @@
-using Avalonia;
+using System;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Styling;
 using MaterialColorUtilities.Avalonia.Helpers;
@@ -9,6 +8,9 @@ using MaterialColorUtilities.Avalonia.Tokens;
 
 namespace MaterialColorUtilities.Avalonia;
 
+/// <summary>
+/// Resolves a Material 3 system color role against the scheme in scope at the target element.
+/// </summary>
 public class MdSysColorExtension
 {
     public MdSysColorExtension(SysColorToken token)
@@ -19,6 +21,10 @@ public class MdSysColorExtension
     [ConstructorArgument("token")]
     public SysColorToken Token { get; set; }
 
+    /// <summary>
+    /// Pins the theme variant. When unset, the role follows the target element's
+    /// <c>ActualThemeVariant</c> and re-resolves as it changes.
+    /// </summary>
     public ThemeVariant? Theme { get; set; }
 
     /// <summary>
@@ -31,17 +37,12 @@ public class MdSysColorExtension
 
     public BindingBase ProvideValue(IServiceProvider serviceProvider)
     {
-        var observable = TokenExtensionHelper<Color, SysColorTokenKey, MaterialColorSchemeHost>.ProvideObservable(
-            serviceProvider,
-            new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(Token, CustomKey)),
-            Theme,
-            Colors.Transparent);
+        return ColorTokenBinding.SysColor(Token, CustomKey, Theme, ShouldProvideBrush(serviceProvider));
+    }
 
-        if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget target
-            && MaterialMarkupExtensionHelper.ShouldProvideBrush(target))
-            return new ColorToBrushObservable(observable)
-                .ToBinding();
-
-        return observable.ToBinding();
+    internal static bool ShouldProvideBrush(IServiceProvider serviceProvider)
+    {
+        return serviceProvider.GetService(typeof(IProvideValueTarget)) is not IProvideValueTarget target
+               || MaterialMarkupExtensionHelper.ShouldProvideBrush(target);
     }
 }

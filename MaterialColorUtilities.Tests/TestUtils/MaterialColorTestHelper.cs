@@ -14,14 +14,9 @@ namespace MaterialColorUtilities.Tests.Avalonia.TestUtils;
 
 internal static class MaterialColorTestHelper
 {
-    internal static ITokenResolver<Color, RefPaletteTokenKey>? GetRefPaletteTokenResolver(AvaloniaObject element)
+    internal static ResolvedColorScheme? GetResolvedScheme(AvaloniaObject element)
     {
-        return element.GetValue(MaterialColorSchemeHost.RefPaletteHostProperty);
-    }
-
-    internal static ITokenResolver<Color, SysColorTokenKey>? GetSysColorTokenResolver(AvaloniaObject element)
-    {
-        return element.GetValue(MaterialColorSchemeHost.SysColorHostProperty);
+        return MaterialColor.GetResolvedScheme(element);
     }
 
     internal static Color ResolveSys(
@@ -31,8 +26,7 @@ internal static class MaterialColorTestHelper
         string? customKey = null
     )
     {
-        _ = TryResolveSys(scheme, token, themeVariant, customKey, out var color);
-        return color;
+        return new ResolvedColorScheme(scheme).GetColor(token, themeVariant, customKey);
     }
 
     internal static bool TryResolveSys(
@@ -43,15 +37,13 @@ internal static class MaterialColorTestHelper
         out Color color
     )
     {
-        return (new MaterialColorScheme(scheme) as ITokenResolver<Color, SysColorTokenKey>).TryResolve(
-            new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(token, customKey)), themeVariant, null,
-            out color);
+        return new ResolvedColorScheme(scheme)
+            .TryGetColor(token, ColorScheme.IsDark(themeVariant), customKey, out color);
     }
 
     internal static Color ResolveRef(ColorScheme scheme, RefPaletteToken palette, byte tone, string? customKey = null)
     {
-        _ = TryResolveRef(scheme, palette, tone, customKey, out var color);
-        return color;
+        return new ResolvedColorScheme(scheme).GetPaletteColor(palette, tone, customKey);
     }
 
     internal static bool TryResolveRef(
@@ -62,9 +54,7 @@ internal static class MaterialColorTestHelper
         out Color color
     )
     {
-        return (new MaterialColorScheme(scheme) as ITokenResolver<Color, RefPaletteTokenKey>).TryResolve(
-            new TokenKey<Color, RefPaletteTokenKey>(new RefPaletteTokenKey(palette, tone, customKey)),
-            ThemeVariant.Light, null, out color);
+        return new ResolvedColorScheme(scheme).TryGetPaletteColor(palette, tone, customKey, out color);
     }
 
     internal static BindingBase CreateBinding(
@@ -84,24 +74,6 @@ internal static class MaterialColorTestHelper
             MdRefPaletteExtension palette => palette.ProvideValue(services),
             _ => throw new ArgumentOutOfRangeException(nameof(extension))
         });
-    }
-}
-
-internal sealed class RecordingColorObserver : IObserver<Color>
-{
-    public List<Color> Values { get; } = [];
-
-    public void OnCompleted()
-    {
-    }
-
-    public void OnError(Exception error)
-    {
-    }
-
-    public void OnNext(Color value)
-    {
-        Values.Add(value);
     }
 }
 

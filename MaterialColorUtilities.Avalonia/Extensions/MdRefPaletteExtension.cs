@@ -1,14 +1,15 @@
-using Avalonia;
+using System;
 using Avalonia.Data;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using Avalonia.Metadata;
-using Avalonia.Styling;
-using MaterialColorUtilities.Avalonia.Helpers;
 using MaterialColorUtilities.Avalonia.Tokens;
 
 namespace MaterialColorUtilities.Avalonia;
 
+/// <summary>
+/// Resolves a tone from one of the reference tonal palettes of the scheme in scope at the target
+/// element. Reference palettes derive from the seed color alone, so they do not vary with the
+/// theme variant.
+/// </summary>
 public class MdRefPaletteExtension
 {
     public MdRefPaletteExtension(RefPaletteToken palette, byte tone)
@@ -29,8 +30,6 @@ public class MdRefPaletteExtension
             : throw new ArgumentOutOfRangeException(nameof(value), "Tone must be in range 0..100.");
     } = 40;
 
-    public ThemeVariant? Theme { get; set; }
-
     /// <summary>
     /// Names the <see cref="CustomColor"/> whose tonal palette to read. Required for
     /// <see cref="RefPaletteToken.Custom"/>, and ignored for every other palette.
@@ -39,19 +38,10 @@ public class MdRefPaletteExtension
 
     public BindingBase ProvideValue(IServiceProvider serviceProvider)
     {
-        var observable = TokenExtensionHelper<Color, RefPaletteTokenKey, MaterialColorSchemeHost>.ProvideObservable(
-            serviceProvider,
-            new TokenKey<Color, RefPaletteTokenKey>(new RefPaletteTokenKey(Palette, Tone, CustomKey)),
-            Theme,
-            Colors.Transparent);
-
-
-        if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget target
-            && MaterialMarkupExtensionHelper.ShouldProvideBrush(target))
-            return new ColorToBrushObservable(observable)
-                .ToBinding();
-
-        return observable
-            .ToBinding();
+        return ColorTokenBinding.RefPalette(
+            Palette,
+            Tone,
+            CustomKey,
+            MdSysColorExtension.ShouldProvideBrush(serviceProvider));
     }
 }

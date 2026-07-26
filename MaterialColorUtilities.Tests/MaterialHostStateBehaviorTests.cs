@@ -14,50 +14,67 @@ namespace MaterialColorUtilities.Tests.Avalonia;
 public class MaterialColorResolverLifecycleTests
 {
     [AvaloniaFact]
-    public void SchemeInputChange_ReplacesResolverSnapshot()
+    public void SchemeInputChange_ReplacesTheSnapshot()
     {
         var target = new Border();
         var scheme = new TonalSpotScheme(Colors.Red);
         MaterialColor.SetScheme(target, scheme);
 
-        var initialRefPaletteTokenResolver = MaterialColorTestHelper.GetRefPaletteTokenResolver(target);
-        var initialSysColorTokenResolver = MaterialColorTestHelper.GetSysColorTokenResolver(target);
+        var initial = MaterialColorTestHelper.GetResolvedScheme(target);
 
         scheme.Color = Colors.Blue;
 
-        var updatedRefPaletteTokenResolver = MaterialColorTestHelper.GetRefPaletteTokenResolver(target);
-        var updatedSysColorTokenResolver = MaterialColorTestHelper.GetSysColorTokenResolver(target);
+        var updated = MaterialColorTestHelper.GetResolvedScheme(target);
 
-        Assert.NotNull(initialRefPaletteTokenResolver);
-        Assert.NotNull(initialSysColorTokenResolver);
-        Assert.NotNull(updatedRefPaletteTokenResolver);
-        Assert.NotNull(updatedSysColorTokenResolver);
-        Assert.NotSame(initialRefPaletteTokenResolver, updatedRefPaletteTokenResolver);
-        Assert.NotSame(initialSysColorTokenResolver, updatedSysColorTokenResolver);
+        Assert.NotNull(initial);
+        Assert.NotNull(updated);
+        Assert.NotSame(initial, updated);
     }
 
     [AvaloniaFact]
-    public void ApplicationResolver_IsUsedWhenLocalSchemeMissing()
+    public void Snapshot_IsInheritedByDescendants()
+    {
+        var child = new Border();
+        var root = new ThemeVariantScope { Child = child };
+        MaterialColor.SetScheme(root, new TonalSpotScheme(Colors.Red));
+
+        Assert.NotNull(MaterialColorTestHelper.GetResolvedScheme(child));
+        Assert.Same(
+            MaterialColorTestHelper.GetResolvedScheme(root),
+            MaterialColorTestHelper.GetResolvedScheme(child));
+    }
+
+    [AvaloniaFact]
+    public void ApplicationScheme_IsUsedWhenTheTargetInheritsNothing()
     {
         var application = Assert.IsType<HeadlessTestApplication>(Application.Current);
         var scheme = new TonalSpotScheme(Colors.Red);
         MaterialColor.SetScheme(application, scheme);
 
-        var target = new Border();
-        var binding = MaterialColorTestHelper.CreateBinding(
-            new MdSysColorExtension(SysColorToken.Primary),
-            target,
-            Border.BackgroundProperty);
+        try
+        {
+            var target = new Border();
+            var binding = MaterialColorTestHelper.CreateBinding(
+                new MdSysColorExtension(SysColorToken.Primary),
+                target,
+                Border.BackgroundProperty);
 
-        target.Bind(Border.BackgroundProperty, binding);
+            target.Bind(Border.BackgroundProperty, binding);
 
-        Assert.Equal(
-            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Light),
-            Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
+            Assert.Equal(
+                MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Light),
+                Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
+        }
+        finally
+        {
+            // The application outlives the test; leaving a scheme on it would leak into the
+            // fallback path of every later test.
+            MaterialColor.SetScheme(application, null);
+        }
     }
 
     [AvaloniaFact]
-    public void ClearingScheme_RemovesResolversAndFallsBackToTransparent()
+    public void ClearingScheme_RemovesTheSnapshotAndFallsBackToTransparent()
     {
         var target = new Border();
         MaterialColor.SetScheme(target, new TonalSpotScheme(Colors.Red));
@@ -71,8 +88,7 @@ public class MaterialColorResolverLifecycleTests
         target.Bind(Border.BackgroundProperty, binding);
         MaterialColor.SetScheme(target, null);
 
-        Assert.Null(MaterialColorTestHelper.GetRefPaletteTokenResolver(target));
-        Assert.Null(MaterialColorTestHelper.GetSysColorTokenResolver(target));
+        Assert.Null(MaterialColorTestHelper.GetResolvedScheme(target));
         Assert.Equal(Colors.Transparent, Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
     }
 }

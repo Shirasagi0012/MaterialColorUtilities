@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Media;
@@ -14,32 +13,7 @@ namespace MaterialColorUtilities.Tests.Avalonia;
 public class MaterialColorBindingIntegrationTests
 {
     [AvaloniaFact]
-    public void CreateObservable_UsesCapturedProviderOwner()
-    {
-        var owner = new ThemeVariantScope
-        {
-            RequestedThemeVariant = ThemeVariant.Light
-        };
-        var scheme = new TonalSpotScheme(Colors.Red);
-        MaterialColor.SetScheme(owner, scheme);
-
-        var provider = new ResourceDictionary();
-        ((IResourceProvider)provider).AddOwner(owner);
-
-        var observer = new RecordingColorObserver();
-        var context = TokenBinding.CaptureContext(new TestParentStackProvider([provider, owner]), null, null);
-        using var subscription = TokenBinding
-            .CreateObservable<Color, SysColorTokenKey, MaterialColorSchemeHost>(context, new TokenKey<Color, SysColorTokenKey>(new SysColorTokenKey(SysColorToken.Primary)),
-                Colors.Transparent)
-            .Subscribe(observer);
-
-        Assert.Equal(
-            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Light),
-            observer.Values[^1]);
-    }
-
-    [AvaloniaFact]
-    public void MdSysColor_ProvideValue_BindsBrushTargetsAndRefreshesOnSchemeChange()
+    public void MdSysColor_ResolvesAgainstTheTargetsOwnScheme()
     {
         var target = new Border();
         var scheme = new TonalSpotScheme(Colors.Red);
@@ -65,41 +39,112 @@ public class MaterialColorBindingIntegrationTests
     }
 
     [AvaloniaFact]
-    public void MdSysColor_ProvideValue_BindsColorTargetsAndHonorsExplicitTheme()
+    public void MdSysColor_InheritsTheSchemeFromAnAncestor()
     {
-        var owner = new ThemeVariantScope
-        {
-            RequestedThemeVariant = ThemeVariant.Light
-        };
+        var target = new Border();
+        var root = new ThemeVariantScope { Child = target };
         var scheme = new TonalSpotScheme(Colors.Red);
-        MaterialColor.SetScheme(owner, scheme);
+        MaterialColor.SetScheme(root, scheme);
 
-        var brush = new SolidColorBrush();
         var binding = MaterialColorTestHelper.CreateBinding(
-            new MdSysColorExtension(SysColorToken.Primary)
-            {
-                Theme = ThemeVariant.Dark
-            },
-            brush,
-            SolidColorBrush.ColorProperty,
-            owner);
+            new MdSysColorExtension(SysColorToken.Primary),
+            target,
+            Border.BackgroundProperty,
+            root);
 
-        brush.Bind(SolidColorBrush.ColorProperty, binding);
+        target.Bind(Border.BackgroundProperty, binding);
 
         Assert.Equal(
-            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Dark),
-            brush.Color);
-
-        owner.RequestedThemeVariant = ThemeVariant.Dark;
-        scheme.Color = Colors.Blue;
-
-        Assert.Equal(
-            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Dark),
-            brush.Color);
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Light),
+            Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
     }
 
     [AvaloniaFact]
-    public void MdRefPalette_ProvideValue_BindsBrushTargetsAndRefreshesOnSchemeChange()
+    public void MdSysColor_FollowsTheTargetsActualThemeVariant()
+    {
+        var target = new Border();
+        var root = new ThemeVariantScope
+        {
+            Child = target,
+            RequestedThemeVariant = ThemeVariant.Light
+        };
+        var scheme = new TonalSpotScheme(Colors.Red);
+        MaterialColor.SetScheme(root, scheme);
+
+        var binding = MaterialColorTestHelper.CreateBinding(
+            new MdSysColorExtension(SysColorToken.Primary),
+            target,
+            Border.BackgroundProperty,
+            root);
+
+        target.Bind(Border.BackgroundProperty, binding);
+
+        Assert.Equal(
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Light),
+            Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
+
+        root.RequestedThemeVariant = ThemeVariant.Dark;
+
+        Assert.Equal(
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Dark),
+            Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
+    }
+
+    [AvaloniaFact]
+    public void MdSysColor_HonorsAnExplicitlyPinnedVariant()
+    {
+        var target = new Border();
+        var root = new ThemeVariantScope
+        {
+            Child = target,
+            RequestedThemeVariant = ThemeVariant.Light
+        };
+        var scheme = new TonalSpotScheme(Colors.Red);
+        MaterialColor.SetScheme(root, scheme);
+
+        var binding = MaterialColorTestHelper.CreateBinding(
+            new MdSysColorExtension(SysColorToken.Primary) { Theme = ThemeVariant.Dark },
+            target,
+            Border.BackgroundProperty,
+            root);
+
+        target.Bind(Border.BackgroundProperty, binding);
+
+        Assert.Equal(
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Dark),
+            Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
+
+        // A pinned variant ignores the ambient one, in both directions.
+        root.RequestedThemeVariant = ThemeVariant.Dark;
+
+        Assert.Equal(
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Dark),
+            Assert.IsType<ImmutableSolidColorBrush>(target.Background).Color);
+    }
+
+    [AvaloniaFact]
+    public void MdSysColor_ResolvesColorTargetsWithoutWrappingInABrush()
+    {
+        var target = new Border();
+        var scheme = new TonalSpotScheme(Colors.Red);
+        MaterialColor.SetScheme(target, scheme);
+
+        // A Color-typed target property makes the extension yield a Color rather than a brush.
+        var binding = MaterialColorTestHelper.CreateBinding(
+            new MdSysColorExtension(SysColorToken.Primary),
+            target,
+            SolidColorBrush.ColorProperty,
+            target);
+
+        target.Bind(Border.TagProperty, binding);
+
+        Assert.Equal(
+            MaterialColorTestHelper.ResolveSys(scheme, SysColorToken.Primary, ThemeVariant.Light),
+            Assert.IsType<Color>(target.Tag));
+    }
+
+    [AvaloniaFact]
+    public void MdRefPalette_ResolvesToneAndRefreshesOnSchemeChange()
     {
         var target = new Border();
         var scheme = new TonalSpotScheme(Colors.Red);
