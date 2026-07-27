@@ -184,8 +184,22 @@ public abstract class ColorScheme : AvaloniaObject
         SchemeChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public static bool IsDark(ThemeVariant variant)
+    /// <summary>
+    /// Whether a theme variant resolves to dark, following <see cref="ThemeVariant.InheritVariant" />
+    /// for custom variants. Anything that resolves to neither light nor dark is treated as light.
+    /// </summary>
+    /// <param name="variant">
+    /// The variant, which may be null. The obvious argument here is an element's
+    /// <c>ActualThemeVariant</c>, and that property is typed non-nullable but registered without a
+    /// default — so it reads null both before the element's first attach and while it is being
+    /// detached. Callers get no nullable warning to tell them so; accepting null here is what keeps
+    /// the straightforward call from throwing at teardown.
+    /// </param>
+    public static bool IsDark(ThemeVariant? variant)
     {
+        if (variant is null)
+            return false;
+
         if (variant == ThemeVariant.Dark)
             return true;
 

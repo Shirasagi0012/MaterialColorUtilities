@@ -79,7 +79,7 @@ public sealed class ResolvedColorScheme
     }
 
     /// <inheritdoc cref="GetColor(SysColorToken, bool, string?)" />
-    public Color GetColor(SysColorToken token, ThemeVariant variant, string? customKey = null)
+    public Color GetColor(SysColorToken token, ThemeVariant? variant, string? customKey = null)
     {
         return GetColor(token, ColorScheme.IsDark(variant), customKey);
     }
