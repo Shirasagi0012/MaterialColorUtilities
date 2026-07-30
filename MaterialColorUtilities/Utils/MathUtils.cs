@@ -90,4 +90,21 @@ public static class MathUtils
     {
         return 180.0 - Math.Abs(Math.Abs(a - b) - 180.0);
     }
+
+    /// <summary>
+    /// Clamps a floating-point value between two bounds.
+    /// </summary>
+    /// <param name="min">Lower bound.</param>
+    /// <param name="max">Upper bound.</param>
+    /// <param name="input">Value to clamp.</param>
+    /// <returns><paramref name="input"/> when it is within the bounds, otherwise the nearest bound.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static double ClampDouble(double min, double max, double input)
+    {
+        if (input < min)
+            return min;
+        if (input > max)
+            return max;
+        return input;
+    }
 }

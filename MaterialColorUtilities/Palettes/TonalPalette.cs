@@ -145,7 +145,9 @@ public class TonalPalette
         }
         else
         {
-            var argb = Hct.From(Hue, Chroma, tone).Argb;
+            var argb = tone == 99 && Hct.IsYellow(Hue)
+                ? AverageArgb(Get(98), Get(100))
+                : Hct.From(Hue, Chroma, tone).Argb;
             _cache[tone] = argb;
             return argb;
         }
@@ -153,6 +155,9 @@ public class TonalPalette
 
     public Hct GetHct(double tone)
     {
+        if (tone == 99.0 && Hct.IsYellow(Hue))
+            return Hct.From(Get(99));
+
         if (tone == Math.Truncate(tone) && tone is >= int.MinValue and <= int.MaxValue)
         {
             var toneKey = (int)tone;
@@ -167,6 +172,14 @@ public class TonalPalette
         }
 
         return Hct.From(Hue, Chroma, tone);
+    }
+
+    private static ArgbColor AverageArgb(ArgbColor argb1, ArgbColor argb2)
+    {
+        var red = (int)Math.Round((argb1.Red + argb2.Red) / 2.0, MidpointRounding.AwayFromZero);
+        var green = (int)Math.Round((argb1.Green + argb2.Green) / 2.0, MidpointRounding.AwayFromZero);
+        var blue = (int)Math.Round((argb1.Blue + argb2.Blue) / 2.0, MidpointRounding.AwayFromZero);
+        return new ArgbColor(255, (byte)(red & 255), (byte)(green & 255), (byte)(blue & 255));
     }
 
     override public string ToString()

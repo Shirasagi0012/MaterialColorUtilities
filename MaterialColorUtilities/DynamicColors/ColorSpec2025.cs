@@ -585,11 +585,9 @@ public class ColorSpec2025 : ColorSpec2021
                             return TMaxC(
                                 s.PrimaryPalette,
                                 0.0,
-                                Hct.IsYellow(s.PrimaryPalette.Hue)
-                                    ? 25.0
-                                    : Hct.IsCyan(s.PrimaryPalette.Hue)
-                                        ? 88.0
-                                        : 98.0
+                                s.IsDark
+                                    ? Hct.IsCyan(s.PrimaryPalette.Hue) ? 88.0 : 98.0
+                                    : Hct.IsYellow(s.PrimaryPalette.Hue) ? 25.0 : 98.0
                             );
 
                         return TMaxC(s.PrimaryPalette);
@@ -694,7 +692,7 @@ public class ColorSpec2025 : ColorSpec2021
                     if (s.Variant == Variant.Expressive)
                     {
                         if (s.IsDark)
-                            return TMaxC(s.PrimaryPalette, 30.0, 93.0);
+                            return TMinC(s.PrimaryPalette, 30.0, 93.0);
 
                         return TMaxC(
                             s.PrimaryPalette,
@@ -1491,6 +1489,13 @@ public class ColorSpec2025 : ColorSpec2021
         var palette = color.Palette(scheme);
         var tone = GetTone(scheme, color);
         var chromaMultiplier = color.ChromaMultiplier?.Invoke(scheme) ?? 1.0;
+
+        if (chromaMultiplier == 1.0)
+            return palette.GetHct(tone);
+
+        if (tone == 99.0 && Hct.IsYellow(palette.Hue))
+            return new TonalPalette(palette.Hue, palette.Chroma * chromaMultiplier).GetHct(tone);
+
         return Hct.From(palette.Hue, palette.Chroma * chromaMultiplier, tone);
     }
 

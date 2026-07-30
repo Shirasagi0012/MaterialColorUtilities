@@ -33,7 +33,7 @@ Most parts of material-color-utilities (except CorePalette, which is labeled as 
 This project support all color schemes from original Material Design 3 and Material 3 Expressive. Watch variant is also ported.
 
 Synced with upstream commit:
-[91da30d](https://github.com/material-foundation/material-color-utilities/commit/91da30d89e70c3dc9575ec71a1ebe8874d881f29)
+[ec7c4da](https://github.com/material-foundation/material-color-utilities/commit/ec7c4da3e0774264275377cd6b7687474bad577a)
 
 ⚠️ This library is **not yet** ready for production use.
 
