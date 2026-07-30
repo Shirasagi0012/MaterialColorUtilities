@@ -14,7 +14,7 @@ schemes based on dynamic inputs like a user’s wallpaper. This enables greater
 flexibility, personalization, and expression, all while streamlining work for
 designers and teams.
 
-Material Color Ultilities (MCU) powers dynamic color with a set of color
+Material Color Utilities (MCU) powers dynamic color with a set of color
 libraries containing algorithms and utilities that make it easier for you to
 develop color themes and schemes in your app.
 
@@ -41,7 +41,7 @@ Synced with upstream commit:
 
 ### Core libs
 
-Most API are identical to original implementation. There are some differences:
+Most APIs are identical to the original implementation. There are some differences:
 
 - For convenience, this library uses ArgbColor struct to represent a color, instead of an int as the original implementation does.
 
@@ -49,9 +49,9 @@ Most API are identical to original implementation. There are some differences:
 
 #### Setup
 
-There are a separate project for Avalonia app to use, which give you ability to directly define a dynamic scheme in XAML with no C# code needed, and easy access to material color tokens with markup extensions. Seed color can be bind to a property, or a dynamic resource. The binding layer is powered by `DesignTokens.Avalonia`.
+There is a separate Avalonia integration project that lets you define a dynamic scheme in XAML without C# code and access Material color tokens with markup extensions. The seed color can be bound to a property or a dynamic resource. The integration uses its own attached-property and immutable-snapshot binding layer; it does not depend on `DesignTokens.Avalonia`.
 
-To setup a dynamic scheme, just set an attached property `MaterialColor.Scheme` with your preferred scheme. Set to Application will apply to the whole app. The scheme will inherit to all element down the logical tree.
+To set up a dynamic scheme, set the attached `MaterialColor.Scheme` property to your preferred scheme. The scheme is an authoring input and is not inherited itself. MCU creates a `ResolvedColorScheme` snapshot and publishes it through the inherited `MaterialColor.ResolvedScheme` property; descendants and color bindings consume that snapshot. Setting the scheme on `Application` provides an application-level fallback for elements that do not have a nearer scheme.
 
 ```xml
 <Application>
@@ -67,6 +67,13 @@ Thanks to Avalonia's ability to use any type for markup extensions, the XAML can
 <Border mcu:MaterialColor.Scheme="{mcu:TonalSpotScheme {Binding ThemeColor}}" />
 ```
 
+`ColorScheme` is the mutable, bindable authoring object. When it changes, MCU replaces the
+immutable `ResolvedColorScheme` snapshot exposed through the inherited
+`MaterialColor.ResolvedScheme` attached property. Applications that integrate MCU into another
+theme system can publish a snapshot directly with `MaterialColor.SetResolvedScheme(...)` and can
+read resolved roles or palettes through `ResolvedColorScheme.GetColor`, `GetBrush`, and
+`GetPaletteColor`.
+
 #### Color Extraction
 
 Currently color extract XAML markup extension is not implemented, but it will be here after some time.
@@ -78,15 +85,40 @@ Access Material 3 design tokens using strongly-typed markup extensions. These ex
 - `MdSysColor (SysColorToken token)`
 - `MdRefPalette (RefPaletteToken palette, byte tone)`
 
+`MdSysColor` follows the target's `ActualThemeVariant` by default and supports the optional
+`Theme` property to pin light or dark resolution. `MdRefPalette` is seed-based and therefore does
+not have a theme parameter.
+
 ```xml
 <Border Background="{mcu:MdRefPalette Primary, 60}" Grid.Row="0">
     <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimary}">Primary</TextBlock>
 </Border>
 ```
 
-#### Custom & Extended Colors
+#### Custom Colors
 
-Currently custom color token and extended color token are not implemented, but it will be here after some time.
+Named custom colors are supported. Each `CustomColor` contributes a tonal palette and the four
+Material custom roles (`Custom`, `OnCustom`, `CustomContainer`, and `OnCustomContainer`). Custom
+colors may be harmonized toward the scheme's source color (the default) or kept exact.
+
+```xml
+<Panel>
+    <mcu:MaterialColor.Scheme>
+        <mcu:TonalSpotScheme Color="#6750A4">
+            <mcu:CustomColor Name="Brand" Color="#FF5722" />
+        </mcu:TonalSpotScheme>
+    </mcu:MaterialColor.Scheme>
+
+    <Border Background="{mcu:MdSysColor CustomContainer, CustomKey=Brand}">
+        <TextBlock Foreground="{mcu:MdSysColor OnCustomContainer, CustomKey=Brand}"
+                   Text="Brand" />
+    </Border>
+</Panel>
+```
+
+Use `MdRefPalette Custom` with `CustomKey` to read a tone from the named custom palette.
+
+The integration does not currently provide image-based color extraction.
 
 #### Theme Override
 
