@@ -21,7 +21,7 @@
         <PackageTags>avalonia;material-design;material;color;hct;tonal;dynamic-color</PackageTags>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <PackageOutputPath>$(MSBuildThisFileDirectory)..\artifacts</PackageOutputPath>
+        <PackageOutputPath>$(MSBuildThisFileDirectory)..\artifacts\packages</PackageOutputPath>
         <PackageProjectUrl>https://github.com/Shirasagi0012/MaterialColorUtilities</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Shirasagi0012/MaterialColorUtilities</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
