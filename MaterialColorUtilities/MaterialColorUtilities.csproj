@@ -12,7 +12,7 @@
 	
 	<PropertyGroup>
 		<PackageId>Shirasagi0012.MaterialColorUtilities</PackageId>
-		<Version>0.3.0-alpha</Version>
+		<Version>0.3.1-alpha</Version>
 		<Authors>Shirasagi0012</Authors>
 		<Description>.NET port of material-color-utilities by Google</Description>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
