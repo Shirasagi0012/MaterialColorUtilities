@@ -2,7 +2,9 @@ using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -244,11 +246,9 @@ public class GalleryCustomColorTests
         host.Window.RequestedThemeVariant = ThemeVariant.Dark;
         AssertRoles(editor, entry);
         Assert.NotEqual(light, BandColors(editor));
-        Assert.Equal("Current theme · Dark", editor.FindControl<TextBlock>("ThemeLabel")!.Text);
 
         host.Window.RequestedThemeVariant = new ThemeVariant("Dim", ThemeVariant.Dark);
         AssertRoles(editor, entry);
-        Assert.Equal("Current theme · Dark", editor.FindControl<TextBlock>("ThemeLabel")!.Text);
 
         var rolePreview = editor.FindControl<StackPanel>("RolePreview")!;
         rolePreview.Resources[new CustomColorKey("Brand", CustomColorRole.Color)] = Colors.Magenta;
@@ -267,7 +267,6 @@ public class GalleryCustomColorTests
 
         host.Window.RequestedThemeVariant = ThemeVariant.Light;
         AssertRoles(editor, entry);
-        Assert.Equal("Current theme · Light", editor.FindControl<TextBlock>("ThemeLabel")!.Text);
     }
 
     [AvaloniaFact]
@@ -304,8 +303,7 @@ public class GalleryCustomColorTests
             Assert.False(editors[0].FindControl<StackPanel>("EditorBody")!.IsVisible);
             Assert.True(editors[2].FindControl<StackPanel>("EditorBody")!.IsVisible);
 
-            var expand = editors[2].GetVisualDescendants().OfType<Button>()
-                .Single(button => AutomationProperties.GetName(button) == "Expand or collapse color");
+            var expand = editors[2].FindControl<Button>("ExpandButton")!;
             expand.Command!.Execute(expand.CommandParameter);
             Assert.False(model.CustomColors[2].IsExpanded);
             Assert.False(editors[2].FindControl<StackPanel>("EditorBody")!.IsVisible);
@@ -339,6 +337,96 @@ public class GalleryCustomColorTests
         Assert.Equal(4, bands[2].Bounds.Top - bands[1].Bounds.Bottom);
         Assert.Equal(0, bands[3].Bounds.Top - bands[2].Bounds.Bottom);
         Assert.Equal(196, editor.FindControl<StackPanel>("RolePreview")!.Bounds.Height);
+    }
+
+    [AvaloniaFact]
+    public void HarmonizeResultsStayInlineAtNarrowAndWideWidthsWithoutDescriptiveHeader()
+    {
+        var entry = new SchemePlaygroundViewModel().CustomColors[0];
+        entry.IsExpanded = true;
+        var editor = new CustomColorEditor { DataContext = entry };
+        using var host = Show(editor);
+        var row = editor.FindControl<Grid>("HarmonizeRow")!;
+        var label = editor.FindControl<TextBlock>("HarmonizeLabel")!;
+        var preview = editor.FindControl<StackPanel>("HarmonizedPreview")!;
+        var state = editor.FindControl<TextBlock>("HarmonizeStateLabel")!;
+        var toggle = editor.FindControl<ToggleSwitch>("HarmonizeToggle")!;
+        Assert.Same(row, preview.Parent);
+        Assert.Null(editor.FindControl<TextBlock>("ThemeLabel"));
+        Assert.DoesNotContain(editor.GetVisualDescendants().OfType<TextBlock>(), block => block.Text == "Role preview");
+
+        foreach (var theme in new[] { ThemeVariant.Light, ThemeVariant.Dark })
+        foreach (var width in new[] { 340d, 480d })
+        {
+            host.Window.RequestedThemeVariant = theme;
+            host.Window.Width = width;
+            foreach (var harmonize in new[] { true, false, true })
+            {
+                entry.Harmonize = harmonize;
+                host.Window.UpdateLayout();
+                Assert.Equal(harmonize, preview.IsVisible);
+                Assert.True(toggle.Bounds.Right <= row.Bounds.Width);
+                Assert.True(state.Bounds.Right <= toggle.Bounds.Left);
+                Assert.Equal(label.Bounds.Center.Y, toggle.Bounds.Center.Y, 0);
+                if (harmonize)
+                {
+                    Assert.InRange(preview.Bounds.Left - label.Bounds.Right, 7, 9);
+                    Assert.True(preview.Bounds.Right <= state.Bounds.Left);
+                    Assert.Equal(label.Bounds.Center.Y, preview.Bounds.Center.Y, 0);
+                }
+                AssertRoles(editor, entry);
+            }
+        }
+    }
+
+    [AvaloniaFact]
+    public void VectorIconButtonsExposeActionsAndSupportRepeatedKeyboardActivation()
+    {
+        var model = new SchemePlaygroundViewModel();
+        var entry = model.CustomColors[0];
+        var editor = new CustomColorEditor { DataContext = entry };
+        using var host = Show(editor);
+        var expand = editor.FindControl<Button>("ExpandButton")!;
+        var remove = editor.FindControl<Button>("RemoveButton")!;
+        var icon = editor.FindControl<PathIcon>("ExpandIcon")!;
+        Assert.IsType<PathIcon>(remove.Content);
+        Assert.Same(icon, expand.Content);
+        foreach (var button in new[] { expand, remove })
+        {
+            Assert.True(button.Bounds.Width >= 32);
+            Assert.True(button.Bounds.Height >= 32);
+            Assert.True(button.Focusable);
+            Assert.True(button.IsTabStop);
+            Assert.False(string.IsNullOrWhiteSpace(AutomationProperties.GetName(button)));
+            Assert.NotNull(ToolTip.GetTip(button));
+        }
+        Assert.True(expand.Focus(NavigationMethod.Tab));
+        Assert.True(expand.IsFocused);
+        for (var i = 0; i < 4; i++)
+        {
+            var wasExpanded = entry.IsExpanded;
+            host.Window.KeyPressQwerty(PhysicalKey.Space, RawInputModifiers.None);
+            host.Window.KeyReleaseQwerty(PhysicalKey.Space, RawInputModifiers.None);
+            host.Window.UpdateLayout();
+            Assert.Equal(!wasExpanded, entry.IsExpanded);
+            Assert.Equal(entry.IsExpanded, icon.Classes.Contains("expanded"));
+            var action = entry.IsExpanded ? "Collapse custom color" : "Expand custom color";
+            Assert.Equal(action, AutomationProperties.GetName(expand));
+            Assert.Equal(action, ToolTip.GetTip(expand));
+            Assert.True(expand.IsFocused);
+        }
+        entry.IsExpanded = true;
+        host.Window.UpdateLayout();
+        var toggle = editor.FindControl<ToggleSwitch>("HarmonizeToggle")!;
+        Assert.True(toggle.Focus(NavigationMethod.Tab));
+        host.Window.KeyPressQwerty(PhysicalKey.Space, RawInputModifiers.None);
+        host.Window.KeyReleaseQwerty(PhysicalKey.Space, RawInputModifiers.None);
+        Assert.False(entry.Harmonize);
+        Assert.True(remove.Focus(NavigationMethod.Tab));
+        host.Window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+        host.Window.KeyReleaseQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+        Assert.Empty(model.CustomColors);
+        Assert.Empty(model.Scheme!.CustomColors);
     }
 
     [AvaloniaFact]

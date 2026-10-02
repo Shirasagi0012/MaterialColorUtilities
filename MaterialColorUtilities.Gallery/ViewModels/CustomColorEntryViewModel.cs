@@ -43,10 +43,10 @@ public partial class CustomColorEntryViewModel : ViewModelBase
     [ObservableProperty] public partial string? NameError { get; set; }
     [ObservableProperty] public partial string SourceHex { get; set; } = string.Empty;
     [ObservableProperty] public partial string? SourceError { get; set; }
-    public string ExpansionGlyph => IsExpanded ? "⌃" : "⌄";
+    public string ExpansionAction => IsExpanded ? "Collapse custom color" : "Expand custom color";
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ExpansionGlyph))]
+    [NotifyPropertyChangedFor(nameof(ExpansionAction))]
     public partial bool IsExpanded { get; set; } = true;
     [ObservableProperty] public partial HctSelection SelectedHct { get; set; }
     [ObservableProperty]

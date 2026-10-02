@@ -5,7 +5,25 @@
              xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
              x:Class="MaterialColorUtilities.Gallery.Controls.CustomColorEditor"
              x:DataType="vm:CustomColorEntryViewModel">
+    <UserControl.Resources>
+        <!-- Vector geometry follows Avalonia Fluent 12.1.3 TextBox and ButtonSpinner icons. -->
+        <StreamGeometry x:Key="RemoveColorIcon">M 11.416016,10 20,1.4160156 18.583984,0 10,8.5839846 1.4160156,0 0,1.4160156 8.5839844,10 0,18.583985 1.4160156,20 10,11.416015 18.583984,20 20,18.583985 Z</StreamGeometry>
+        <StreamGeometry x:Key="ExpandColorIcon">M0,1 L10,10 20,1 19,0 10,8 1,0 z</StreamGeometry>
+    </UserControl.Resources>
     <UserControl.Styles>
+        <Style Selector="Button.icon">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="MinWidth" Value="32" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="PathIcon.expanded">
+            <Setter Property="RenderTransform" Value="rotate(180deg)" />
+        </Style>
         <Style Selector="TextBlock.role">
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="Medium" />
@@ -25,17 +43,22 @@
                 <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4">
                     <Button Command="{Binding ToggleExpandedCommand}" Background="Transparent"
                             HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                            AutomationProperties.Name="Expand or collapse custom color">
+                            ToolTip.Tip="{Binding ExpansionAction}" AutomationProperties.Name="{Binding ExpansionAction}">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                             <Border Width="22" Height="22" CornerRadius="4" Background="{Binding SourceBrush}" />
                             <TextBlock Grid.Column="1" Text="{Binding ResourceName}" FontSize="18" FontWeight="SemiBold"
                                        TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                         </Grid>
                     </Button>
-                    <Button Grid.Column="1" Content="×" FontSize="22" Padding="8 0" Background="Transparent"
-                            Command="{Binding RemoveCommand}" ToolTip.Tip="Remove color" AutomationProperties.Name="Remove color" />
-                    <Button x:Name="ExpandButton" Grid.Column="2" Content="{Binding ExpansionGlyph}" Command="{Binding ToggleExpandedCommand}"
-                            Background="Transparent" Padding="8 0" AutomationProperties.Name="Expand or collapse color" />
+                    <Button x:Name="RemoveButton" Grid.Column="1" Classes="icon"
+                            Command="{Binding RemoveCommand}" ToolTip.Tip="Remove color" AutomationProperties.Name="Remove color">
+                        <PathIcon Width="12" Height="12" Data="{StaticResource RemoveColorIcon}" />
+                    </Button>
+                    <Button x:Name="ExpandButton" Grid.Column="2" Classes="icon" Command="{Binding ToggleExpandedCommand}"
+                            ToolTip.Tip="{Binding ExpansionAction}" AutomationProperties.Name="{Binding ExpansionAction}">
+                        <PathIcon x:Name="ExpandIcon" Width="14" Height="7" Data="{StaticResource ExpandColorIcon}"
+                                  Classes.expanded="{Binding IsExpanded}" RenderTransformOrigin="50%,50%" />
+                    </Button>
                 </Grid>
             </Border>
             <StackPanel x:Name="EditorBody" IsVisible="{Binding IsExpanded}" Margin="16" Spacing="16">
@@ -62,22 +85,19 @@
                         <TextBlock Classes="error" Text="{Binding SourceError}" IsVisible="{Binding SourceError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
                     </StackPanel>
                 </Grid>
-                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
-                    <TextBlock Text="Harmonize" FontSize="16" VerticalAlignment="Center" />
-                    <TextBlock Grid.Column="1" Text="{Binding HarmonizeState}" VerticalAlignment="Center"
+                <Grid x:Name="HarmonizeRow" ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="8">
+                    <TextBlock x:Name="HarmonizeLabel" Text="Harmonize" FontSize="16" VerticalAlignment="Center" />
+                    <StackPanel x:Name="HarmonizedPreview" Grid.Column="1" IsVisible="{Binding Harmonize}"
+                                Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <Border Width="18" Height="18" CornerRadius="3" Background="{Binding HarmonizedBrush}" />
+                        <SelectableTextBlock Text="{Binding HarmonizedHex}" VerticalAlignment="Center"
+                                             AutomationProperties.Name="Harmonized HEX color"
+                                             Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
+                    </StackPanel>
+                    <TextBlock x:Name="HarmonizeStateLabel" Grid.Column="3" Text="{Binding HarmonizeState}" VerticalAlignment="Center"
                                Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
-                    <ToggleSwitch x:Name="HarmonizeToggle" Grid.Column="2" IsChecked="{Binding Harmonize, Mode=TwoWay}"
+                    <ToggleSwitch x:Name="HarmonizeToggle" Grid.Column="4" IsChecked="{Binding Harmonize, Mode=TwoWay}"
                                   OnContent="" OffContent="" MinWidth="0" AutomationProperties.Name="Harmonize custom color" />
-                </Grid>
-                <StackPanel x:Name="HarmonizedPreview" IsVisible="{Binding Harmonize}" Orientation="Horizontal" Spacing="10">
-                    <Border Width="18" Height="18" CornerRadius="3" Background="{Binding HarmonizedBrush}" />
-                    <SelectableTextBlock Text="{Binding HarmonizedHex}" VerticalAlignment="Center"
-                                         Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
-                </StackPanel>
-                <Grid ColumnDefinitions="*,Auto">
-                    <TextBlock Text="Role preview" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
-                    <TextBlock x:Name="ThemeLabel" Grid.Column="1" FontSize="12" VerticalAlignment="Center"
-                               Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
                 </Grid>
                 <StackPanel x:Name="RolePreview">
                     <Border x:Name="ColorBand" Height="56"><TextBlock x:Name="ColorLabel" Classes="role" Text="Color" /></Border>

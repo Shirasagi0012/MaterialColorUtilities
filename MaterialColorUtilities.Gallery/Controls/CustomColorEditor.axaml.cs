@@ -34,8 +34,6 @@ public partial class CustomColorEditor : UserControl
             _resources.Scheme = null;
             ClearRoleBindings();
         };
-        ActualThemeVariantChanged += (_, _) => UpdateThemeLabel();
-        UpdateThemeLabel();
     }
 
     private void SetEntry()
@@ -76,8 +74,4 @@ public partial class CustomColorEditor : UserControl
         _roleBindings.Add(label.Bind(TextBlock.ForegroundProperty,
             new DynamicResourceExtension(new CustomColorKey(_entry.ResourceName, foreground))));
     }
-
-    private void UpdateThemeLabel() => ThemeLabel.Text = ColorScheme.IsDark(ActualThemeVariant)
-        ? "Current theme · Dark"
-        : "Current theme · Light";
 }
