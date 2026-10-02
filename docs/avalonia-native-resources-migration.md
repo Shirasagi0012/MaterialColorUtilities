@@ -4,21 +4,25 @@ This is a **breaking API and behavior change**. There is no compatibility bridge
 The core HCT, palette, contrast, quantizer, score, and scheme algorithms are
 unchanged. Applications using only the core library do not need this migration.
 
-## Initial public API
+## Public API
 
 The Avalonia integration now has one resource lookup path:
 
 `ColorScheme` → `MaterialColorResources` → native Avalonia resource lookup → `Color`.
 
 Register `MaterialColorResources` in `ResourceDictionary.MergedDictionaries`, then
-consume its colors with native `DynamicResource`. `Scheme` is a nullable
+consume its colors with native `DynamicResource` or the thin MCU markup extensions. `Scheme` is a nullable
 `StyledProperty` and the provider's XAML content property. Existing `ColorScheme`
 classes remain mutable inputs, including contrast, platform, spec, custom colors,
 and CMF's secondary seed. Inputs and scheme replacement invalidate resources.
 
-The initial API intentionally defers all ergonomic MCU markup extensions. There is
-no replacement `MdSysColor`, `MdRefPalette`, or `MdCustomColor` extension in this
-release. Use the native syntax shown in the [README](../README.md#avalonia-integration).
+`MdSysColor`, `MdRefPalette`, and `MdCustomColor` are now thin native-resource
+extensions in `MaterialColorUtilities.Avalonia.Markup`, mapped to the existing MCU
+XML namespace. Each public `ProvideValue(IServiceProvider)` returns `BindingBase`
+by passing the original service provider to `DynamicResourceExtension` with a typed
+key. This preserves native setters, templates, theme context, and resource updates;
+it does not restore the old custom binding, theme override, or fallback path.
+See the [README](../README.md#avalonia-integration) for complete examples.
 
 ## Removed API and replacements
 
@@ -27,13 +31,13 @@ release. Use the native syntax shown in the [README](../README.md#avalonia-integ
 | `MaterialColor.Scheme` / `MaterialColor.SetScheme` | `MaterialColorResources { Scheme = ... }` in `MergedDictionaries` |
 | Inherited `MaterialColor.ResolvedScheme` / `SetResolvedScheme` | Native resource scopes and ordinary `Color` resources |
 | Public `ResolvedColorScheme` reads (`GetColor`, `GetBrush`, `GetPaletteColor`) | `TryFindResource(key, actualTheme, out value)` or direct core algorithms |
-| `{mcu:MdSysColor Primary}` | `{DynamicResource {x:Static mcu:SysColorToken.Primary}}` |
-| `{mcu:MdRefPalette Primary, 60}` | `DynamicResource` using `new RefPaletteKey(RefPaletteToken.Primary, 60)` |
-| `{mcu:MdRefPalette Custom, 60, CustomKey=Brand}` | `DynamicResource` using `new RefPaletteKey("Brand", 60)` |
-| `SysColorToken.Custom` | `new CustomColorKey(name, CustomColorRole.Color)` |
-| `SysColorToken.OnCustom` | `new CustomColorKey(name, CustomColorRole.OnColor)` |
-| `SysColorToken.CustomContainer` | `new CustomColorKey(name, CustomColorRole.Container)` |
-| `SysColorToken.OnCustomContainer` | `new CustomColorKey(name, CustomColorRole.OnContainer)` |
+| Old `{mcu:MdSysColor Primary}` implementation | New `{mcu:MdSysColor Primary}` (native resource semantics), or `{DynamicResource {x:Static mcu:SysColorToken.Primary}}` |
+| Old `{mcu:MdRefPalette Primary, 60}` implementation | New `{mcu:MdRefPalette Primary, 60}`, or `DynamicResource` using `new RefPaletteKey(RefPaletteToken.Primary, 60)` |
+| `{mcu:MdRefPalette Custom, 60, CustomKey=Brand}` | `{mcu:MdRefPalette CustomName=Brand, Tone=60}`, or `DynamicResource` using `new RefPaletteKey("Brand", 60)` |
+| `SysColorToken.Custom` / old `MdSysColor` custom role | `{mcu:MdCustomColor Brand, Color}` (replace `Brand` with the name), or `new CustomColorKey(name, CustomColorRole.Color)` |
+| `SysColorToken.OnCustom` / old `MdSysColor` custom role | `{mcu:MdCustomColor Brand, OnColor}` (replace `Brand` with the name), or `new CustomColorKey(name, CustomColorRole.OnColor)` |
+| `SysColorToken.CustomContainer` / old `MdSysColor` custom role | `{mcu:MdCustomColor Brand, Container}` (replace `Brand` with the name), or `new CustomColorKey(name, CustomColorRole.Container)` |
+| `SysColorToken.OnCustomContainer` / old `MdSysColor` custom role | `{mcu:MdCustomColor Brand, OnContainer}` (replace `Brand` with the name), or `new CustomColorKey(name, CustomColorRole.OnContainer)` |
 | `MdSysColor.Theme` | `ThemeVariantScope`, theme dictionaries, or an explicit one-time C# lookup |
 | `ColorTokenBinding` and target-type helper | Avalonia's native `DynamicResource` and native color-to-brush conversion |
 
@@ -94,13 +98,60 @@ or a preexisting outer scope: a direct entry in the same dictionary is unavailab
 while its merged provider is being constructed, regardless of textual declaration
 order. These native source/construction rules also apply to independent dictionaries.
 
+## Native-resource markup extensions
+
+Positional and named forms address the same typed keys:
+
+```xml
+<Border Background="{mcu:MdSysColor Primary}" />
+<Border Background="{mcu:MdSysColor Token=Primary}" />
+<Border Background="{mcu:MdRefPalette Primary, 60}" />
+<Border Background="{mcu:MdRefPalette Palette=Primary, Tone=60}" />
+<Border Background="{mcu:MdRefPalette CustomName=Brand, Tone=60}" />
+<Border Background="{mcu:MdCustomColor Brand, Container}" />
+<Border Background="{mcu:MdCustomColor Name=Brand, Role=Container}" />
+```
+
+`MdSysColorExtension` offers parameterless and `SysColorToken` constructors, with
+`Token` defaulting to `Background`. `MdRefPaletteExtension` offers parameterless and
+`(RefPaletteToken palette, int tone)` constructors, with `Palette=Primary`, `Tone=0`,
+and nullable `CustomName`. `MdCustomColorExtension` offers parameterless and
+`(string name, CustomColorRole role)` constructors, with `Name` and `Role` properties.
+A valid custom name is required when providing a custom-role value.
+
+The palette extension validates its `int` tone before constructing the byte-based
+key: only 0–100 is allowed. Explicit `Palette` plus `CustomName` is rejected,
+including explicitly setting `Palette=Primary` or `Palette=Custom`; use only
+`CustomName` and `Tone` for named palettes. `Palette=Custom` without a name is also
+invalid. Undefined token, palette, and role enum values are rejected. Names are
+validated without trimming and keys compare case-insensitively, just like the
+underlying key constructors. These extension properties describe fixed keys;
+for a resource key chosen dynamically in C#, keep using native resource lookup or
+`GetResourceObservable(key)` and replace the observation when the key changes.
+
+Apply the shorthand directly in styles and templates for native target scope:
+
+```xml
+<Style Selector="Button.material">
+    <Setter Property="Background" Value="{mcu:MdSysColor PrimaryContainer}" />
+    <Setter Property="Template">
+        <ControlTemplate>
+            <Border Background="{mcu:MdSysColor Surface}">
+                <ContentPresenter Content="{TemplateBinding Content}" />
+            </Border>
+        </ControlTemplate>
+    </Setter>
+</Style>
+```
+
 ## Immutable palette and custom keys
 
 Avalonia 12.1's XAML compiler rejects struct constructors expressed with
 `x:Arguments` (AVLN3000). Expose the constructed keys as static properties in your
-application, then consume them with native `x:Static` inside `DynamicResource`.
-See the complete README example and `SchemePlaygroundView.axaml` plus its code-behind.
-No converter, MCU alias syntax, or markup extension is required. The same immutable
+application when you need explicit keys, then consume them with native `x:Static`
+inside `DynamicResource`. The new shorthand avoids this boilerplate for consumption;
+explicit keys remain useful for dictionary overrides and C# binding. See the
+complete README example and `SchemePlaygroundView.axaml` plus its code-behind. The same immutable
 value works for native dictionary overrides in C# or `x:Key="{x:Static ...}"` in XAML.
 
 - `RefPaletteKey(RefPaletteToken palette, byte tone)` accepts standard palettes
@@ -194,7 +245,13 @@ Successful provider lookups always return Avalonia `Color`. Native dynamic resou
 convert to `ImmutableSolidColorBrush` for target properties typed exactly `IBrush`.
 This is not a guarantee for arbitrary concrete `SolidColorBrush`, `IImmutableBrush`,
 or custom target types. Build a `SolidColorBrush` explicitly and apply the dynamic
-resource to its `Color` property when you need that concrete type.
+resource to its `Color` property when you need that concrete type:
+
+```xml
+<SolidColorBrush x:Key="MaterialSurfaceBrush" Color="{mcu:MdSysColor Surface}" />
+```
+
+The shorthand uses exactly this native conversion behavior and adds no converter.
 
 There is no public brush token set, MCU brush cache, or brush identity guarantee.
 Separate consumers/updates may allocate different brush instances. A shared brush
@@ -206,8 +263,8 @@ follow each target's local scheme.
 
 1. Move each scheme into a provider in the intended dictionary's `MergedDictionaries`
 2. Replace snapshot publishing/reading with native resource writes/lookups
-3. Replace all removed markup extensions with native `DynamicResource`
-4. Replace four custom enum roles with named `CustomColorKey` values
+3. Migrate old expressions to the new thin extensions or native `DynamicResource`
+4. Replace four custom enum roles with `MdCustomColor` or named `CustomColorKey` values
 5. Replace expression theme pins with appropriate scopes or dictionary contexts
 6. Check missing-resource behavior, custom per-key fallback, and dark palette colors
 7. Give bindings an explicit source and C# reads an explicit theme

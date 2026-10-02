@@ -4,3 +4,5 @@ using System.Runtime.CompilerServices;
 [assembly: XmlnsDefinition("https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia", "MaterialColorUtilities.Avalonia")]
 [assembly: InternalsVisibleTo("MaterialColorUtilities.Tests")]
 [assembly: XmlnsDefinition("https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia", "MaterialColorUtilities.Avalonia.Tokens")]
+
+[assembly: XmlnsDefinition("https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia", "MaterialColorUtilities.Avalonia.Markup")]

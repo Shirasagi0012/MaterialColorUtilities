@@ -1,0 +1,13 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
+                    xmlns:local="using:MaterialColorUtilities.Tests.Avalonia">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+            <local:ThemeSettings x:Key="ThemeSettings" SeedColor="#6750A4" />
+        </ResourceDictionary>
+        <mcu:MaterialColorResources>
+            <mcu:TonalSpotScheme Color="{ReflectionBinding SeedColor, Source={StaticResource ThemeSettings}}" />
+        </mcu:MaterialColorResources>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

@@ -126,21 +126,21 @@
                 ColumnSpacing="4">
                 <!-- Primary -->
                 <Grid Classes="single-width" RowDefinitions="Auto Auto 4 Auto Auto">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.Primary}}" Grid.Row="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnPrimary}}">Primary</TextBlock>
+                    <Border Background="{mcu:MdSysColor Primary}" Grid.Row="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimary}">Primary</TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnPrimary}}" Grid.Row="1">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.Primary}}">
+                    <Border Background="{mcu:MdSysColor OnPrimary}" Grid.Row="1">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Primary}">
                             On Primary
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.PrimaryContainer}}" Grid.Row="3">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnPrimaryContainer}}">
+                    <Border Background="{mcu:MdSysColor PrimaryContainer}" Grid.Row="3">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimaryContainer}">
                             Primary Container
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnPrimaryContainer}}" Grid.Row="4">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.PrimaryContainer}}">
+                    <Border Background="{mcu:MdSysColor OnPrimaryContainer}" Grid.Row="4">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor PrimaryContainer}">
                             On Primary Container
                         </TextBlock>
                     </Border>
@@ -151,21 +151,21 @@
                     Classes="single-width"
                     Column="1"
                     RowDefinitions="Auto Auto 4 Auto Auto">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.Secondary}}" Grid.Row="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSecondary}}">Secondary</TextBlock>
+                    <Border Background="{mcu:MdSysColor Secondary}" Grid.Row="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSecondary}">Secondary</TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnSecondary}}" Grid.Row="1">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.Secondary}}">
+                    <Border Background="{mcu:MdSysColor OnSecondary}" Grid.Row="1">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Secondary}">
                             On Secondary
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SecondaryContainer}}" Grid.Row="3">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSecondaryContainer}}">
+                    <Border Background="{mcu:MdSysColor SecondaryContainer}" Grid.Row="3">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSecondaryContainer}">
                             Secondary Container
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnSecondaryContainer}}" Grid.Row="4">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.SecondaryContainer}}">
+                    <Border Background="{mcu:MdSysColor OnSecondaryContainer}" Grid.Row="4">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor SecondaryContainer}">
                             On Secondary Container
                         </TextBlock>
                     </Border>
@@ -176,21 +176,21 @@
                     Classes="single-width"
                     Column="2"
                     RowDefinitions="Auto Auto 4 Auto Auto">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.Tertiary}}" Grid.Row="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnTertiary}}">Tertiary</TextBlock>
+                    <Border Background="{mcu:MdSysColor Tertiary}" Grid.Row="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnTertiary}">Tertiary</TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnTertiary}}" Grid.Row="1">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.Tertiary}}">
+                    <Border Background="{mcu:MdSysColor OnTertiary}" Grid.Row="1">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Tertiary}">
                             On Tertiary
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.TertiaryContainer}}" Grid.Row="3">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnTertiaryContainer}}">
+                    <Border Background="{mcu:MdSysColor TertiaryContainer}" Grid.Row="3">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnTertiaryContainer}">
                             Tertiary Container
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnTertiaryContainer}}" Grid.Row="4">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.TertiaryContainer}}">
+                    <Border Background="{mcu:MdSysColor OnTertiaryContainer}" Grid.Row="4">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor TertiaryContainer}">
                             On Tertiary Container
                         </TextBlock>
                     </Border>
@@ -204,21 +204,21 @@
                 Column="1"
                 Row="0"
                 RowDefinitions="Auto Auto 4 Auto Auto">
-                <Border Background="{DynamicResource {x:Static mcu:SysColorToken.Error}}" Grid.Row="0">
-                    <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnError}}">Error</TextBlock>
+                <Border Background="{mcu:MdSysColor Error}" Grid.Row="0">
+                    <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnError}">Error</TextBlock>
                 </Border>
-                <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnError}}" Grid.Row="1">
-                    <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.Error}}">
+                <Border Background="{mcu:MdSysColor OnError}" Grid.Row="1">
+                    <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Error}">
                         On Error
                     </TextBlock>
                 </Border>
-                <Border Background="{DynamicResource {x:Static mcu:SysColorToken.ErrorContainer}}" Grid.Row="3">
-                    <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnErrorContainer}}">
+                <Border Background="{mcu:MdSysColor ErrorContainer}" Grid.Row="3">
+                    <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnErrorContainer}">
                         Error Container
                     </TextBlock>
                 </Border>
-                <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnErrorContainer}}" Grid.Row="4">
-                    <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.ErrorContainer}}">
+                <Border Background="{mcu:MdSysColor OnErrorContainer}" Grid.Row="4">
+                    <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor ErrorContainer}">
                         On Error Container
                     </TextBlock>
                 </Border>
@@ -237,25 +237,25 @@
                     Column="0"
                     ColumnDefinitions="* *"
                     RowDefinitions="Auto Auto Auto">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.PrimaryFixed}}" Grid.Row="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnPrimaryFixed}}">
+                    <Border Background="{mcu:MdSysColor PrimaryFixed}" Grid.Row="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimaryFixed}">
                             Primary Fixed
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.PrimaryFixedDim}}" Grid.Column="1" Grid.Row="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnPrimaryFixed}}">
+                    <Border Background="{mcu:MdSysColor PrimaryFixedDim}" Grid.Column="1" Grid.Row="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnPrimaryFixed}">
                             Primary Fixed Dim
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnPrimaryFixed}}" Grid.Column="0" Grid.ColumnSpan="2"
+                    <Border Background="{mcu:MdSysColor OnPrimaryFixed}" Grid.Column="0" Grid.ColumnSpan="2"
                             Grid.Row="1">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.PrimaryFixed}}">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor PrimaryFixed}">
                             On Primary Fixed
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnPrimaryFixedVariant}}" Grid.Column="0" Grid.ColumnSpan="2"
+                    <Border Background="{mcu:MdSysColor OnPrimaryFixedVariant}" Grid.Column="0" Grid.ColumnSpan="2"
                             Grid.Row="2">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.PrimaryFixed}}">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor PrimaryFixed}">
                             On Primary Fixed Variant
                         </TextBlock>
                     </Border>
@@ -267,25 +267,25 @@
                     Column="1"
                     ColumnDefinitions="* *"
                     RowDefinitions="Auto Auto Auto">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SecondaryFixed}}" Grid.Row="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSecondaryFixed}}">
+                    <Border Background="{mcu:MdSysColor SecondaryFixed}" Grid.Row="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSecondaryFixed}">
                             Secondary Fixed
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SecondaryFixedDim}}" Grid.Column="1" Grid.Row="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSecondaryFixed}}">
+                    <Border Background="{mcu:MdSysColor SecondaryFixedDim}" Grid.Column="1" Grid.Row="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSecondaryFixed}">
                             Secondary Fixed Dim
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnSecondaryFixed}}" Grid.Column="0" Grid.ColumnSpan="2"
+                    <Border Background="{mcu:MdSysColor OnSecondaryFixed}" Grid.Column="0" Grid.ColumnSpan="2"
                             Grid.Row="1">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.SecondaryFixed}}">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor SecondaryFixed}">
                             On Secondary Fixed
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnSecondaryFixedVariant}}" Grid.Column="0" Grid.ColumnSpan="2"
+                    <Border Background="{mcu:MdSysColor OnSecondaryFixedVariant}" Grid.Column="0" Grid.ColumnSpan="2"
                             Grid.Row="2">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.SecondaryFixed}}">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor SecondaryFixed}">
                             On Secondary Fixed Variant
                         </TextBlock>
                     </Border>
@@ -297,25 +297,25 @@
                     Column="2"
                     ColumnDefinitions="* *"
                     RowDefinitions="Auto Auto Auto">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.TertiaryFixed}}" Grid.Row="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnTertiaryFixed}}">
+                    <Border Background="{mcu:MdSysColor TertiaryFixed}" Grid.Row="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnTertiaryFixed}">
                             Tertiary Fixed
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.TertiaryFixedDim}}" Grid.Column="1" Grid.Row="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnTertiaryFixed}}">
+                    <Border Background="{mcu:MdSysColor TertiaryFixedDim}" Grid.Column="1" Grid.Row="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnTertiaryFixed}">
                             Tertiary Fixed Dim
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnTertiaryFixed}}" Grid.Column="0" Grid.ColumnSpan="2"
+                    <Border Background="{mcu:MdSysColor OnTertiaryFixed}" Grid.Column="0" Grid.ColumnSpan="2"
                             Grid.Row="1">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.TertiaryFixed}}">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor TertiaryFixed}">
                             On Tertiary Fixed
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnTertiaryFixedVariant}}" Grid.Column="0" Grid.ColumnSpan="2"
+                    <Border Background="{mcu:MdSysColor OnTertiaryFixedVariant}" Grid.Column="0" Grid.ColumnSpan="2"
                             Grid.Row="2">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.TertiaryFixed}}">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor TertiaryFixed}">
                             On Tertiary Fixed Variant
                         </TextBlock>
                     </Border>
@@ -329,11 +329,11 @@
                 Column="1"
                 Row="1"
                 RowDefinitions="Auto Auto">
-                <Border Background="{DynamicResource {x:Static mcu:SysColorToken.Background}}" Grid.Row="0">
-                    <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnBackground}}">Background</TextBlock>
+                <Border Background="{mcu:MdSysColor Background}" Grid.Row="0">
+                    <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnBackground}">Background</TextBlock>
                 </Border>
-                <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnBackground}}" Grid.Row="1">
-                    <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.Background}}">
+                <Border Background="{mcu:MdSysColor OnBackground}" Grid.Row="1">
+                    <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Background}">
                         On
                         Background
                     </TextBlock>
@@ -349,72 +349,72 @@
                 RowDefinitions="Auto Auto Auto"
                 RowSpacing="4">
                 <Grid ColumnDefinitions="* * *" Row="0">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceDim}}" Grid.Column="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}">
+                    <Border Background="{mcu:MdSysColor SurfaceDim}" Grid.Column="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
                             Surface
                             Dim
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.Surface}}" Grid.Column="1">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}">Surface</TextBlock>
+                    <Border Background="{mcu:MdSysColor Surface}" Grid.Column="1">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">Surface</TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceBright}}" Grid.Column="2">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}">
+                    <Border Background="{mcu:MdSysColor SurfaceBright}" Grid.Column="2">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
                             Surface
                             Bright
                         </TextBlock>
                     </Border>
                 </Grid>
                 <Grid ColumnDefinitions="* * * * *" Row="1">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainerLowest}}" Grid.Column="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}">
+                    <Border Background="{mcu:MdSysColor SurfaceContainerLowest}" Grid.Column="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
                             Surface
                             Container Lowest
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainerLow}}" Grid.Column="1">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}">
+                    <Border Background="{mcu:MdSysColor SurfaceContainerLow}" Grid.Column="1">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
                             Surface
                             Container Low
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainer}}" Grid.Column="2">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}">
+                    <Border Background="{mcu:MdSysColor SurfaceContainer}" Grid.Column="2">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
                             Surface
                             Container
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainerHigh}}" Grid.Column="3">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}">
+                    <Border Background="{mcu:MdSysColor SurfaceContainerHigh}" Grid.Column="3">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
                             Surface
                             Container High
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainerHighest}}" Grid.Column="4">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}">
+                    <Border Background="{mcu:MdSysColor SurfaceContainerHighest}" Grid.Column="4">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
                             Surface
                             Container Highest
                         </TextBlock>
                     </Border>
                 </Grid>
                 <Grid ColumnDefinitions="* * * *" Row="2">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}" Grid.Column="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.Surface}}">
+                    <Border Background="{mcu:MdSysColor OnSurface}" Grid.Column="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Surface}">
                             On
                             Surface
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" Grid.Column="1">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.Surface}}">
+                    <Border Background="{mcu:MdSysColor OnSurfaceVariant}" Grid.Column="1">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Surface}">
                             On
                             Surface Variant
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.Outline}}" Grid.Column="2">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.Surface}}">Outline</TextBlock>
+                    <Border Background="{mcu:MdSysColor Outline}" Grid.Column="2">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor Surface}">Outline</TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.OutlineVariant}}" Grid.Column="3">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}">
+                    <Border Background="{mcu:MdSysColor OutlineVariant}" Grid.Column="3">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
                             Outline
                             Variant
                         </TextBlock>
@@ -431,21 +431,21 @@
                 RowDefinitions="Auto Auto *"
                 RowSpacing="4">
                 <Grid Row="0" RowDefinitions="* *">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.InverseSurface}}" Grid.Row="0">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.InverseOnSurface}}">
+                    <Border Background="{mcu:MdSysColor InverseSurface}" Grid.Row="0">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor InverseOnSurface}">
                             Inverse
                             Surface
                         </TextBlock>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.InverseOnSurface}}" Grid.Row="1">
-                        <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.InverseSurface}}">
+                    <Border Background="{mcu:MdSysColor InverseOnSurface}" Grid.Row="1">
+                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor InverseSurface}">
                             Inverse
                             On Surface
                         </TextBlock>
                     </Border>
                 </Grid>
-                <Border Background="{DynamicResource {x:Static mcu:SysColorToken.InversePrimary}}" Grid.Row="1">
-                    <TextBlock Classes="label-medium" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}">
+                <Border Background="{mcu:MdSysColor InversePrimary}" Grid.Row="1">
+                    <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor OnSurface}">
                         Inverse
                         Primary
                     </TextBlock>
@@ -455,18 +455,18 @@
                     ColumnSpacing="16"
                     Row="2"
                     VerticalAlignment="Bottom">
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.Scrim}}" Grid.Column="0">
+                    <Border Background="{mcu:MdSysColor Scrim}" Grid.Column="0">
                         <ThemeVariantScope RequestedThemeVariant="Light">
                             <TextBlock Classes="label-medium"
-                                       Foreground="{DynamicResource {x:Static mcu:SysColorToken.InverseOnSurface}}">
+                                       Foreground="{mcu:MdSysColor InverseOnSurface}">
                                 Scrim
                             </TextBlock>
                         </ThemeVariantScope>
                     </Border>
-                    <Border Background="{DynamicResource {x:Static mcu:SysColorToken.Shadow}}" Grid.Column="1">
+                    <Border Background="{mcu:MdSysColor Shadow}" Grid.Column="1">
                         <ThemeVariantScope RequestedThemeVariant="Light">
                             <TextBlock Classes="label-medium"
-                                       Foreground="{DynamicResource {x:Static mcu:SysColorToken.InverseOnSurface}}">
+                                       Foreground="{mcu:MdSysColor InverseOnSurface}">
                                 Shadow
                             </TextBlock>
                         </ThemeVariantScope>

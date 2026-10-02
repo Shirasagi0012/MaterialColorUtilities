@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:local="using:MaterialColorUtilities.Tests.Avalonia" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
+             x:Class="MaterialColorUtilities.Tests.Avalonia.MarkupThemeDictionaryView">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <mcu:MaterialColorResources>
+                    <mcu:TonalSpotScheme Color="#6750A4" />
+                </mcu:MaterialColorResources>
+            </ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="ThemedBrush" Color="{mcu:MdSysColor Primary}" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="ThemedBrush" Color="{mcu:MdSysColor Primary}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <StackPanel>
+        <ThemeVariantScope RequestedThemeVariant="Light">
+            <Border Name="LightTarget" Background="{DynamicResource ThemedBrush}" />
+        </ThemeVariantScope>
+        <ThemeVariantScope RequestedThemeVariant="Dark">
+            <Border Name="DarkTarget" Background="{DynamicResource ThemedBrush}" />
+        </ThemeVariantScope>
+    </StackPanel>
+</UserControl>

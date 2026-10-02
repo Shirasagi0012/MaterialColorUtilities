@@ -51,10 +51,11 @@ The Avalonia package exposes Material colors through Avalonia's native resource 
 `ColorScheme` is the mutable, bindable input; `MaterialColorResources` is a resource
 provider. All generated values are Avalonia `Color` values, addressed by typed keys.
 
-**Breaking change:** the old attached-property/snapshot API and MCU color markup
-extensions have been removed. See [Migrating to native resources](docs/avalonia-native-resources-migration.md)
-for the complete migration and behavior changes. Ergonomic markup extensions are
-intentionally deferred in this initial API.
+**Breaking change:** the old attached-property/snapshot API and custom color-binding
+implementation have been removed. The new `MdSysColor`, `MdRefPalette`, and
+`MdCustomColor` markup extensions are thin wrappers around native `DynamicResource`.
+See [Migrating to native resources](docs/avalonia-native-resources-migration.md)
+for the complete migration and behavior changes.
 
 #### Register a scheme
 
@@ -101,32 +102,79 @@ are not aliases.
 </Border>
 ```
 
-Use `DynamicResource` for live scheme and theme updates. Avalonia converts a `Color`
+For shorter XAML, use the equivalent native-resource markup extensions:
+
+```xml
+<Border Background="{mcu:MdSysColor PrimaryContainer}">
+    <TextBlock Text="Material colors"
+               Foreground="{mcu:MdSysColor Token=OnPrimaryContainer}" />
+</Border>
+```
+
+`{mcu:MdSysColor}` defaults to `SysColorToken.Background`. The extensions live in
+`MaterialColorUtilities.Avalonia.Markup` and use the same `mcu` XML namespace above.
+Their public `ProvideValue(IServiceProvider)` returns `BindingBase` by forwarding
+the original service provider to a native `DynamicResourceExtension` with the typed
+key. They do not resolve colors eagerly or create a separate binding implementation.
+
+Use `DynamicResource` or these extensions for live scheme and theme updates. Avalonia converts a `Color`
 to an immutable brush when the target property type is `IBrush`, such as
 `Background` or `Foreground`. The provider itself always returns `Color`. For a
 concrete `SolidColorBrush`, create it explicitly and bind its `Color`:
 
 ```xml
 <SolidColorBrush x:Key="MaterialSurfaceBrush"
-                 Color="{DynamicResource {x:Static mcu:SysColorToken.Surface}}" />
+                 Color="{mcu:MdSysColor Surface}" />
 ```
 
 A shared brush resolves in its declaration/owner context. It is not reinterpreted
 against each consumer's local scheme. Put `DynamicResource` directly on the target,
 style setter, or template when each target should use its own resource scope.
+The shorthand preserves these native contexts too:
+
+```xml
+<Style Selector="Button.material">
+    <Setter Property="Background" Value="{mcu:MdSysColor PrimaryContainer}" />
+    <Setter Property="Template">
+        <ControlTemplate>
+            <Border Background="{mcu:MdSysColor Surface}">
+                <ContentPresenter Content="{TemplateBinding Content}" />
+            </Border>
+        </ControlTemplate>
+    </Setter>
+</Style>
+```
 
 #### Palettes and named custom colors
 
-Multi-argument keys are immutable values:
+Use positional arguments for a standard palette or custom role, or named properties:
+
+```xml
+<Border Background="{mcu:MdRefPalette Primary, 60}" />
+<Border Background="{mcu:MdRefPalette Palette=Primary, Tone=60}" />
+<Border Background="{mcu:MdRefPalette CustomName=Brand, Tone=60}" />
+<Border Background="{mcu:MdCustomColor Brand, Container}" />
+<Border Background="{mcu:MdCustomColor Name=Brand, Role=Container}" />
+```
+
+`MdRefPalette` defaults to `Palette=Primary` and `Tone=0`. Its `Tone` property is an
+`int` and must be 0–100. `CustomName` selects a named palette; do not explicitly set
+`Palette` alongside it, even to `Primary` or `Custom`. Without `CustomName`,
+`RefPaletteToken.Custom` is invalid. `MdCustomColor` requires a valid `Name`; `Role`
+selects `Color`, `OnColor`, `Container`, or `OnContainer`. Invalid enum values are
+rejected. The named colors must be registered in a scheme or supplied as ordinary
+resources, as below; the extensions create no fallback resources.
+
+The underlying multi-argument keys remain immutable values:
 
 - `new RefPaletteKey(RefPaletteToken.Primary, 60)` selects a standard palette tone
 - `new RefPaletteKey("Brand", 60)` selects a named custom palette tone
 - `new CustomColorKey("Brand", CustomColorRole.Container)` selects a custom role
 
-Avalonia 12.1 cannot construct these structs with `x:Arguments`. For native XAML,
-expose application-owned key values as static properties, then use `x:Static`.
-These are ordinary keys in your application, not MCU markup extensions or string
-aliases:
+Avalonia 12.1 cannot construct these structs with `x:Arguments`. When you need an
+explicit key, for example for an override, expose application-owned key values as
+static properties and use `x:Static`. Native `DynamicResource` remains fully supported
+alongside the shorthand:
 
 ```csharp
 using MaterialColorUtilities.Avalonia.Tokens;
