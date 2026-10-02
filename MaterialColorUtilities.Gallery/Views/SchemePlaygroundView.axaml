@@ -133,18 +133,20 @@
                 </Border>
             </Grid>
 
-            <Border VerticalAlignment="Top" Padding="12" CornerRadius="12"
-                    Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainerHigh}}">
-                <Border.Resources>
-                    <ResourceDictionary>
-                        <ResourceDictionary.MergedDictionaries>
-                            <mcu:MaterialColorResources
-                                Scheme="{ReflectionBinding DataContext.Scheme, ElementName=Root}" />
-                        </ResourceDictionary.MergedDictionaries>
-                    </ResourceDictionary>
-                </Border.Resources>
-                <views:ColorSchemeView />
-            </Border>
+            <ThemeVariantScope x:Name="SchemePreview" RequestedThemeVariant="{Binding PreviewThemeVariant}">
+                <Border VerticalAlignment="Top" Padding="12" CornerRadius="12"
+                        Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainerHigh}}">
+                    <Border.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <mcu:MaterialColorResources
+                                    Scheme="{ReflectionBinding DataContext.Scheme, ElementName=Root}" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </Border.Resources>
+                    <views:ColorSchemeView />
+                </Border>
+            </ThemeVariantScope>
         </DockPanel>
     </StackPanel>
 </UserControl>

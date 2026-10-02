@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MaterialColorUtilities\MaterialColorUtilities.csproj" />
+    <ProjectReference Include="..\MaterialColorUtilities.Gallery\MaterialColorUtilities.Gallery.csproj" />
     <ProjectReference Include="..\MaterialColorUtilities.Avalonia\MaterialColorUtilities.Avalonia.csproj" />
   </ItemGroup>
 

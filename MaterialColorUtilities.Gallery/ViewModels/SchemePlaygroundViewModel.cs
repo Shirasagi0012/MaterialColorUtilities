@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Media;
+using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MaterialColorUtilities.Avalonia;
 using MaterialColorUtilities.Avalonia.Helpers;
@@ -55,7 +56,15 @@ public partial class SchemePlaygroundViewModel : ViewModelBase
     public static IReadOnlyList<PlatformOption> PlatformOptions { get; } =
         [new("Phone", DynamicScheme.Platform.Phone), new("Watch", DynamicScheme.Platform.Watch)];
 
-    [ObservableProperty] public partial PlatformOption SelectedPlatformOption { get; set; } = PlatformOptions[0];
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PreviewThemeVariant))]
+    public partial PlatformOption SelectedPlatformOption { get; set; } = PlatformOptions[0];
+
+    // Watch color roles target dark surfaces; Phone inherits the surrounding theme.
+    public ThemeVariant PreviewThemeVariant => SelectedPlatformOption.Platform == DynamicScheme.Platform.Watch
+        ? ThemeVariant.Dark
+        : ThemeVariant.Default;
+
     [ObservableProperty] public partial double SelectedContrast { get; set; }
     [ObservableProperty] public partial IReadOnlyList<SpecOption> SpecOptions { get; set; } = [];
 
