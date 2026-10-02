@@ -85,10 +85,12 @@ Bind the provider or its input using an explicit source, such as a named root:
 ```
 
 Here `Root` is the named `UserControl` in the same XAML namescope, whose view model
-has a `Scheme` property. Resource providers do not automatically inherit owner
-`DataContext`. An independent resource dictionary does not gain a data context
-simply by receiving an owner. Dynamic-resource seeds are supported when the
-application supplies the named seed resource; do not use a generated color as its
+has a `Scheme` property. Schemes and resource providers are not `StyledElement`s
+and do not themselves inherit `DataContext`. Inline XAML bindings can still use
+Avalonia's declaration anchor to resolve the enclosing control's data context. An
+independent resource dictionary does not gain a data context simply by receiving
+an owner; a programmatically constructed binding needs an explicit source.
+Dynamic-resource seeds are supported when the application supplies the named seed resource; do not use a generated color as its
 own input.
 
 With `Source={StaticResource ThemeSettings}`, Avalonia's compiled binding sees an

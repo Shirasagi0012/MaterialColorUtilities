@@ -20,239 +20,140 @@ develop color themes and schemes in your app.
 
 <video autoplay muted loop src="https://user-images.githubusercontent.com/6655696/146014425-8e8e04bc-e646-4cc2-a3e7-97497a3e1b09.mp4" data-canonical-src="https://user-images.githubusercontent.com/6655696/146014425-8e8e04bc-e646-4cc2-a3e7-97497a3e1b09.mp4" class="d-block rounded-bottom-2 width-fit" style="max-width:640px;"></video>
 
+
 # MaterialColorUtilities for .NET
 
-This repository contains a C# port of Google's official `material-color-utilities` library.
+A C# port of Google's [Material Color Utilities](https://github.com/material-foundation/material-color-utilities)
+for Material 3 and Material 3 Expressive color schemes. Includes HCT,
+tonal palettes, contrast, blending, pixel quantization, color scoring, and Phone/Watch schemes.
+The optional Avalonia integration exposes generated colors as native resources.
 
-## Current Status
+This project is **pre-release**; APIs may change and it is not yet production-ready.
+Upstream baseline: [ec7c4da](https://github.com/material-foundation/material-color-utilities/commit/ec7c4da3e0774264275377cd6b7687474bad577a).
 
-This implementation is currently a **work-in-progress**. The API is mostly the same as the original, with minor adjustments to add some C# flavor.
+## Installation
 
-Most parts of material-color-utilities (except CorePalette, which is labeled as deprecated) and all unit tests have been ported. All ported unit tests are passing. Feel free to try it out and give your feedback.
+Both packages target **.NET 8 and .NET 10**. The Avalonia integration uses **Avalonia 12.1.3**.
+[CI](.github/workflows/ci.yml) is configured to publish `main` builds to GitHub Packages.
+Before installing, [configure an authenticated NuGet source](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry#authenticating-to-github-packages)
+for `https://nuget.pkg.github.com/Shirasagi0012/index.json`.
 
-This project support all color schemes from original Material Design 3 and Material 3 Expressive. Watch variant is also ported.
+```sh
+# Core algorithms only
+dotnet add package Shirasagi0012.MaterialColorUtilities --prerelease
+# Avalonia integration (includes the core package)
+dotnet add package Shirasagi0012.MaterialColorUtilities.Avalonia --prerelease
+```
 
-Synced with upstream commit:
-[ec7c4da](https://github.com/material-foundation/material-color-utilities/commit/ec7c4da3e0774264275377cd6b7687474bad577a)
+## Core usage
 
-⚠️ This library is **not yet** ready for production use.
+The core API follows upstream, using `ArgbColor` instead of a packed integer:
 
-## APIs
+```csharp
+using MaterialColorUtilities.HCT;
+using MaterialColorUtilities.Scheme;
+using MaterialColorUtilities.Utils;
 
-### Core libs
+var seed = Hct.From(new ArgbColor(0xFF6750A4u));
+var scheme = new SchemeTonalSpot(seed, isDark: false, contrastLevel: 0);
+ArgbColor primary = scheme.Primary;
+ArgbColor onPrimary = scheme.OnPrimary;
+```
 
-Most APIs are identical to the original implementation. There are some differences:
+The core quantizers and `Score.CalculateScore` can select seed colors from decoded
+image pixels. Image decoding and an Avalonia image-extraction adapter are not provided.
 
-- For convenience, this library uses ArgbColor struct to represent a color, instead of an int as the original implementation does.
+## Avalonia integration
 
-### Avalonia integration
+### Register a scheme
 
-The Avalonia package exposes Material colors through Avalonia's native resource system.
-`ColorScheme` is the mutable, bindable input; `MaterialColorResources` is a resource
-provider. All generated values are Avalonia `Color` values, addressed by typed keys.
-
-**Breaking change:** the old attached-property/snapshot API and custom color-binding
-implementation have been removed. The new `MdSysColor`, `MdRefPalette`, and
-`MdCustomColor` markup extensions are thin wrappers around native `DynamicResource`.
-See [Migrating to native resources](docs/avalonia-native-resources-migration.md)
-for the complete migration and behavior changes.
-
-#### Register a scheme
-
-Add a provider to a resource dictionary's `MergedDictionaries`, at application,
-window, or control scope. Use the same XML namespace for the schemes and token keys:
+Add `MaterialColorResources` to a resource dictionary's `MergedDictionaries` at
+application, window, or control scope. Use the `mcu` XML namespace below throughout:
 
 ```xml
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
-             RequestedThemeVariant="Default">
+             xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <mcu:MaterialColorResources>
-                    <mcu:TonalSpotScheme Color="#6750A4" SpecVersion="Spec2025" />
-                </mcu:MaterialColorResources>
+                <mcu:MaterialColorResources
+                    Scheme="{mcu:TonalSpotScheme '#6750A4', SpecVersion=Spec2025}" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
 ```
 
-`Scheme` is the provider's content property and a `StyledProperty`. The provider is
-not a dictionary: do not assign it directly to `Resources` or use it as a
-`ThemeDictionaries` entry. Put it in an ordinary dictionary's `MergedDictionaries`.
+Defaults are `Spec2021`, `Phone`, and contrast `0`; `CmfScheme` requires `Spec2026`.
+No provider or seed is registered automatically: a null scheme or unset seed supplies
+no resources. The provider cannot replace `Resources` or be a `ThemeDictionaries` entry.
 
-The seed above is an explicit application choice. MCU does not choose a default
-seed or automatically register global resources. A null scheme or unset/null
-primary seed supplies no resources. `Color="{DynamicResource SystemAccentColor}"`
-also works when your application supplies that resource; it is not guaranteed by
-MCU on every platform. The defaults remain `Spec2021`, `Phone`, and contrast 0.
-CMF requires `Spec2026` and supports its existing secondary seed.
+### Use colors
 
-#### Consume system colors
-
-`SysColorToken` enum values are the resource keys. Strings such as `"Primary"`
-are not aliases.
-
-```xml
-<Border Background="{DynamicResource {x:Static mcu:SysColorToken.PrimaryContainer}}">
-    <TextBlock Text="Material colors"
-               Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnPrimaryContainer}}" />
-</Border>
-```
-
-For shorter XAML, use the equivalent native-resource markup extensions:
+The markup extensions wrap native `DynamicResource`, so colors update with the
+scheme and the target's theme. Generated values are Avalonia `Color`; Avalonia
+converts them to brushes for properties such as `Background` and `Foreground`.
 
 ```xml
 <Border Background="{mcu:MdSysColor PrimaryContainer}">
     <TextBlock Text="Material colors"
-               Foreground="{mcu:MdSysColor Token=OnPrimaryContainer}" />
+               Foreground="{mcu:MdSysColor OnPrimaryContainer}" />
 </Border>
-```
-
-`{mcu:MdSysColor}` defaults to `SysColorToken.Background`. The extensions live in
-`MaterialColorUtilities.Avalonia.Markup` and use the same `mcu` XML namespace above.
-Their public `ProvideValue(IServiceProvider)` returns `BindingBase` by forwarding
-the original service provider to a native `DynamicResourceExtension` with the typed
-key. They do not resolve colors eagerly or create a separate binding implementation.
-
-Use `DynamicResource` or these extensions for live scheme and theme updates. Avalonia converts a `Color`
-to an immutable brush when the target property type is `IBrush`, such as
-`Background` or `Foreground`. The provider itself always returns `Color`. For a
-concrete `SolidColorBrush`, create it explicitly and bind its `Color`:
-
-```xml
-<SolidColorBrush x:Key="MaterialSurfaceBrush"
-                 Color="{mcu:MdSysColor Surface}" />
-```
-
-A shared brush resolves in its declaration/owner context. It is not reinterpreted
-against each consumer's local scheme. Put `DynamicResource` directly on the target,
-style setter, or template when each target should use its own resource scope.
-The shorthand preserves these native contexts too:
-
-```xml
-<Style Selector="Button.material">
-    <Setter Property="Background" Value="{mcu:MdSysColor PrimaryContainer}" />
-    <Setter Property="Template">
-        <ControlTemplate>
-            <Border Background="{mcu:MdSysColor Surface}">
-                <ContentPresenter Content="{TemplateBinding Content}" />
-            </Border>
-        </ControlTemplate>
-    </Setter>
-</Style>
-```
-
-#### Palettes and named custom colors
-
-Use positional arguments for a standard palette or custom role, or named properties:
-
-```xml
 <Border Background="{mcu:MdRefPalette Primary, 60}" />
-<Border Background="{mcu:MdRefPalette Palette=Primary, Tone=60}" />
-<Border Background="{mcu:MdRefPalette CustomName=Brand, Tone=60}" />
-<Border Background="{mcu:MdCustomColor Brand, Container}" />
-<Border Background="{mcu:MdCustomColor Name=Brand, Role=Container}" />
 ```
 
-`MdRefPalette` defaults to `Palette=Primary` and `Tone=0`. Its `Tone` property is an
-`int` and must be 0–100. `CustomName` selects a named palette; do not explicitly set
-`Palette` alongside it, even to `Primary` or `Custom`. Without `CustomName`,
-`RefPaletteToken.Custom` is invalid. `MdCustomColor` requires a valid `Name`; `Role`
-selects `Color`, `OnColor`, `Container`, or `OnContainer`. Invalid enum values are
-rejected. The named colors must be registered in a scheme or supplied as ordinary
-resources, as below; the extensions create no fallback resources.
+The keys are typed values, not strings:
 
-The underlying multi-argument keys remain immutable values:
+- `MdSysColor Primary` uses `SysColorToken.Primary`
+- `MdRefPalette Primary, 60` uses `new RefPaletteKey(RefPaletteToken.Primary, 60)`
+- `MdRefPalette CustomName=Brand, Tone=60` uses `new RefPaletteKey("Brand", 60)`
+- `MdCustomColor Brand, Container` uses `new CustomColorKey("Brand", CustomColorRole.Container)`
 
-- `new RefPaletteKey(RefPaletteToken.Primary, 60)` selects a standard palette tone
-- `new RefPaletteKey("Brand", 60)` selects a named custom palette tone
-- `new CustomColorKey("Brand", CustomColorRole.Container)` selects a custom role
+Native lookup is equivalent: `{DynamicResource {x:Static mcu:SysColorToken.Primary}}`.
+Palette tones are integers from `0` through `100`. For a named palette, use
+`CustomName` without also setting `Palette`.
 
-Avalonia 12.1 cannot construct these structs with `x:Arguments`. When you need an
-explicit key, for example for an override, expose application-owned key values as
-static properties and use `x:Static`. Native `DynamicResource` remains fully supported
-alongside the shorthand:
+### Add custom colors
 
-```csharp
-using MaterialColorUtilities.Avalonia.Tokens;
+Use the object-element form inside `MergedDictionaries` to register named colors:
 
-namespace YourApp;
-
-public static class ThemeKeys
-{
-    public static RefPaletteKey Primary60 { get; } = new(RefPaletteToken.Primary, 60);
-    public static RefPaletteKey Brand60 { get; } = new("Brand", 60);
-    public static CustomColorKey BrandContainer { get; } = new("Brand", CustomColorRole.Container);
-}
+```xml
+<mcu:MaterialColorResources>
+    <mcu:TonalSpotScheme Color="#6750A4" SpecVersion="Spec2025">
+        <mcu:CustomColor Name="Brand" Color="#FF5722" Harmonize="True" />
+    </mcu:TonalSpotScheme>
+</mcu:MaterialColorResources>
 ```
 
 ```xml
-<Border xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
-        xmlns:local="using:YourApp">
-    <Border.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <mcu:MaterialColorResources>
-                    <mcu:TonalSpotScheme Color="#6750A4">
-                        <mcu:CustomColor Name="Brand" Color="#FF5722" Harmonize="True" />
-                    </mcu:TonalSpotScheme>
-                </mcu:MaterialColorResources>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Border.Resources>
-    <StackPanel Spacing="8">
-        <Border Height="40" Background="{DynamicResource {x:Static local:ThemeKeys.Primary60}}" />
-        <Border Height="40" Background="{DynamicResource {x:Static local:ThemeKeys.Brand60}}" />
-        <Border Height="40" Background="{DynamicResource {x:Static local:ThemeKeys.BrandContainer}}" />
-    </StackPanel>
+<Border Background="{mcu:MdCustomColor Brand, Container}">
+    <TextBlock Text="Brand" Foreground="{mcu:MdCustomColor Brand, OnContainer}" />
 </Border>
+<Border Background="{mcu:MdRefPalette CustomName=Brand, Tone=60}" />
 ```
 
-Tones are bytes in the range 0–100. The standard constructor does not accept
-`RefPaletteToken.Custom`; use the named constructor.
+Custom roles are `Color`, `OnColor`, `Container`, and `OnContainer`. Names are
+case-insensitive, nonempty, and must not have surrounding whitespace. Harmonization
+defaults to `True`; the last complete entry with the same name wins.
 
-Custom roles are `Color`, `OnColor`, `Container`, and `OnContainer`. Names use
-`StringComparer.OrdinalIgnoreCase` for key equality and hashing, so `Brand` and
-`brAND` address the same resource, including ordinary dictionary overrides. Names
-must be nonempty and have no leading/trailing whitespace; they are not trimmed.
-Later complete custom inputs with the same name win. Incomplete custom inputs (null
-name or seed) are skipped. Harmonization is optional and defaults to true. Custom
-roles retain fixed light/dark tones; standard palette lookup now uses the requested
-theme, which can change Spec2025 results compared with the old API.
+### Bind and update inputs
 
-#### Scope, overrides, and themes
-
-Native Avalonia resource lookup handles scope and precedence. To override one
-role, add a direct entry to the dictionary that contains the merged provider:
+Schemes are mutable, bindable inputs. Bind the constructor's seed using a named root
+whose view model exposes a `Color`-valued `Seed`, or use an application-supplied color resource:
 
 ```xml
-<Color x:Key="{x:Static mcu:SysColorToken.Primary}">#B3261E</Color>
+<mcu:MaterialColorResources
+    Scheme="{mcu:TonalSpotScheme {ReflectionBinding DataContext.Seed, ElementName=Root}, SpecVersion=Spec2025}" />
+<mcu:MaterialColorResources
+    Scheme="{mcu:TonalSpotScheme Color={DynamicResource SeedColor}, SpecVersion=Spec2025}" />
 ```
 
-This overrides only that role; it does not regenerate related colors or validate
-the resulting contrast. A local provider missing a custom name allows that key to
-fall back to outer resources. Missing resources follow native miss/unset behavior,
-not an automatic transparent color.
-
-Use `ThemeVariantScope RequestedThemeVariant="Dark"` or native Light/Dark theme
-dictionaries for fixed-theme scopes. There is no per-expression theme pin.
-Light/Dark subtrees can use one provider concurrently. Custom variants follow their
-`InheritVariant` chain; null, `Default`, and variants without a Light/Dark ancestor
-resolve to light at the provider level.
-
-In Avalonia 12.1, a brush's declaration context matters even inside theme dictionaries:
-inline Light/Dark dictionaries under a control use that declaring control's theme
-for the brush's nested `DynamicResource`. For brushes pinned to their dictionary's
-Light/Dark variant, put the theme dictionaries in a standalone `ResourceDictionary`
-loaded through `ResourceInclude`, as the Gallery does. These native anchor behaviors
-are not changed by MCU.
-
-#### C# lookup and binding
+These are alternatives; `Root` must be named in the same XAML namescope.
+Schemes and providers are not `StyledElement`s and do not themselves inherit
+`DataContext`. Inline XAML bindings can use their declaration anchor; prefer an
+explicit source or named root, especially across resource-dictionary boundaries.
+A `StaticResource` source must be in an already available outer scope or earlier merged dictionary.
 
 ```csharp
 using Avalonia.Controls;
@@ -262,33 +163,33 @@ using MaterialColorUtilities.Avalonia.Tokens;
 
 var scheme = new TonalSpotScheme(Color.Parse("#6750A4"));
 border.Resources.MergedDictionaries.Add(new MaterialColorResources { Scheme = scheme });
-scheme.Color = Color.Parse("#006A6A");
-
-if (border.TryFindResource(SysColorToken.Primary, border.ActualThemeVariant, out var value)
-    && value is Color color)
-{
-    var brush = new SolidColorBrush(color);
-}
-
-border.Resources[new CustomColorKey("Brand", CustomColorRole.Container)] =
-    Color.Parse("#FFDBCF");
+scheme.Color = Color.Parse("#006A6A"); // Updates dynamic-resource consumers.
+border.TryFindResource(SysColorToken.Primary, border.ActualThemeVariant, out var color);
 ```
 
-Pass `ActualThemeVariant` explicitly for a themed C# lookup. The overload without a
-theme passes null; it does not automatically use the caller's actual theme. Use
-host resource lookup rather than `Resources[key]`, which only reads direct entries.
-A lookup is a snapshot of the value; use Avalonia's `GetResourceObservable(key)` for
-continued observation and dispose its subscription normally.
+C# lookup returns a snapshot; pass `ActualThemeVariant` explicitly. Use
+`GetResourceObservable(key)` for ongoing observation and dispose subscriptions normally.
 
-For scheme/input bindings, use an explicit source or element name. A resource
-provider is not a `StyledElement` and does not automatically inherit the owner's
-`DataContext`. The Gallery uses a named root as the binding source and demonstrates
-system colors, both palette key constructors, custom roles, and theme dictionaries.
+### Themes and overrides
 
-For `Source={StaticResource ThemeSettings}`, use `ReflectionBinding` or an explicitly
-typed binding path. Put the settings resource in an earlier merged dictionary or an
-already available outer scope. A direct entry in the same dictionary is not yet
-available during construction of its merged provider, even if it appears first in
-XAML. The named-root binding in the Gallery avoids this construction-order issue.
+Native Avalonia lookup determines scope and precedence. Use
+`ThemeVariantScope RequestedThemeVariant="Dark"` for a dark subtree. One provider
+can serve Light and Dark consumers simultaneously. To override a single role,
+add a direct entry to the dictionary containing the merged provider:
 
-Image-based color extraction is not provided by the integration.
+```xml
+<Color x:Key="{x:Static mcu:SysColorToken.Primary}">#B3261E</Color>
+```
+
+Overrides do not regenerate related colors or check contrast. Shared brushes resolve
+in their declaration context; put the dynamic resource on the target, setter, or
+template when each consumer needs its own scope.
+
+## Examples and further reading
+
+- [Gallery](MaterialColorUtilities.Gallery): editable schemes, custom colors, and theme scopes
+- [Native-resource migration guide](docs/avalonia-native-resources-migration.md): previous API replacements, resource-key validation, binding setup, and detailed lookup behavior
+
+## License
+
+[Apache 2.0](LICENSE.txt). Original algorithms © Google LLC; C# port by Shirasagi0012.
