@@ -27,8 +27,12 @@ public interface IQuantizer
     /// <summary>
     /// Quantize a collection of ARGB pixel values to a smaller set of representative colors.
     /// </summary>
+    /// <remarks>
+    /// Runs synchronously on the calling thread. Applications choose where to schedule CPU work.
+    /// Do not mutate the input list until this method returns.
+    /// </remarks>
     /// <param name="pixels">Input pixels as ARGB colors</param>
     /// <param name="maxColors">Maximum number of colors in the result</param>
     /// <returns>Result containing representative colors and their counts</returns>
-    Task<QuantizerResult> QuantizeAsync(List<ArgbColor> pixels, int maxColors);
+    QuantizerResult Quantize(List<ArgbColor> pixels, int maxColors);
 }

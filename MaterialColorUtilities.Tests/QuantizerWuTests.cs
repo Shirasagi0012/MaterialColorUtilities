@@ -12,59 +12,59 @@ public class QuantizerWuTests
     private const int MaxColors = 256;
 
     [Fact]
-    public async Task OneRed_FirstTest()
+    public void OneRed_FirstTest()
     {
         var wu = new QuantizerWu();
-        var result = await wu.QuantizeAsync(new List<ArgbColor> { Red }, MaxColors);
+        var result = wu.Quantize(new List<ArgbColor> { Red }, MaxColors);
         var colors = result.ColorToCount.Keys.ToList();
         Assert.Single(colors);
     }
 
     [Fact]
-    public async Task OneRando()
+    public void OneRando()
     {
         var wu = new QuantizerWu();
-        var result = await wu.QuantizeAsync(new List<ArgbColor> { new ArgbColor(0xff141216) }, MaxColors);
+        var result = wu.Quantize(new List<ArgbColor> { new ArgbColor(0xff141216) }, MaxColors);
         var colors = result.ColorToCount.Keys.ToList();
         Assert.Single(colors);
         Assert.Equal(unchecked((int)0xff141216), colors[0].Value);
     }
 
     [Fact]
-    public async Task OneRed()
+    public void OneRed()
     {
         var wu = new QuantizerWu();
-        var result = await wu.QuantizeAsync(new List<ArgbColor> { Red }, MaxColors);
+        var result = wu.Quantize(new List<ArgbColor> { Red }, MaxColors);
         var colors = result.ColorToCount.Keys.ToList();
         Assert.Single(colors);
         Assert.Equal(Red.Value, colors[0].Value);
     }
 
     [Fact]
-    public async Task OneGreen()
+    public void OneGreen()
     {
         var wu = new QuantizerWu();
-        var result = await wu.QuantizeAsync(new List<ArgbColor> { Green }, MaxColors);
+        var result = wu.Quantize(new List<ArgbColor> { Green }, MaxColors);
         var colors = result.ColorToCount.Keys.ToList();
         Assert.Single(colors);
         Assert.Equal(Green.Value, colors[0].Value);
     }
 
     [Fact]
-    public async Task OneBlue()
+    public void OneBlue()
     {
         var wu = new QuantizerWu();
-        var result = await wu.QuantizeAsync(new List<ArgbColor> { Blue }, MaxColors);
+        var result = wu.Quantize(new List<ArgbColor> { Blue }, MaxColors);
         var colors = result.ColorToCount.Keys.ToList();
         Assert.Single(colors);
         Assert.Equal(Blue.Value, colors[0].Value);
     }
 
     [Fact]
-    public async Task FiveBlue()
+    public void FiveBlue()
     {
         var wu = new QuantizerWu();
-        var result = await wu.QuantizeAsync(
+        var result = wu.Quantize(
             new List<ArgbColor> { Blue, Blue, Blue, Blue, Blue },
             MaxColors);
         var colors = result.ColorToCount.Keys.ToList();
@@ -73,10 +73,10 @@ public class QuantizerWuTests
     }
 
     [Fact]
-    public async Task TwoRedThreeGreen()
+    public void TwoRedThreeGreen()
     {
         var wu = new QuantizerWu();
-        var result = await wu.QuantizeAsync(
+        var result = wu.Quantize(
             new List<ArgbColor> { Red, Red, Green, Green, Green },
             MaxColors);
         var colors = result.ColorToCount.Keys.ToList();
@@ -86,10 +86,10 @@ public class QuantizerWuTests
     }
 
     [Fact]
-    public async Task OneRedOneGreenOneBlue()
+    public void OneRedOneGreenOneBlue()
     {
         var wu = new QuantizerWu();
-        var result = await wu.QuantizeAsync(
+        var result = wu.Quantize(
             new List<ArgbColor> { Red, Green, Blue },
             MaxColors);
         var colors = result.ColorToCount.Keys.ToList();

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <QuantizationProject Condition="'$(QuantizationProject)' == ''">../../MaterialColorUtilities/MaterialColorUtilities.csproj</QuantizationProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(QuantizationProject)" />
+    <Compile Include="../../MaterialColorUtilities.Tests/QuantizationRegressionData.cs" Link="QuantizationRegressionData.cs" />
+  </ItemGroup>
+</Project>

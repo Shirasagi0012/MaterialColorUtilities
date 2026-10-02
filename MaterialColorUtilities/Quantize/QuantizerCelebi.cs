@@ -24,19 +24,19 @@ namespace MaterialColorUtilities.Quantize;
 /// </summary>
 public sealed class QuantizerCelebi : IQuantizer
 {
-    public async Task<QuantizerResult> QuantizeAsync(List<ArgbColor> pixels, int maxColors)
+    public QuantizerResult Quantize(List<ArgbColor> pixels, int maxColors)
     {
-        return await QuantizeAsync(pixels, maxColors, false);
+        return Quantize(pixels, maxColors, false);
     }
 
-    public async Task<QuantizerResult> QuantizeAsync(
+    public QuantizerResult Quantize(
         List<ArgbColor> pixels,
         int maxColors,
         bool returnInputPixelToClusterPixel
     )
     {
         var wu = new QuantizerWu();
-        var wuResult = await wu.QuantizeAsync(pixels, maxColors);
+        var wuResult = wu.Quantize(pixels, maxColors);
         var wsmeansResult = QuantizerWsmeans.Quantize(
             pixels,
             maxColors,

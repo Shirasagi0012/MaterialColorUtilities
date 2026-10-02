@@ -21,6 +21,7 @@ namespace MaterialColorUtilities.Quantize;
 /// <summary>
 /// Wu color quantization algorithm. An image quantizer based on recursive division.
 /// </summary>
+/// <remarks>Instances may be reused sequentially, but are not safe for concurrent calls.</remarks>
 public sealed class QuantizerWu : IQuantizer
 {
     private int[] _weights = [];
@@ -39,9 +40,9 @@ public sealed class QuantizerWu : IQuantizer
     private const int SideLength = 33;
     private const int TotalSize = 35937;
 
-    public async Task<QuantizerResult> QuantizeAsync(List<ArgbColor> pixels, int colorCount)
+    public QuantizerResult Quantize(List<ArgbColor> pixels, int colorCount)
     {
-        var result = await new QuantizerMap().QuantizeAsync(pixels, colorCount);
+        var result = new QuantizerMap().Quantize(pixels, colorCount);
         ConstructHistogram(result.ColorToCount);
         ComputeMoments();
         var createBoxesResult = CreateBoxes(colorCount);

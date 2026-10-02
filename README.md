@@ -61,7 +61,9 @@ ArgbColor onPrimary = scheme.OnPrimary;
 ```
 
 The core quantizers and `Score.CalculateScore` can select seed colors from decoded
-image pixels. Image decoding and an Avalonia image-extraction adapter are not provided.
+image pixels. Quantization runs synchronously on the calling thread; see the
+[synchronous API and migration notes](docs/synchronous-quantization.md).
+Image decoding and an Avalonia image-extraction adapter are not provided.
 
 ## Avalonia integration
 
