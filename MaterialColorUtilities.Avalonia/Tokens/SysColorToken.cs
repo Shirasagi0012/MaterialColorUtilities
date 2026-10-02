@@ -1,6 +1,4 @@
-﻿namespace MaterialColorUtilities.Avalonia.Tokens;
-
-internal readonly record struct SysColorTokenKey(SysColorToken Token, string? CustomKey = null);
+namespace MaterialColorUtilities.Avalonia.Tokens;
 
 public enum SysColorToken
 {
@@ -54,9 +52,4 @@ public enum SysColorToken
     OnTertiaryFixed,
     OnTertiaryFixedVariant,
 
-    // The four roles below are generated from a named CustomColor and require a custom key.
-    Custom,
-    OnCustom,
-    CustomContainer,
-    OnCustomContainer
 }

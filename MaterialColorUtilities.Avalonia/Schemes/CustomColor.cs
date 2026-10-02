@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Media;
+using MaterialColorUtilities.Avalonia.Tokens;
 
 namespace MaterialColorUtilities.Avalonia;
 
@@ -8,15 +9,16 @@ namespace MaterialColorUtilities.Avalonia;
 /// primary / secondary / tertiary / error key colors.
 /// <para>
 /// Each custom color produces a full tonal palette, addressable as a reference palette via
-/// <c>RefPaletteToken.Custom</c>, and four system roles via <c>SysColorToken.Custom</c>,
-/// <c>OnCustom</c>, <c>CustomContainer</c> and <c>OnCustomContainer</c>. All of them are keyed by
+/// <see cref="RefPaletteKey"/>, and four fixed-tone roles via <see cref="CustomColorKey"/>.
+/// All of them are keyed by
 /// <see cref="Name"/>.
 /// </para>
 /// </summary>
 public class CustomColor : AvaloniaObject
 {
     public static readonly StyledProperty<string?> NameProperty =
-        AvaloniaProperty.Register<CustomColor, string?>(nameof(Name));
+        AvaloniaProperty.Register<CustomColor, string?>(nameof(Name),
+            validate: value => value is null || ResourceKeyValidation.IsValidName(value));
 
     public static readonly StyledProperty<Color?> ColorProperty =
         AvaloniaProperty.Register<CustomColor, Color?>(nameof(Color));
@@ -35,7 +37,7 @@ public class CustomColor : AvaloniaObject
     }
 
     /// <summary>
-    /// The key this color is addressed by from token markup, e.g. <c>{MdSysColor Custom, CustomKey=Brand}</c>.
+    /// The name used by <see cref="CustomColorKey"/> and <see cref="RefPaletteKey"/>.
     /// Lookup is case-insensitive.
     /// </summary>
     public string? Name
@@ -56,7 +58,7 @@ public class CustomColor : AvaloniaObject
     /// <summary>
     /// When <c>true</c> (the default), the seed color's hue is rotated up to 15 degrees toward the
     /// scheme's source color so it sits comfortably alongside the generated roles. Set to
-    /// <c>false</c> to keep a brand color exact.
+    /// <c>false</c> to disable harmonization before tonal-palette generation.
     /// </summary>
     public bool Harmonize
     {

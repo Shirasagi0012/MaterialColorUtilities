@@ -18,18 +18,18 @@
 		<DockPanel LastChildFill="True" 
 		           Background="{DynamicResource SurfaceBrush}">
 			<Border
-				Background="{mcu:MdSysColor SurfaceContainerLow}"
+				Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainerLow}}"
 				DockPanel.Dock="Top"
 				Padding="16">
 				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" RowDefinitions="Auto Auto" RowSpacing="12">
 					<TextBlock
 						FontSize="28"
 						FontWeight="SemiBold"
-						Foreground="{mcu:MdSysColor OnSurface}"
+						Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurface}}"
 						Grid.ColumnSpan="2"
 						Text="Material Color Utilities Gallery" />
 					<TextBlock
-						Foreground="{mcu:MdSysColor OnSurfaceVariant}"
+						Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}"
 						Grid.Row="1"
 						Text="Color Scheme" />
 					<ComboBox

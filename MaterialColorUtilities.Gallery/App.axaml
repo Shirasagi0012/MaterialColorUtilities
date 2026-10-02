@@ -18,12 +18,11 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
+				<mcu:MaterialColorResources>
+					<mcu:TonalSpotScheme Color="{DynamicResource SystemAccentColor}" />
+				</mcu:MaterialColorResources>
 				<ResourceInclude Source="Assets/ResourceDictionary1.axaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
-
-	<mcu:MaterialColor.Scheme>
-		<mcu:TonalSpotScheme Color="{DynamicResource SystemAccentColor}" />
-	</mcu:MaterialColor.Scheme>
 </Application>

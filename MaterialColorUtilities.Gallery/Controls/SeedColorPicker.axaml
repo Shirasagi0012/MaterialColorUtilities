@@ -50,9 +50,9 @@
 
             <Border Grid.Row="3" Grid.Column="1"
                     CornerRadius="4"
-                    BorderBrush="{mcu:MdSysColor Outline}"
+                    BorderBrush="{DynamicResource {x:Static mcu:SysColorToken.Outline}}"
                     BorderThickness="1"
-                    Background="{mcu:MdSysColor SurfaceContainerHighest}"
+                    Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainerHighest}}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Padding="2">
