@@ -71,6 +71,7 @@
                                     LargeChange="0.25"
                                     Value="{Binding SelectedContrast, Mode=TwoWay}" />
                             <TextBlock Grid.Column="1"
+                                       Width="72"
                                        VerticalAlignment="Center"
                                        Text="{Binding SelectedContrast, StringFormat={}{0:0.00}}" />
                         </Grid>
