@@ -92,43 +92,30 @@
                 </Border>
 
                 <Border Grid.Column="1" Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainerLow}}"
-                        Padding="24" CornerRadius="12">
-                    <StackPanel Spacing="12">
-                        <TextBlock FontSize="20">Native palette resources</TextBlock>
-                        <TextBlock TextWrapping="Wrap"
-                                   Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}"
-                                   Text="Primary tone 60 follows the selected scheme and theme." />
-                        <Border Height="48" CornerRadius="4"
-                                Background="{DynamicResource {x:Static views:SchemePlaygroundView.Primary60Key}}">
-                            <Border.Resources>
-                                <ResourceDictionary>
-                                    <ResourceDictionary.MergedDictionaries>
-                                        <mcu:MaterialColorResources
-                                            Scheme="{ReflectionBinding DataContext.Scheme, ElementName=Root}" />
-                                    </ResourceDictionary.MergedDictionaries>
-                                </ResourceDictionary>
-                            </Border.Resources>
-                        </Border>
-                        <Border Padding="16" CornerRadius="4"
-                                Background="{DynamicResource {x:Static views:SchemePlaygroundView.BrandContainerKey}}">
-                            <Border.Resources>
-                                <ResourceDictionary>
-                                    <ResourceDictionary.MergedDictionaries>
-                                        <mcu:MaterialColorResources>
-                                            <mcu:TonalSpotScheme Color="#6750A4">
-                                                <mcu:CustomColor Name="Brand" Color="#FF5722" />
-                                            </mcu:TonalSpotScheme>
-                                        </mcu:MaterialColorResources>
-                                    </ResourceDictionary.MergedDictionaries>
-                                </ResourceDictionary>
-                            </Border.Resources>
-                            <StackPanel Spacing="12">
-                                <TextBlock Text="Named custom color"
-                                           Foreground="{DynamicResource {x:Static views:SchemePlaygroundView.BrandOnContainerKey}}" />
-                                <Border Height="24" CornerRadius="4"
-                                        Background="{DynamicResource {x:Static views:SchemePlaygroundView.Brand60Key}}" />
+                        Padding="24" CornerRadius="12" VerticalAlignment="Top">
+                    <StackPanel Spacing="20">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                <TextBlock FontSize="20" Text="Custom colors" />
+                                <TextBlock Text="{Binding CustomColors.Count}" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
                             </StackPanel>
-                        </Border>
+                            <Button x:Name="AddCustomColorButton" Grid.Column="1" Content="+ Add color" Command="{Binding AddCustomColorCommand}"
+                                    Background="{DynamicResource {x:Static mcu:SysColorToken.PrimaryContainer}}"
+                                    Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnPrimaryContainer}}" />
+                        </Grid>
+                        <TextBlock IsVisible="{Binding HasNoCustomColors}" Text="Add a custom color to preview its roles."
+                                   TextWrapping="Wrap" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
+                        <ItemsControl x:Name="CustomColorItems" ItemsSource="{Binding CustomColors}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate><StackPanel Spacing="20" /></ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:CustomColorEntryViewModel">
+                                    <controls:CustomColorEditor />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </Border>
             </Grid>
