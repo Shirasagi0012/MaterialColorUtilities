@@ -7,6 +7,7 @@ using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Styling;
 using MaterialColorUtilities.Avalonia.Helpers;
+using MaterialColorUtilities.Avalonia.Tokens;
 using MaterialColorUtilities.HCT;
 using MaterialColorUtilities.Palettes;
 using MaterialColorUtilities.Utils;
@@ -23,18 +24,22 @@ public abstract class ColorScheme : AvaloniaObject
         AvaloniaProperty.Register<ColorScheme, Color?>(nameof(Color));
 
     public static readonly StyledProperty<double?> ContrastLevelProperty =
-        AvaloniaProperty.Register<ColorScheme, double?>(nameof(ContrastLevel));
+        AvaloniaProperty.Register<ColorScheme, double?>(nameof(ContrastLevel), validate: value => value is null ||
+                (double.IsFinite(value.Value) && value.Value is >= -1 and <= 1));
 
     public static readonly StyledProperty<ColorSpec.SpecVersion> SpecVersionProperty =
         AvaloniaProperty.Register<ColorScheme, ColorSpec.SpecVersion>(
             nameof(SpecVersion),
-            DynamicScheme.DefaultSpecVersion
+            DynamicScheme.DefaultSpecVersion,
+            validate: value => Enum.IsDefined(value)
         );
 
     public static readonly StyledProperty<DynamicScheme.Platform> PlatformProperty =
-        AvaloniaProperty.Register<ColorScheme, DynamicScheme.Platform>(nameof(Platform), DynamicScheme.DefaultPlatform);
+        AvaloniaProperty.Register<ColorScheme, DynamicScheme.Platform>(nameof(Platform), DynamicScheme.DefaultPlatform,
+            validate: value => Enum.IsDefined(value));
 
     private readonly AvaloniaList<CustomColor> _customColors = [];
+    private readonly HashSet<CustomColor> _subscribedCustomColors = new(ReferenceEqualityComparer.Instance);
 
     protected ColorScheme()
     {
@@ -114,9 +119,10 @@ public abstract class ColorScheme : AvaloniaObject
 
         foreach (var custom in _customColors)
         {
-            if (string.IsNullOrEmpty(custom.Name) || custom.Color is not { } customColor)
+            if (custom.Name is null || custom.Color is not { } customColor)
                 continue;
 
+            ResourceKeyValidation.ValidateName(custom.Name, nameof(CustomColor.Name));
             var argb = ArgbColor.FromAvaloniaColor(customColor);
             if (custom.Harmonize && seed is { } source)
                 argb = Blend.Harmonize(argb, source);
@@ -132,7 +138,7 @@ public abstract class ColorScheme : AvaloniaObject
 
     protected Hct ResolveSeedHct()
     {
-        var color = Color ?? throw new InvalidOperationException("SchemeProvider requires Color to be set.");
+        var color = Color ?? throw new InvalidOperationException("ColorScheme requires Color to be set.");
 
         return Hct.From(ArgbColor.FromAvaloniaColor(color));
     }
@@ -161,13 +167,17 @@ public abstract class ColorScheme : AvaloniaObject
 
     private void OnCustomColorsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.OldItems is { } removed)
-            foreach (CustomColor custom in removed)
+        // Reconcile against the live collection, including Reset (whose OldItems is null).
+        // Subscribe once per identity: duplicates keep notifying until their last removal.
+        var current = new HashSet<CustomColor>(_customColors, ReferenceEqualityComparer.Instance);
+        foreach (var custom in _subscribedCustomColors)
+            if (!current.Contains(custom))
                 custom.PropertyChanged -= OnCustomColorPropertyChanged;
-
-        if (e.NewItems is { } added)
-            foreach (CustomColor custom in added)
+        foreach (var custom in current)
+            if (!_subscribedCustomColors.Contains(custom))
                 custom.PropertyChanged += OnCustomColorPropertyChanged;
+        _subscribedCustomColors.Clear();
+        _subscribedCustomColors.UnionWith(current);
 
         OnSchemeChanged();
     }

@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
+             x:Class="MaterialColorUtilities.Tests.Avalonia.NamedMarkupView">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <mcu:MaterialColorResources>
+                    <mcu:TonalSpotScheme Color="#6750A4">
+                        <mcu:CustomColor Name="Brand" Color="#FF5722" />
+                    </mcu:TonalSpotScheme>
+                </mcu:MaterialColorResources>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <StackPanel>
+        <Border Name="SystemNamed" Background="{mcu:MdSysColor Token=Primary}" />
+        <Border Name="PaletteNamed" Background="{mcu:MdRefPalette Palette=Primary, Tone=60}" />
+        <Border Name="CustomPaletteNamed" Background="{mcu:MdRefPalette CustomName=brand, Tone=60}" />
+        <Border Name="CustomRoleNamed" Background="{mcu:MdCustomColor Name=brand, Role=Container}" />
+        <Border Name="DefaultCustomRole" Background="{mcu:MdCustomColor Name=Brand}" />
+        <Border Name="DefaultSystem" Background="{mcu:MdSysColor}" />
+        <Border Name="DefaultPalette" Background="{mcu:MdRefPalette}" />
+        <Border Name="PaletteLowerBound" Background="{mcu:MdRefPalette Primary, 0}" />
+        <Border Name="PaletteUpperBound" Background="{mcu:MdRefPalette Primary, 100}" />
+    </StackPanel>
+</UserControl>

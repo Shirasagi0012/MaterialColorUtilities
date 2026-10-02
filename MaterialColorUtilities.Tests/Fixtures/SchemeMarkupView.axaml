@@ -1,0 +1,131 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
+ x:Class="MaterialColorUtilities.Tests.Avalonia.SchemeMarkupView" x:Name="Root" x:CompileBindings="False">
+ <StackPanel>
+  <Border Name="TonalSpotString" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:TonalSpotScheme '#6750A4', SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="TonalSpotObject" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources><mcu:TonalSpotScheme Color="#6750A4" SpecVersion="Spec2025" /></mcu:MaterialColorResources>
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="ContentString" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:ContentScheme '#6750A4', SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="ContentObject" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources><mcu:ContentScheme Color="#6750A4" SpecVersion="Spec2025" /></mcu:MaterialColorResources>
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="ExpressiveString" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:ExpressiveScheme '#6750A4', SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="ExpressiveObject" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources><mcu:ExpressiveScheme Color="#6750A4" SpecVersion="Spec2025" /></mcu:MaterialColorResources>
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="FidelityString" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:FidelityScheme '#6750A4', SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="FidelityObject" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources><mcu:FidelityScheme Color="#6750A4" SpecVersion="Spec2025" /></mcu:MaterialColorResources>
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="FruitSaladString" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:FruitSaladScheme '#6750A4', SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="FruitSaladObject" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources><mcu:FruitSaladScheme Color="#6750A4" SpecVersion="Spec2025" /></mcu:MaterialColorResources>
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="MonochromeString" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:MonochromeScheme '#6750A4', SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="MonochromeObject" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources><mcu:MonochromeScheme Color="#6750A4" SpecVersion="Spec2025" /></mcu:MaterialColorResources>
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="NeutralString" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:NeutralScheme '#6750A4', SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="NeutralObject" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources><mcu:NeutralScheme Color="#6750A4" SpecVersion="Spec2025" /></mcu:MaterialColorResources>
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="RainbowString" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:RainbowScheme '#6750A4', SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="RainbowObject" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources><mcu:RainbowScheme Color="#6750A4" SpecVersion="Spec2025" /></mcu:MaterialColorResources>
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="VibrantString" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:VibrantScheme '#6750A4', SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="VibrantObject" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources><mcu:VibrantScheme Color="#6750A4" SpecVersion="Spec2025" /></mcu:MaterialColorResources>
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="CmfString" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:CmfScheme '#6750A4', SecondaryColor='#00FF00', SpecVersion=Spec2026}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="CmfObject" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources><mcu:CmfScheme Color="#6750A4" SecondaryColor="#00FF00" SpecVersion="Spec2026" /></mcu:MaterialColorResources>
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="PositionalBinding" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:TonalSpotScheme {Binding Seed, ElementName=Root}, SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="NamedBinding" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:TonalSpotScheme Color={Binding Seed, ElementName=Root}, SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="DynamicSeed" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:TonalSpotScheme Color={DynamicResource SeedColor}, SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="ImplicitBinding" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:TonalSpotScheme {Binding Seed}, SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+  <Border Name="ReadmeBinding" Background="{mcu:MdSysColor Primary}">
+   <Border.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
+    <mcu:MaterialColorResources Scheme="{mcu:TonalSpotScheme {ReflectionBinding DataContext.Seed, ElementName=Root}, SpecVersion=Spec2025}" />
+   </ResourceDictionary.MergedDictionaries></ResourceDictionary></Border.Resources>
+  </Border>
+ </StackPanel>
+</UserControl>

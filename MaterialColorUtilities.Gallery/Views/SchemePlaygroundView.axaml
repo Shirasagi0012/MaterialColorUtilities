@@ -8,7 +8,8 @@
              xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
              mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="1200"
              x:Class="MaterialColorUtilities.Gallery.Views.SchemePlaygroundView"
-             x:DataType="vm:SchemePlaygroundViewModel">
+             x:DataType="vm:SchemePlaygroundViewModel"
+             x:Name="Root">
 
     <Design.DataContext>
         <vm:SchemePlaygroundViewModel />
@@ -70,6 +71,7 @@
                                     LargeChange="0.25"
                                     Value="{Binding SelectedContrast, Mode=TwoWay}" />
                             <TextBlock Grid.Column="1"
+                                       Width="72"
                                        VerticalAlignment="Center"
                                        Text="{Binding SelectedContrast, StringFormat={}{0:0.00}}" />
                         </Grid>
@@ -90,21 +92,48 @@
                 </Border>
 
                 <Border Grid.Column="1" Background="{mcu:MdSysColor SurfaceContainerLow}"
-                        Padding="24" CornerRadius="12">
-                    <StackPanel Spacing="12">
-                        <TextBlock FontSize="20">Additional Palette</TextBlock>
-                        <TextBlock TextWrapping="Wrap"
-                                   Foreground="{mcu:MdSysColor OnSurfaceVariant}">
-                        </TextBlock>
+                        Padding="24" CornerRadius="12" VerticalAlignment="Top">
+                    <StackPanel Spacing="20">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                <TextBlock FontSize="20" Text="Custom colors" />
+                                <TextBlock Text="{Binding CustomColors.Count}" VerticalAlignment="Center"
+                                           Foreground="{mcu:MdSysColor OnSurfaceVariant}" />
+                            </StackPanel>
+                            <Button x:Name="AddCustomColorButton" Grid.Column="1" Content="+ Add color" Command="{Binding AddCustomColorCommand}"
+                                    Background="{mcu:MdSysColor PrimaryContainer}"
+                                    Foreground="{mcu:MdSysColor OnPrimaryContainer}" />
+                        </Grid>
+                        <TextBlock IsVisible="{Binding HasNoCustomColors}" Text="Add a custom color to preview its roles."
+                                   TextWrapping="Wrap" Foreground="{mcu:MdSysColor OnSurfaceVariant}" />
+                        <ItemsControl x:Name="CustomColorItems" ItemsSource="{Binding CustomColors}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate><StackPanel Spacing="20" /></ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:CustomColorEntryViewModel">
+                                    <controls:CustomColorEditor />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </Border>
             </Grid>
 
-            <Border VerticalAlignment="Top" Padding="12" CornerRadius="12"
-                    Background="{mcu:MdSysColor SurfaceContainerHigh}"
-                    mcu:MaterialColor.Scheme="{Binding Scheme}">
-                <views:ColorSchemeView />
-            </Border>
+            <ThemeVariantScope x:Name="SchemePreview" RequestedThemeVariant="{Binding PreviewThemeVariant}">
+                <Border VerticalAlignment="Top" Padding="12" CornerRadius="12"
+                        Background="{mcu:MdSysColor SurfaceContainerHigh}">
+                    <Border.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <mcu:MaterialColorResources
+                                    Scheme="{ReflectionBinding DataContext.Scheme, ElementName=Root}" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </Border.Resources>
+                    <views:ColorSchemeView />
+                </Border>
+            </ThemeVariantScope>
         </DockPanel>
     </StackPanel>
 </UserControl>

@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
+             xmlns:local="using:MaterialColorUtilities.Tests.Avalonia"
+             x:Class="MaterialColorUtilities.Tests.Avalonia.MarkupNativeResourceView">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <mcu:MaterialColorResources>
+                    <mcu:TonalSpotScheme Color="#6750A4" SpecVersion="Spec2025">
+                        <mcu:CustomColor Name="Brand" Color="#FF5722" Harmonize="True" />
+                    </mcu:TonalSpotScheme>
+                </mcu:MaterialColorResources>
+            </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Key="DeclaredBrush" Color="{mcu:MdSysColor Primary}" />
+            <ControlTheme x:Key="ResourceTheme" TargetType="Button">
+                <Setter Property="Background" Value="{mcu:MdSysColor Primary}" />
+                <Setter Property="Template">
+                    <ControlTemplate>
+                        <Border Name="PART_ResourceBorder" Background="{mcu:MdSysColor PrimaryContainer}">
+                            <ContentPresenter Content="{TemplateBinding Content}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter>
+            </ControlTheme>
+            <DataTemplate x:Key="ResourceDataTemplate">
+                <Border Background="{mcu:MdSysColor Primary}" />
+            </DataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.Styles>
+        <Style Selector="Border.resource-style">
+            <Setter Property="Background" Value="{mcu:MdSysColor PrimaryContainer}" />
+        </Style>
+    </UserControl.Styles>
+    <StackPanel>
+        <Border Name="PaletteTarget" Background="{mcu:MdRefPalette Primary, 60}" />
+        <Border Name="CustomTarget" Background="{mcu:MdCustomColor Brand, Container}" />
+        <Border Name="DirectTarget" Background="{mcu:MdSysColor Primary}" />
+        <local:NativeColorTarget Name="ColorTarget" Value="{mcu:MdSysColor Primary}" />
+        <Border Name="StyleTarget" Classes="resource-style" />
+        <Border Name="SharedLightTarget" Background="{StaticResource DeclaredBrush}" />
+        <Button Name="LightButton" Theme="{StaticResource ResourceTheme}" Content="Light" />
+        <ThemeVariantScope RequestedThemeVariant="Dark">
+            <StackPanel>
+                <Border Name="DarkTarget" Background="{mcu:MdSysColor Primary}" />
+                <Border Name="SharedDarkTarget" Background="{StaticResource DeclaredBrush}" />
+                <Button Name="DarkButton" Theme="{StaticResource ResourceTheme}" Content="Dark" />
+            </StackPanel>
+        </ThemeVariantScope>
+    </StackPanel>
+</UserControl>

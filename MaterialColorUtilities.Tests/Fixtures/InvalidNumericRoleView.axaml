@@ -1,0 +1,6 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
+ x:Class="MaterialColorUtilities.Tests.Avalonia.InvalidNumericRoleView">
+ <Border Background="{mcu:MdCustomColor Brand, 999}" />
+</UserControl>

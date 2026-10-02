@@ -1,0 +1,7 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia" x:CompileBindings="False">
+ <ResourceDictionary.MergedDictionaries>
+  <mcu:MaterialColorResources Scheme="{mcu:TonalSpotScheme {Binding Seed}, SpecVersion=Spec2025}" />
+ </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

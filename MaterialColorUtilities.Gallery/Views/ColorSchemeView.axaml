@@ -456,14 +456,20 @@
                     Row="2"
                     VerticalAlignment="Bottom">
                     <Border Background="{mcu:MdSysColor Scrim}" Grid.Column="0">
-                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor InverseOnSurface, Theme=Light}">
-                            Scrim
-                        </TextBlock>
+                        <ThemeVariantScope RequestedThemeVariant="Light">
+                            <TextBlock Classes="label-medium"
+                                       Foreground="{mcu:MdSysColor InverseOnSurface}">
+                                Scrim
+                            </TextBlock>
+                        </ThemeVariantScope>
                     </Border>
                     <Border Background="{mcu:MdSysColor Shadow}" Grid.Column="1">
-                        <TextBlock Classes="label-medium" Foreground="{mcu:MdSysColor InverseOnSurface, Theme=Light}">
-                            Shadow
-                        </TextBlock>
+                        <ThemeVariantScope RequestedThemeVariant="Light">
+                            <TextBlock Classes="label-medium"
+                                       Foreground="{mcu:MdSysColor InverseOnSurface}">
+                                Shadow
+                            </TextBlock>
+                        </ThemeVariantScope>
                     </Border>
                 </Grid>
             </Grid>

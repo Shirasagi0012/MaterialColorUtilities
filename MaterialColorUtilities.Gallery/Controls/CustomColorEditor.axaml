@@ -1,0 +1,111 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:MaterialColorUtilities.Gallery.ViewModels"
+             xmlns:controls="clr-namespace:MaterialColorUtilities.Gallery.Controls"
+             xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
+             x:Class="MaterialColorUtilities.Gallery.Controls.CustomColorEditor"
+             x:DataType="vm:CustomColorEntryViewModel">
+    <UserControl.Resources>
+        <!-- Vector geometry follows Avalonia Fluent 12.1.3 TextBox and ButtonSpinner icons. -->
+        <StreamGeometry x:Key="RemoveColorIcon">M 11.416016,10 20,1.4160156 18.583984,0 10,8.5839846 1.4160156,0 0,1.4160156 8.5839844,10 0,18.583985 1.4160156,20 10,11.416015 18.583984,20 20,18.583985 Z</StreamGeometry>
+        <StreamGeometry x:Key="ExpandColorIcon">M0,1 L10,10 20,1 19,0 10,8 1,0 z</StreamGeometry>
+    </UserControl.Resources>
+    <UserControl.Styles>
+        <Style Selector="Button.icon">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="MinWidth" Value="32" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="PathIcon.expanded">
+            <Setter Property="RenderTransform" Value="rotate(180deg)" />
+        </Style>
+        <Style Selector="TextBlock.role">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Padding" Value="16 8" />
+        </Style>
+        <Style Selector="TextBlock.error">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static mcu:SysColorToken.Error}}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Styles>
+    <Border BorderBrush="{DynamicResource {x:Static mcu:SysColorToken.OutlineVariant}}"
+            BorderThickness="1" CornerRadius="8">
+        <StackPanel>
+            <Border Background="{DynamicResource {x:Static mcu:SysColorToken.SurfaceContainer}}"
+                    CornerRadius="7" Padding="8">
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4">
+                    <Button Command="{Binding ToggleExpandedCommand}" Background="Transparent"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            ToolTip.Tip="{Binding ExpansionAction}" AutomationProperties.Name="{Binding ExpansionAction}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Border Width="22" Height="22" CornerRadius="4" Background="{Binding SourceBrush}" />
+                            <TextBlock Grid.Column="1" Text="{Binding ResourceName}" FontSize="18" FontWeight="SemiBold"
+                                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                        </Grid>
+                    </Button>
+                    <Button x:Name="RemoveButton" Grid.Column="1" Classes="icon"
+                            Command="{Binding RemoveCommand}" ToolTip.Tip="Remove color" AutomationProperties.Name="Remove color">
+                        <PathIcon Width="12" Height="12" Data="{StaticResource RemoveColorIcon}" />
+                    </Button>
+                    <Button x:Name="ExpandButton" Grid.Column="2" Classes="icon" Command="{Binding ToggleExpandedCommand}"
+                            ToolTip.Tip="{Binding ExpansionAction}" AutomationProperties.Name="{Binding ExpansionAction}">
+                        <PathIcon x:Name="ExpandIcon" Width="14" Height="7" Data="{StaticResource ExpandColorIcon}"
+                                  Classes.expanded="{Binding IsExpanded}" RenderTransformOrigin="50%,50%" />
+                    </Button>
+                </Grid>
+            </Border>
+            <StackPanel x:Name="EditorBody" IsVisible="{Binding IsExpanded}" Margin="16" Spacing="16">
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Name" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
+                        <TextBox x:Name="NameInput" Text="{Binding Name, Mode=TwoWay}" AutomationProperties.Name="Custom color name" />
+                        <TextBlock Classes="error" Text="{Binding NameError}" IsVisible="{Binding NameError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="6">
+                        <TextBlock Text="Source color" Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
+                        <TextBox x:Name="SourceInput" Text="{Binding SourceHex, Mode=TwoWay}" AutomationProperties.Name="Source HEX color">
+                            <TextBox.InnerLeftContent>
+                                <Button Background="Transparent" Padding="6 0" ToolTip.Tip="Edit HCT color" AutomationProperties.Name="Edit source color with HCT">
+                                    <Border Width="20" Height="20" CornerRadius="3" Background="{Binding SourceBrush}" />
+                                    <Button.Flyout>
+                                        <Flyout>
+                                            <controls:SeedColorPicker Width="280" Title="Source color" Hct="{Binding SelectedHct, Mode=TwoWay}" />
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </TextBox.InnerLeftContent>
+                        </TextBox>
+                        <TextBlock Classes="error" Text="{Binding SourceError}" IsVisible="{Binding SourceError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                    </StackPanel>
+                </Grid>
+                <Grid x:Name="HarmonizeRow" ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="8">
+                    <TextBlock x:Name="HarmonizeLabel" Text="Harmonize" FontSize="16" VerticalAlignment="Center" />
+                    <StackPanel x:Name="HarmonizedPreview" Grid.Column="1" IsVisible="{Binding Harmonize}"
+                                Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <Border Width="18" Height="18" CornerRadius="3" Background="{Binding HarmonizedBrush}" />
+                        <SelectableTextBlock Text="{Binding HarmonizedHex}" VerticalAlignment="Center"
+                                             AutomationProperties.Name="Harmonized HEX color"
+                                             Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
+                    </StackPanel>
+                    <TextBlock x:Name="HarmonizeStateLabel" Grid.Column="3" Text="{Binding HarmonizeState}" VerticalAlignment="Center"
+                               Foreground="{DynamicResource {x:Static mcu:SysColorToken.OnSurfaceVariant}}" />
+                    <ToggleSwitch x:Name="HarmonizeToggle" Grid.Column="4" IsChecked="{Binding Harmonize, Mode=TwoWay}"
+                                  OnContent="" OffContent="" MinWidth="0" AutomationProperties.Name="Harmonize custom color" />
+                </Grid>
+                <StackPanel x:Name="RolePreview">
+                    <Border x:Name="ColorBand" Height="56"><TextBlock x:Name="ColorLabel" Classes="role" Text="Color" /></Border>
+                    <Border x:Name="OnColorBand" Height="40"><TextBlock x:Name="OnColorLabel" Classes="role" Text="On Color" /></Border>
+                    <Border x:Name="ContainerBand" Height="56" Margin="0 4 0 0"><TextBlock x:Name="ContainerLabel" Classes="role" Text="Color Container" /></Border>
+                    <Border x:Name="OnContainerBand" Height="40"><TextBlock x:Name="OnContainerLabel" Classes="role" Text="On Color Container" /></Border>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>
