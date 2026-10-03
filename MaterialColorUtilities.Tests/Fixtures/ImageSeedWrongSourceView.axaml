@@ -1,0 +1,10 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
+             x:Class="MaterialColorUtilities.Tests.Avalonia.ImageSeedWrongSourceView">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="WrongSource" Color="Red" />
+        <mcu:CustomColor x:Key="InvalidColor" Name="Invalid"
+            Color="{mcu:ImageSeed {StaticResource WrongSource}}" />
+    </UserControl.Resources>
+</UserControl>

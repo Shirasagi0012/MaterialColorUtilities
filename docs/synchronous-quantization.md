@@ -27,11 +27,13 @@ var seeds = Score.CalculateScore(
 ArgbColor seed = seeds[0];
 ```
 
-The core does CPU work on its caller's thread. A UI/image adapter should schedule
-its complete decode/sample/quantize/score pipeline off the UI thread and marshal
-only the final result back. The core neither dispatches nor captures a
-`SynchronizationContext`. Choose the sample size and color budget explicitly;
-a synchronous API does not make large image processing inexpensive.
+The core does CPU work on its caller's thread and neither dispatches nor captures
+a `SynchronizationContext`. Image adapters must respect their platform's capture
+thread rules. The [Avalonia adapter](avalonia-image-colors.md) captures a bounded
+static-bitmap snapshot on the UI thread; `ImageColorSource` sends only managed pixels
+to background quantization/scoring and publishes results on the UI thread. Choose
+the sample size and color budget explicitly; synchronous APIs do not make large
+image processing inexpensive.
 
 Do not mutate the input while quantizing. A `QuantizerWu` instance holds mutable
 histogram state: sequential reuse is supported, concurrent reuse is not. Use a
@@ -48,9 +50,10 @@ This refactor changes execution ownership, not the color algorithms:
   deterministic clustering are unchanged, including existing alpha-mixed quirks
 - Input validation and invalid-budget behavior have not been redesigned
 
-Image decoding, downsampling, transparency normalization, and an Avalonia
-image-extraction API remain separate work. The regression suite records baseline
-outputs rather than silently introducing such changes here.
+Image loading remains the application's responsibility. Downsampling and the
+opaque-only policy belong to the separate [Avalonia adapter](avalonia-image-colors.md),
+not the core refactor. The core regression suite records baseline outputs rather
+than silently introducing algorithm changes.
 
 ## Verification and performance
 

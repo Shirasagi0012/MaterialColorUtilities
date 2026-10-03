@@ -135,5 +135,6 @@
                 </Border>
             </ThemeVariantScope>
         </DockPanel>
+        <views:ImageSeedDemoView Width="830" />
     </StackPanel>
 </UserControl>

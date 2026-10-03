@@ -63,7 +63,8 @@ ArgbColor onPrimary = scheme.OnPrimary;
 The core quantizers and `Score.CalculateScore` can select seed colors from decoded
 image pixels. Quantization runs synchronously on the calling thread; see the
 [synchronous API and migration notes](docs/synchronous-quantization.md).
-Image decoding and an Avalonia image-extraction adapter are not provided.
+The Avalonia package also provides a synchronous adapter for already decoded static
+`Bitmap` images; applications still own image loading and disposal.
 
 ## Avalonia integration
 
@@ -172,6 +173,40 @@ border.TryFindResource(SysColorToken.Primary, border.ActualThemeVariant, out var
 C# lookup returns a snapshot; pass `ActualThemeVariant` explicitly. Use
 `GetResourceObservable(key)` for ongoing observation and dispose subscriptions normally.
 
+### Use an image as a seed
+
+Share one `ImageColorSource` between schemes and custom colors. Given an already
+loaded, caller-owned `CoverBitmap` in an outer resource scope:
+
+```xml
+<ResourceDictionary>
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+            <mcu:ImageColorSource x:Key="CoverColors"
+                Image="{StaticResource CoverBitmap}" FallbackColor="#6750A4" />
+        </ResourceDictionary>
+        <mcu:MaterialColorResources>
+            <mcu:TonalSpotScheme Color="{ReflectionBinding Result.SeedColor, Source={StaticResource CoverColors}}">
+                <mcu:CustomColor Name="CoverAccent"
+                    Color="{mcu:ImageSeed {StaticResource CoverColors}, Index=1, FallbackColor=#006C4C}" />
+            </mcu:TonalSpotScheme>
+        </mcu:MaterialColorResources>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>
+```
+
+`Index=1` selects the second scored candidate. Both fallbacks above are explicit
+application choices, not library defaults. Without a candidate or explicit fallback,
+`SeedColor` is null. Bind to `Result.Candidates`, `IsBusy`, and `Error` for palette and
+status displays. Change the existing source's `Image` to update all consumers.
+
+The source coalesces changes, captures bounded pixels on the UI thread, then runs
+synchronous quantization in the background. For immediate synchronous use on the UI
+thread, call `ImageColorExtractor.Extract(bitmap, options)`. Only opaque pixels in the
+sample contribute; decoded original-image memory is outside the sample budget.
+See [image extraction and lifecycle](docs/avalonia-image-colors.md) for supported
+bitmaps, nullable results, caching, ownership, and performance measurements.
+
 ### Themes and overrides
 
 Native Avalonia lookup determines scope and precedence. Use
@@ -189,7 +224,7 @@ template when each consumer needs its own scope.
 
 ## Examples and further reading
 
-- [Gallery](MaterialColorUtilities.Gallery): editable schemes, custom colors, and theme scopes
+- [Gallery](MaterialColorUtilities.Gallery): editable schemes, custom colors, theme scopes, and a shared image-seed demo
 - [Native-resource migration guide](docs/avalonia-native-resources-migration.md): previous API replacements, resource-key validation, binding setup, and detailed lookup behavior
 
 ## License

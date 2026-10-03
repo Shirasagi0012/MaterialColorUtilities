@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
+             xmlns:local="using:MaterialColorUtilities.Tests.Avalonia"
+             x:Class="MaterialColorUtilities.Tests.Avalonia.ImageSeedView">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <local:ImageSeedBitmapExtension x:Key="CoverBitmap" />
+                    <mcu:ImageColorSource x:Key="CoverColors"
+                        Image="{StaticResource CoverBitmap}"
+                        AutoUpdate="False"
+                        MaxSamplePixels="16384"
+                        MaxColors="128"
+                        DesiredColors="4"
+                        FallbackColor="#6750A4" />
+                </ResourceDictionary>
+                <mcu:MaterialColorResources>
+                    <mcu:TonalSpotScheme
+                        Color="{ReflectionBinding Result.SeedColor, Source={StaticResource CoverColors}}">
+                        <mcu:CustomColor Name="CoverAccent"
+                            Color="{mcu:ImageSeed {StaticResource CoverColors}, Index=1, FallbackColor=#006C4C}"
+                            Harmonize="True" />
+                        <mcu:CustomColor Name="CandidateOrSeed"
+                            Color="{mcu:ImageSeed {StaticResource CoverColors}, Index=1}"
+                            Harmonize="False" />
+                        <mcu:CustomColor Name="BestCandidate"
+                            Color="{mcu:ImageSeed {StaticResource CoverColors}}"
+                            Harmonize="False" />
+                    </mcu:TonalSpotScheme>
+                </mcu:MaterialColorResources>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <StackPanel>
+        <Border Name="SystemColor" Background="{mcu:MdSysColor Primary}" />
+        <Border Name="CustomColor" Background="{mcu:MdCustomColor CoverAccent, Container}" />
+        <Border Name="PaletteColor" Background="{mcu:MdRefPalette Primary, 60}" />
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,90 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mcu="https://github.com/Shirasagi0012/MaterialColorUtilities.Avalonia"
+             xmlns:media="clr-namespace:Avalonia.Media;assembly=Avalonia.Base"
+             x:Class="MaterialColorUtilities.Gallery.Views.ImageSeedDemoView">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Declare the shared source before the consumers. The view owns its Bitmap. -->
+                <ResourceDictionary>
+                    <mcu:ImageColorSource x:Key="DemoImageColors" DesiredColors="4"
+                                          FallbackColor="#6750A4" />
+                </ResourceDictionary>
+                <mcu:MaterialColorResources>
+                    <mcu:TonalSpotScheme
+                        Color="{ReflectionBinding Result.SeedColor, Source={StaticResource DemoImageColors}}">
+                        <mcu:CustomColor Name="ImageAccent" Harmonize="True"
+                                         Color="{mcu:ImageSeed {StaticResource DemoImageColors}, Index=1, FallbackColor=#006C4C}" />
+                    </mcu:TonalSpotScheme>
+                </mcu:MaterialColorResources>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Border Background="{mcu:MdSysColor SurfaceContainerLow}" CornerRadius="12" Padding="24">
+        <StackPanel Spacing="16">
+            <TextBlock Text="Image seeds" FontSize="24" Foreground="{mcu:MdSysColor OnSurface}" />
+            <TextBlock Text="One shared image source supplies the scheme seed and a second-ranked custom color."
+                       TextWrapping="Wrap" Foreground="{mcu:MdSysColor OnSurfaceVariant}" />
+            <Grid ColumnDefinitions="300,*" ColumnSpacing="24">
+                <StackPanel Spacing="12">
+                    <Border CornerRadius="8" ClipToBounds="True" Height="188"
+                            Background="{mcu:MdSysColor SurfaceContainerHigh}">
+                        <Image x:Name="SampleImage" Stretch="UniformToFill"
+                               Source="{ReflectionBinding Image, Source={StaticResource DemoImageColors}}"
+                               AutomationProperties.Name="Current image used to extract seed colors" />
+                    </Border>
+                    <WrapPanel Orientation="Horizontal">
+                        <Button x:Name="CoastButton" Content="Coast" Click="ShowCoast" Margin="0 0 8 0" />
+                        <Button x:Name="DuskButton" Content="Dusk" Click="ShowDusk" Margin="0 0 8 0" />
+                        <Button x:Name="ClearImageButton" Content="Clear" Click="ClearImage" />
+                    </WrapPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="10">
+                    <TextBlock Text="Ranked candidates" FontSize="18" Foreground="{mcu:MdSysColor OnSurface}" />
+                    <ItemsControl x:Name="CandidateItems"
+                                  ItemsSource="{ReflectionBinding Result.Candidates, Source={StaticResource DemoImageColors}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><WrapPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="media:Color">
+                                <StackPanel Spacing="4" Margin="0 0 8 6">
+                                    <Border Width="88" Height="40" CornerRadius="6">
+                                        <Border.Background><SolidColorBrush Color="{Binding}" /></Border.Background>
+                                    </Border>
+                                    <TextBlock Text="{Binding}" FontSize="11" HorizontalAlignment="Center"
+                                               Foreground="{mcu:MdSysColor OnSurfaceVariant}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock x:Name="BusyLabel" Text="Extracting colors…"
+                               IsVisible="{ReflectionBinding IsBusy, Source={StaticResource DemoImageColors}}"
+                               Foreground="{mcu:MdSysColor OnSurfaceVariant}" />
+                    <TextBlock x:Name="FallbackLabel" Text="Using the demo fallback: #6750A4"
+                               IsVisible="{ReflectionBinding Result.IsFallback, Source={StaticResource DemoImageColors}}"
+                               Foreground="{mcu:MdSysColor OnSurfaceVariant}" />
+                    <TextBlock x:Name="ExtractionError" TextWrapping="Wrap"
+                               Text="{ReflectionBinding Error.Message, Source={StaticResource DemoImageColors}}"
+                               Foreground="{mcu:MdSysColor Error}" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                        <Border x:Name="ImagePrimaryBand" Background="{mcu:MdSysColor PrimaryContainer}"
+                                Padding="12" CornerRadius="8">
+                            <TextBlock Text="Scheme primary" TextWrapping="Wrap"
+                                       Foreground="{mcu:MdSysColor OnPrimaryContainer}" />
+                        </Border>
+                        <Border x:Name="ImageAccentBand" Grid.Column="1"
+                                Background="{mcu:MdCustomColor ImageAccent, Container}" Padding="12" CornerRadius="8">
+                            <TextBlock Text="Candidate #2 · harmonized" TextWrapping="Wrap"
+                                       Foreground="{mcu:MdCustomColor ImageAccent, OnContainer}" />
+                        </Border>
+                    </Grid>
+                    <TextBlock Text="Clear restores explicit demo fallbacks. Theme changes reuse the extracted candidates."
+                               TextWrapping="Wrap" FontSize="12" Foreground="{mcu:MdSysColor OnSurfaceVariant}" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

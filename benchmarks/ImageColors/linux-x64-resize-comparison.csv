@@ -1,0 +1,5 @@
+workload,width,height,quality,sample_width,sample_height,warmups,measurements,resize_ms_median,resize_ms_p95,resize_managed_bytes_median,resize_managed_bytes_p95,glibc_malloc_baseline_bytes,glibc_malloc_sampled_peak_bytes,glibc_malloc_sampled_peak_delta_bytes,candidates
+photo,4096,4096,LowQuality,128,128,3,20,0.454,0.563,464.000,464.000,85859248,85944624,85376,#ff325b78|#ff6ba9a6|#ffcdbd9d|#ff7f8977
+photo,4096,4096,MediumQuality,128,128,3,20,11.453,15.221,464.000,464.000,108247280,108380848,133568,#ff315673|#ff42837d|#ffc1b298|#ff4c5445
+noise-8k,7680,4320,LowQuality,170,96,3,20,0.578,0.716,464.000,464.000,173981424,174061088,79664,#ff5ee62b|#ffb62be6|#ffb4561e|#ff6796b6
+noise-8k,7680,4320,MediumQuality,170,96,3,20,35.704,41.521,464.000,464.000,151664720,196004288,44339568,#ff7c817b|#ff7b8081|#ff7c7a82|#ff817980
