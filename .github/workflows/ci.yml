@@ -10,7 +10,7 @@ on:
     inputs:
       nuget_user:
         description: NuGet.org username for Trusted Publishing
-        default: Shirasagi0012
+        default: Shirasagi
         required: true
         type: string
 
